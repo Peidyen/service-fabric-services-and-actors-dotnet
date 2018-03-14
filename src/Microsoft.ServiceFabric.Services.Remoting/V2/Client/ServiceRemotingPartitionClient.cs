@@ -61,11 +61,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Client
             var tcs = new TaskCompletionSource<bool>();
             using (cancellationToken.Register(() => tcs.TrySetResult(false)))
             {
-                Task<IServiceRemotingResponseMessage> innerTask = this.InvokeWithRetryAsync(
+                var innerTask = this.InvokeWithRetryAsync(
                     client => client.RequestResponseAsync(remotingRequestMessage),
                     cancellationToken);
 
-                Task completedTask = await Task.WhenAny(innerTask, tcs.Task);
+                var completedTask = await Task.WhenAny(innerTask, tcs.Task);
 
                 if (completedTask != innerTask)
                 {
@@ -77,7 +77,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Client
                         // Adding a cancellation header indicates that the request that was sent with
                         // for the interface, method and identified by the call-context should be canceled.
                         //
-                        IServiceRemotingRequestMessageHeader headers = remotingRequestMessage.GetHeader();
+                        var headers = remotingRequestMessage.GetHeader();
                         ServiceTrace.Source.WriteInfo(
                             TraceType,
                             "Cancellation requested for CallContext : {0}, MethodId : {1}, InterfaceId : {2}",
@@ -98,7 +98,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Client
                         // Cancellation token is not sent in this call that means that cancellation *will* be 
                         // delivered.
 
-                        Task<IServiceRemotingResponseMessage> remoteCancellationTask = this.InvokeWithRetryAsync(
+                        var remoteCancellationTask = this.InvokeWithRetryAsync(
                             client => client.RequestResponseAsync(remotingRequestMessage),
                             remoteCancellationTaskCts.Token);
 
@@ -111,7 +111,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Client
                         // task or actual request task to finish.
                         //
 
-                        Task<IServiceRemotingResponseMessage> finishedTask = await Task.WhenAny(innerTask, remoteCancellationTask);
+                        var finishedTask = await Task.WhenAny(innerTask, remoteCancellationTask);
 
                         if (finishedTask != innerTask)
                         {

@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------
+// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
@@ -147,7 +147,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            ResolvedServicePartition previousRsp = await this.ServiceResolver.ResolveAsync(
+            var previousRsp = await this.ServiceResolver.ResolveAsync(
                 serviceUri,
                 partitionKey,
                 ServicePartitionResolver.DefaultResolveTimeout,
@@ -193,7 +193,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            TCommunicationClient newClient = await this.CreateClientWithRetriesAsync(
+            var newClient = await this.CreateClientWithRetriesAsync(
                 previousRsp,
                 targetReplica,
                 listenerName,
@@ -223,24 +223,23 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            Guid partitionId = client.ResolvedServicePartition.Info.Id;
-            CommunicationClientCacheEntry<TCommunicationClient> entry = this.cache.GetOrAddClientCacheEntry(
+            var partitionId = client.ResolvedServicePartition.Info.Id;
+            var entry = this.cache.GetOrAddClientCacheEntry(
                 partitionId,
                 client.Endpoint,
                 client.ListenerName,
                 client.ResolvedServicePartition);
 
-            TCommunicationClient faultedClient = default(TCommunicationClient);
+            var faultedClient = default(TCommunicationClient);
             OperationRetryControl retval;
 
             await entry.Semaphore.WaitAsync(cancellationToken);
             try
             {
-                ExceptionHandlingResult exceptionHandlingResult;
-                bool handled = this.HandleReportedException(
+                var handled = this.HandleReportedException(
                     exceptionInformation,
                     retrySettings,
-                    out exceptionHandlingResult);
+                    out var exceptionHandlingResult);
                 if (handled && exceptionHandlingResult is ExceptionHandlingRetryResult)
                 {
                     var retryResult = (ExceptionHandlingRetryResult) exceptionHandlingResult;
@@ -273,8 +272,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
                         Exception = exceptionInformation.Exception
                     };
 
-                    var throwResult = exceptionHandlingResult as ExceptionHandlingThrowResult;
-                    if (throwResult != null && throwResult.ExceptionToThrow != null)
+                    if (exceptionHandlingResult is ExceptionHandlingThrowResult throwResult && throwResult.ExceptionToThrow != null)
                     {
                         retval.Exception = throwResult.ExceptionToThrow;
                     }
@@ -365,7 +363,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             bool doInitialResolve,
             CancellationToken cancellationToken)
         {
-            bool doResolve = doInitialResolve;
+            var doResolve = doInitialResolve;
             var currentRetryCount = 0;
             string currentExceptionId = null;
 
@@ -378,7 +376,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
                 {
                     if (doResolve)
                     {
-                        ResolvedServicePartition rsp = await this.ServiceResolver.ResolveAsync(
+                        var rsp = await this.ServiceResolver.ResolveAsync(
                             previousRsp,
                             ServicePartitionResolver.DefaultResolveTimeout,
                             retrySettings.MaxRetryBackoffIntervalOnTransientErrors,
@@ -387,8 +385,8 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
                     }
 
 
-                    ResolvedServiceEndpoint endpoint = this.GetEndpoint(previousRsp, targetReplicaSelector);
-                    CommunicationClientCacheEntry<TCommunicationClient> cacheEntry =
+                    var endpoint = this.GetEndpoint(previousRsp, targetReplicaSelector);
+                    var cacheEntry =
                         await
                             this.GetAndLockClientCacheEntryAsync(
                                 previousRsp.Info.Id,
@@ -427,7 +425,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
 
                         else
                         {
-                            bool clientValid = this.ValidateLockedClientCacheEntry(
+                            var clientValid = this.ValidateLockedClientCacheEntry(
                                 cacheEntry,
                                 previousRsp,
                                 out client);
@@ -484,8 +482,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
                         throw;
                     }
 
-                    var throwResult = result as ExceptionHandlingThrowResult;
-                    if (throwResult != null)
+                    if (result is ExceptionHandlingThrowResult throwResult)
                     {
                         if (ReferenceEquals(e, throwResult.ExceptionToThrow))
                         {
@@ -536,7 +533,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
                     out result);
             }
 
-            foreach (Exception innerException in aggregateException.Flatten().InnerExceptions)
+            foreach (var innerException in aggregateException.Flatten().InnerExceptions)
             {
                 if (this.TryHandleException(
                     new ExceptionInformation(innerException, exceptionInformation.TargetReplica),
@@ -556,7 +553,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             OperationRetrySettings retrySettings,
             out ExceptionHandlingResult result)
         {
-            foreach (IExceptionHandler handler in this.exceptionHandlers)
+            foreach (var handler in this.exceptionHandlers)
             {
                 if (handler.TryHandleException(
                     exceptionInformation,
@@ -586,7 +583,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
                         rsp.ServiceName));
             }
 
-            ResolvedServiceEndpoint endpoint = rsp.Endpoints.First();
+            var endpoint = rsp.Endpoints.First();
             if (endpoint.Role == ServiceEndpointRole.Stateless)
             {
                 if (targetReplica != TargetReplicaSelector.RandomInstance)
@@ -615,7 +612,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
 
             if (targetReplica == TargetReplicaSelector.RandomSecondaryReplica)
             {
-                IEnumerable<ResolvedServiceEndpoint> secondaryEndpoints =
+                var secondaryEndpoints =
                     rsp.Endpoints.Where(rsEndpoint => rsEndpoint.Role != ServiceEndpointRole.StatefulPrimary);
                 if (!secondaryEndpoints.Any())
                 {
@@ -661,7 +658,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                CommunicationClientCacheEntry<TCommunicationClient> entry = this.cache.GetOrAddClientCacheEntry(partitionId, endpoint, listenerName, rsp);
+                var entry = this.cache.GetOrAddClientCacheEntry(partitionId, endpoint, listenerName, rsp);
 
                 await entry.Semaphore.WaitAsync(cancellationToken);
                 if (entry.IsInCache)
@@ -688,7 +685,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             out TCommunicationClient client)
         {
             client = cacheEntry.Client;
-            TCommunicationClient faultedClient = default(TCommunicationClient);
+            var faultedClient = default(TCommunicationClient);
 
             // check if we have a cached client
             if (client != null)

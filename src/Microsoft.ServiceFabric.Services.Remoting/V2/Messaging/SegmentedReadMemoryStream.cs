@@ -1,6 +1,6 @@
 // ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
@@ -33,8 +33,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
 
         public SegmentedReadMemoryStream(ArraySegment<byte> readbuffer)
         {
-            var tempBuffers = new List<ArraySegment<byte>>();
-            tempBuffers.Add(readbuffer);
+            var tempBuffers = new List<ArraySegment<byte>>
+            {
+                readbuffer
+            };
             this.length = 0;
             this.readbuffers = tempBuffers;
             this.Initialize();
@@ -79,9 +81,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 case SeekOrigin.Begin:
                     this.Initialize();
                     return this.Position;
-            }
 
+            }
+			
             throw new NotImplementedException();
+
         }
 
         public override void SetLength(long value)
@@ -96,7 +100,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 throw new ArgumentNullException("buffer");
             }
 
-            if (offset + count > buffer.Length)
+            if ((offset + count) > buffer.Length)
             {
                 throw new ArgumentException("buffer too small", "buffer");
             }
@@ -111,22 +115,20 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 throw new ArgumentException("count must be >= 0", "count");
             }
 
-
             if (this.Position >= this.Length || count == 0)
             {
                 return 0;
             }
 
-
-            int bytesToRead = Math.Min(count, (int) (this.Length - this.Position));
+            var bytesToRead = Math.Min(count, (int)(this.Length - this.Position));
             var bytesRead = 0;
-            int bytesLeft = bytesToRead - bytesRead;
+            var bytesLeft = bytesToRead - bytesRead;
 
             while (bytesLeft > 0)
             {
-                ArraySegment<byte> buf = this.readbuffers.ElementAt(this.bufferNum);
-                int bufferSize = buf.Count;
-                int bytesToCopy = this.bufferOffset + bytesLeft < bufferSize
+                var buf = this.readbuffers.ElementAt(this.bufferNum);
+                var bufferSize = buf.Count;
+                var bytesToCopy = (this.bufferOffset + bytesLeft) < bufferSize
                     ? bytesLeft
                     : bufferSize - this.bufferOffset;
 
@@ -155,7 +157,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 return -1;
             }
 
-            ArraySegment<byte> currentBuffer = this.readbuffers.ElementAt(this.bufferNum);
+            var currentBuffer = this.readbuffers.ElementAt(this.bufferNum);
 
             //Read from next buffer
             if (this.bufferOffset == currentBuffer.Count)
@@ -165,7 +167,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 currentBuffer = this.readbuffers.ElementAt(this.bufferNum);
             }
 
-            byte byteread = currentBuffer.Array[this.bufferOffset];
+            var byteread = currentBuffer.Array[this.bufferOffset];
             this.Position++;
             this.bufferOffset++;
 
@@ -189,7 +191,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
 
         private void SetLength()
         {
-            foreach (ArraySegment<byte> segment in this.readbuffers)
+            foreach (var segment in this.readbuffers)
             {
                 this.length += segment.Count;
             }

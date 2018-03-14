@@ -42,7 +42,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
                 partitionId,
                 instanceId);
 
-            StatelessService service = this.serviceFactory(instanceContext);
+            var service = this.serviceFactory(instanceContext);
             return new StatelessServiceInstanceAdapter(service.Context, service);
         }
     }

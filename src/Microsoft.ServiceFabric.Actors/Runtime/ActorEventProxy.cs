@@ -71,9 +71,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         internal void RemoveSubscriber(Guid subscriberId)
         {
-            IActorEventSubscriberProxy removed;
 #if !DotNetCoreClr
-            this.subscriberProxiesV1.TryRemove(subscriberId, out removed);
+            this.subscriberProxiesV1.TryRemove(subscriberId, out var removed);
 #endif
             this.subscriberProxiesV2.TryRemove(subscriberId, out removed);
         }
@@ -102,7 +101,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         private void SendToSubscribers(int eventInterfaceId, int eventMethodId, IServiceRemotingRequestMessageBody messageBody)
         {
             IList<Guid> subscribersToRemove = null;
-            foreach (KeyValuePair<Guid, IActorEventSubscriberProxy> subscriber in this.subscriberProxiesV2)
+            foreach (var subscriber in this.subscriberProxiesV2)
             {
                 try
                 {
@@ -128,10 +127,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             if (subscribersToRemove != null)
             {
-                foreach (Guid subscriberKey in subscribersToRemove)
+                foreach (var subscriberKey in subscribersToRemove)
                 {
-                    IActorEventSubscriberProxy eventProxy;
-                    this.subscriberProxiesV2.TryRemove(subscriberKey, out eventProxy);
+                    this.subscriberProxiesV2.TryRemove(subscriberKey, out var eventProxy);
                 }
             }
         }
@@ -204,7 +202,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         private void SendToSubscribers(int eventInterfaceId, int eventMethodId, byte[] eventMsgBytes)
         {
             IList<Guid> subscribersToRemove = null;
-            foreach (KeyValuePair<Guid, IActorEventSubscriberProxy> subscriber in this.subscriberProxiesV1)
+            foreach (var subscriber in this.subscriberProxiesV1)
             {
                 try
                 {
@@ -230,10 +228,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             if (subscribersToRemove != null)
             {
-                foreach (Guid subscriberKey in subscribersToRemove)
+                foreach (var subscriberKey in subscribersToRemove)
                 {
-                    IActorEventSubscriberProxy eventProxy;
-                    this.subscriberProxiesV1.TryRemove(subscriberKey, out eventProxy);
+                    this.subscriberProxiesV1.TryRemove(subscriberKey, out var eventProxy);
                 }
             }
         }

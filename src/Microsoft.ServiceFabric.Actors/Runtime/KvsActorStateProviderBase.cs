@@ -74,7 +74,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             try
             {
-                byte[] buffer = this.SerializeLogicalTimestamp(data);
+                var buffer = this.SerializeLogicalTimestamp(data);
                 await this.UpdateOrAddAsync(LogicalTimestampKey, buffer);
             }
             catch (Exception)
@@ -217,14 +217,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         /// <returns> A task that represents the asynchronous Actor activation notification processing.</returns>
         Task IActorStateProvider.ActorActivatedAsync(ActorId actorId, CancellationToken cancellationToken)
         {
-            string key = ActorStateProviderHelper.CreateActorPresenceStorageKey(actorId);
+            var key = ActorStateProviderHelper.CreateActorPresenceStorageKey(actorId);
 
             return this.actorStateProviderHelper.ExecuteWithRetriesAsync(
                 async () =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    using (Transaction tx = this.storeReplica.CreateTransaction())
+                    using (var tx = this.storeReplica.CreateTransaction())
                     {
                         this.storeReplica.TryAdd(tx, key, ActorPresenceValue);
                         await tx.CommitAsync();
@@ -246,9 +246,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         /// </returns>
         Task IActorStateProvider.ReminderCallbackCompletedAsync(ActorId actorId, IActorReminder reminder, CancellationToken cancellationToken)
         {
-            string key = ActorStateProviderHelper.CreateReminderCompletedStorageKey(actorId, reminder.Name);
+            var key = ActorStateProviderHelper.CreateReminderCompletedStorageKey(actorId, reminder.Name);
             var data = new ReminderCompletedData(this.logicalTimeManager.CurrentLogicalTime, DateTime.UtcNow);
-            byte[] buffer = this.SerializeReminderCompletedData(data);
+            var buffer = this.SerializeReminderCompletedData(data);
 
             return this.actorStateProviderHelper.ExecuteWithRetriesAsync(
                 () =>
@@ -277,16 +277,16 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             Requires.Argument("stateName", stateName).NotNull();
 
-            string key = CreateActorStorageKey(actorId, stateName);
+            var key = CreateActorStorageKey(actorId, stateName);
 
             return this.actorStateProviderHelper.ExecuteWithRetriesAsync(
                 () =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    using (Transaction tx = this.storeReplica.CreateTransaction())
+                    using (var tx = this.storeReplica.CreateTransaction())
                     {
-                        byte[] value = this.storeReplica.TryGetValue(tx, key);
+                        var value = this.storeReplica.TryGetValue(tx, key);
 
                         if (value != null)
                         {
@@ -325,9 +325,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             var serializedStateChanges = new List<SerializedStateChange>();
 
-            foreach (ActorStateChange stateChange in stateChanges)
+            foreach (var stateChange in stateChanges)
             {
-                string key = CreateActorStorageKey(actorId, stateChange.StateName);
+                var key = CreateActorStorageKey(actorId, stateChange.StateName);
 
                 byte[] buffer = null;
                 if (stateChange.ChangeKind == StateChangeKind.Add ||
@@ -359,16 +359,16 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         /// <exception cref="OperationCanceledException">The operation was canceled.</exception>
         Task<bool> IActorStateProvider.ContainsStateAsync(ActorId actorId, string stateName, CancellationToken cancellationToken)
         {
-            string key = CreateActorStorageKey(actorId, stateName);
+            var key = CreateActorStorageKey(actorId, stateName);
 
             return this.actorStateProviderHelper.ExecuteWithRetriesAsync(
                 () =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    using (Transaction tx = this.storeReplica.CreateTransaction())
+                    using (var tx = this.storeReplica.CreateTransaction())
                     {
-                        bool res = this.storeReplica.Contains(tx, key);
+                        var res = this.storeReplica.Contains(tx, key);
                         return Task.FromResult(res);
                     }
                 },
@@ -452,11 +452,11 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         /// <exception cref="OperationCanceledException">The operation was canceled.</exception>
         Task IActorStateProvider.SaveReminderAsync(ActorId actorId, IActorReminder reminder, CancellationToken cancellationToken)
         {
-            string reminderKey = CreateReminderStorageKey(actorId, reminder.Name);
+            var reminderKey = CreateReminderStorageKey(actorId, reminder.Name);
             var data = new ActorReminderData(actorId, reminder, this.logicalTimeManager.CurrentLogicalTime);
-            byte[] buffer = this.SerializeReminder(data);
+            var buffer = this.SerializeReminder(data);
 
-            string reminderCompletedKey = ActorStateProviderHelper.CreateReminderCompletedStorageKey(actorId, reminder.Name);
+            var reminderCompletedKey = ActorStateProviderHelper.CreateReminderCompletedStorageKey(actorId, reminder.Name);
 
             return this.actorStateProviderHelper.ExecuteWithRetriesAsync(
                 () =>
@@ -478,8 +478,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         /// <exception cref="OperationCanceledException">The operation was canceled.</exception>
         Task IActorStateProvider.DeleteReminderAsync(ActorId actorId, string reminderName, CancellationToken cancellationToken)
         {
-            string reminderKey = CreateReminderStorageKey(actorId, reminderName);
-            string reminderCompletedKey = ActorStateProviderHelper.CreateReminderCompletedStorageKey(actorId, reminderName);
+            var reminderKey = CreateReminderStorageKey(actorId, reminderName);
+            var reminderCompletedKey = ActorStateProviderHelper.CreateReminderCompletedStorageKey(actorId, reminderName);
 
             var reminderKeyInfo = new List<ReminderKeyInfo>
             {
@@ -499,7 +499,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         Task IActorStateProvider.DeleteRemindersAsync(
             IReadOnlyDictionary<ActorId, IReadOnlyCollection<string>> reminderNames, CancellationToken cancellationToken)
         {
-            List<ReminderKeyInfo> reminderKeyInfoList = this.GetReminderKeyInfoList(reminderNames);
+            var reminderKeyInfoList = this.GetReminderKeyInfoList(reminderNames);
 
             return this.DeleteRemindersInternalAsync(
                 reminderKeyInfoList,
@@ -685,7 +685,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             try
             {
-                string backupDirectoryPath = this.GetLocalBackupFolderPath();
+                var backupDirectoryPath = this.GetLocalBackupFolderPath();
                 PrepareBackupFolder(backupDirectoryPath);
 
                 await this.storeReplica.BackupAsync(
@@ -736,7 +736,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         /// <returns>Task that represents the asynchronous restore operation.</returns>
         Task IStateProviderReplica.RestoreAsync(string backupFolderPath, RestorePolicy restorePolicy, CancellationToken cancellationToken)
         {
-            bool enableLsnCheck = restorePolicy == RestorePolicy.Safe;
+            var enableLsnCheck = restorePolicy == RestorePolicy.Safe;
             var restoreSettings = new RestoreSettings(true, enableLsnCheck);
 
             return this.storeReplica.RestoreAsync(backupFolderPath, restoreSettings, cancellationToken);
@@ -748,11 +748,11 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private void OnCopyComplete(KeyValueStoreEnumerator enumerator)
         {
-            IEnumerator<KeyValueStoreItem> inner = enumerator.Enumerate(LogicalTimestampKey);
+            var inner = enumerator.Enumerate(LogicalTimestampKey);
 
             while (inner.MoveNext())
             {
-                KeyValueStoreItem item = inner.Current;
+                var item = inner.Current;
                 this.TryDeserializeAndApplyLogicalTimestamp(item.Metadata.Key, item.Value);
             }
         }
@@ -761,7 +761,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             while (notification.MoveNext())
             {
-                KeyValueStoreNotification item = notification.Current;
+                var item = notification.Current;
                 this.TryDeserializeAndApplyLogicalTimestamp(item.Metadata.Key, item.Value);
             }
         }
@@ -775,7 +775,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             try
             {
-                ReplicatorSettings replicatorSettings = this.LoadReplicatorSettings();
+                var replicatorSettings = this.LoadReplicatorSettings();
                 this.storeReplica.UpdateReplicatorSettings(replicatorSettings);
             }
             catch (FabricElementNotFoundException ex)
@@ -948,9 +948,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 while (true)
                 {
                     var delayTaskCts = new CancellationTokenSource();
-                    Task delayTask = Task.Delay(this.stateProviderSettings.BackupCallbackExpectedCancellationTime, delayTaskCts.Token);
+                    var delayTask = Task.Delay(this.stateProviderSettings.BackupCallbackExpectedCancellationTime, delayTaskCts.Token);
 
-                    Task finishedTask = await Task.WhenAny(this.backupCallbackTask, delayTask);
+                    var finishedTask = await Task.WhenAny(this.backupCallbackTask, delayTask);
 
                     if (finishedTask == this.backupCallbackTask)
                     {
@@ -970,7 +970,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private void ReportBackupCallbackSlowCancellationHealth()
         {
-            string description = string.Format(
+            var description = string.Format(
                 "BackupCallback is taking longer than expected time ({0}s) to cancel.",
                 this.stateProviderSettings.BackupCallbackExpectedCancellationTime.TotalSeconds);
 
@@ -1020,8 +1020,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private void LoadActorStateProviderSettings()
         {
-            string configPackageName = ActorNameFormat.GetConfigPackageName(this.ActorTypeInformation.ImplementationType);
-            string sectionName = ActorNameFormat.GetActorStateProviderSettingsSectionName(this.ActorTypeInformation.ImplementationType);
+            var configPackageName = ActorNameFormat.GetConfigPackageName(this.ActorTypeInformation.ImplementationType);
+            var sectionName = ActorNameFormat.GetActorStateProviderSettingsSectionName(this.ActorTypeInformation.ImplementationType);
 
             this.stateProviderSettings = KvsActorStateProviderSettings.LoadFrom(
                 this.InitParams.CodePackageActivationContext,
@@ -1053,7 +1053,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private static string ExtractStateName(ActorId actorId, string storageKey)
         {
-            string storageKeyPrefix = CreateActorStorageKeyPrefix(actorId, string.Empty);
+            var storageKeyPrefix = CreateActorStorageKeyPrefix(actorId, string.Empty);
 
             if (storageKey == storageKeyPrefix)
             {
@@ -1097,7 +1097,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             using (var memoryStream = new MemoryStream())
             {
-                XmlDictionaryWriter binaryWriter = XmlDictionaryWriter.CreateBinaryWriter(memoryStream);
+                var binaryWriter = XmlDictionaryWriter.CreateBinaryWriter(memoryStream);
                 serializer.WriteObject(binaryWriter, data);
                 binaryWriter.Flush();
 
@@ -1124,7 +1124,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             if (key.Equals(LogicalTimestampKey))
             {
-                LogicalTimestamp timestamp = this.DeserializeLogicalTimeStamp(value);
+                var timestamp = this.DeserializeLogicalTimeStamp(value);
 
                 if (timestamp != null)
                 {
@@ -1137,7 +1137,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             using (var memoryStream = new MemoryStream(data))
             {
-                XmlDictionaryReader binaryReader = XmlDictionaryReader.CreateBinaryReader(
+                var binaryReader = XmlDictionaryReader.CreateBinaryReader(
                     memoryStream,
                     XmlDictionaryReaderQuotas.Max);
 
@@ -1147,7 +1147,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private async Task AddOrUpdateReminderAsync(string reminderKey, byte[] state, string reminderCompletedKey)
         {
-            using (Transaction tx = this.storeReplica.CreateTransaction())
+            using (var tx = this.storeReplica.CreateTransaction())
             {
                 if (!this.storeReplica.TryUpdate(tx, reminderKey, state))
                 {
@@ -1180,9 +1180,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private async Task DeleteReminderAsync(IEnumerable<ReminderKeyInfo> reminderKeyInfoList)
         {
-            using (Transaction tx = this.storeReplica.CreateTransaction())
+            using (var tx = this.storeReplica.CreateTransaction())
             {
-                foreach (ReminderKeyInfo reminderKeyInfo in reminderKeyInfoList)
+                foreach (var reminderKeyInfo in reminderKeyInfoList)
                 {
                     this.storeReplica.TryRemove(tx, reminderKeyInfo.ReminderKey);
                     this.storeReplica.TryRemove(tx, reminderKeyInfo.ReminderCompletedKey);
@@ -1196,14 +1196,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             var reminderKeyInfoList = new List<ReminderKeyInfo>();
 
-            foreach (KeyValuePair<ActorId, IReadOnlyCollection<string>> reminderNamesPerActor in reminderNames)
+            foreach (var reminderNamesPerActor in reminderNames)
             {
-                ActorId actorId = reminderNamesPerActor.Key;
+                var actorId = reminderNamesPerActor.Key;
 
-                foreach (string reminderName in reminderNamesPerActor.Value)
+                foreach (var reminderName in reminderNamesPerActor.Value)
                 {
-                    string reminderKey = CreateReminderStorageKey(actorId, reminderName);
-                    string reminderCompletedKey = ActorStateProviderHelper.CreateReminderCompletedStorageKey(actorId, reminderName);
+                    var reminderKey = CreateReminderStorageKey(actorId, reminderName);
+                    var reminderCompletedKey = ActorStateProviderHelper.CreateReminderCompletedStorageKey(actorId, reminderName);
 
                     reminderKeyInfoList.Add(new ReminderKeyInfo(reminderKey, reminderCompletedKey));
                 }
@@ -1214,7 +1214,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private async Task UpdateOrAddAsync(string key, byte[] state)
         {
-            using (Transaction tx = this.storeReplica.CreateTransaction())
+            using (var tx = this.storeReplica.CreateTransaction())
             {
                 if (!this.storeReplica.TryUpdate(tx, key, state))
                 {
@@ -1229,14 +1229,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             var reminderCompletedDataMap = new Dictionary<string, ReminderCompletedData>();
 
-            IEnumerator<KeyValueStoreItem> enumerator = this.storeReplica.Enumerate(tx, ActorStateProviderHelper.ReminderCompletedStorageKeyPrefix);
+            var enumerator = this.storeReplica.Enumerate(tx, ActorStateProviderHelper.ReminderCompletedStorageKeyPrefix);
 
             while (enumerator.MoveNext())
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                KeyValueStoreItem item = enumerator.Current;
-                ReminderCompletedData data = this.DeserializeReminderCompletedData(item.Value);
+                var item = enumerator.Current;
+                var data = this.DeserializeReminderCompletedData(item.Value);
 
                 if (data != null)
                 {
@@ -1251,26 +1251,25 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             var reminderCollection = new ActorReminderCollection();
 
-            using (Transaction tx = this.storeReplica.CreateTransaction())
+            using (var tx = this.storeReplica.CreateTransaction())
             {
-                Dictionary<string, ReminderCompletedData> reminderCompletedDataMap = await this.GetReminderCompletedDataMapAsync(tx, cancellationToken);
+                var reminderCompletedDataMap = await this.GetReminderCompletedDataMapAsync(tx, cancellationToken);
 
-                IEnumerator<KeyValueStoreItem> enumerator = this.storeReplica.Enumerate(tx, ReminderStorageKeyPrefix);
+                var enumerator = this.storeReplica.Enumerate(tx, ReminderStorageKeyPrefix);
 
                 while (enumerator.MoveNext())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    KeyValueStoreItem item = enumerator.Current;
-                    ActorReminderData reminderData = this.DeserializeReminder(item.Value);
+                    var item = enumerator.Current;
+                    var reminderData = this.DeserializeReminder(item.Value);
 
                     if (reminderData != null)
                     {
-                        string reminderCompletedKey =
+                        var reminderCompletedKey =
                             ActorStateProviderHelper.CreateReminderCompletedStorageKey(reminderData.ActorId, reminderData.Name);
 
-                        ReminderCompletedData reminderCompletedData;
-                        reminderCompletedDataMap.TryGetValue(reminderCompletedKey, out reminderCompletedData);
+                        reminderCompletedDataMap.TryGetValue(reminderCompletedKey, out var reminderCompletedData);
 
                         reminderCollection.Add(
                             reminderData.ActorId,
@@ -1289,9 +1288,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             // Check for cancellation before creating the transaction.
             cancellationToken.ThrowIfCancellationRequested();
 
-            using (Transaction tx = this.storeReplica.CreateTransaction())
+            using (var tx = this.storeReplica.CreateTransaction())
             {
-                foreach (SerializedStateChange stateChange in serializedStateChanges)
+                foreach (var stateChange in serializedStateChanges)
                 {
                     switch (stateChange.ChangeKind)
                     {
@@ -1315,7 +1314,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private void RemoveKeysWithPrefixAsync(Transaction tx, string keyPrefix)
         {
-            IEnumerator<KeyValueStoreItemMetadata> stateMetadataEnumerator = this.storeReplica.EnumerateMetadata(tx, keyPrefix);
+            var stateMetadataEnumerator = this.storeReplica.EnumerateMetadata(tx, keyPrefix);
 
             while (stateMetadataEnumerator.MoveNext())
             {
@@ -1325,10 +1324,10 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private Task RemoveActorAtomicallyAsync(ActorId actorId, CancellationToken cancellationToken)
         {
-            string stateKeyPrefix = CreateActorStorageKeyPrefix(actorId, string.Empty);
-            string reminderKeyPrefix = CreateReminderStorageKeyPrefix(actorId, string.Empty);
-            string reminderCompletedKeyPrefix = ActorStateProviderHelper.CreateReminderCompletedStorageKeyPrefix(actorId);
-            string actorePresenceStorageKey = ActorStateProviderHelper.CreateActorPresenceStorageKey(actorId);
+            var stateKeyPrefix = CreateActorStorageKeyPrefix(actorId, string.Empty);
+            var reminderKeyPrefix = CreateReminderStorageKeyPrefix(actorId, string.Empty);
+            var reminderCompletedKeyPrefix = ActorStateProviderHelper.CreateReminderCompletedStorageKeyPrefix(actorId);
+            var actorePresenceStorageKey = ActorStateProviderHelper.CreateActorPresenceStorageKey(actorId);
 
             return this.actorStateProviderHelper.ExecuteWithRetriesAsync(
                 async () =>
@@ -1336,7 +1335,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                     // Check for cancellation before creating transaction.
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    using (Transaction tx = this.storeReplica.CreateTransaction())
+                    using (var tx = this.storeReplica.CreateTransaction())
                     {
                         this.RemoveKeysWithPrefixAsync(tx, stateKeyPrefix + "_");
                         this.RemoveKeysWithPrefixAsync(tx, reminderKeyPrefix);
@@ -1358,14 +1357,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         private Task<IEnumerable<string>> GetStateNamesAsync(ActorId actorId, CancellationToken cancellationToken)
         {
             var stateNameList = new List<string>();
-            string keyPrefix = CreateActorStorageKeyPrefix(actorId, string.Empty);
+            var keyPrefix = CreateActorStorageKeyPrefix(actorId, string.Empty);
 
             // Check for cancellation before creating transaction.
             cancellationToken.ThrowIfCancellationRequested();
 
-            using (Transaction tx = this.storeReplica.CreateTransaction())
+            using (var tx = this.storeReplica.CreateTransaction())
             {
-                IEnumerator<KeyValueStoreItemMetadata> enumerator = this.storeReplica.EnumerateMetadata(tx, keyPrefix + "_");
+                var enumerator = this.storeReplica.EnumerateMetadata(tx, keyPrefix + "_");
 
                 while (enumerator.MoveNext())
                 {
@@ -1390,7 +1389,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             ContinuationToken continuationToken,
             CancellationToken cancellationToken)
         {
-            using (Transaction tx = this.storeReplica.CreateTransaction())
+            using (var tx = this.storeReplica.CreateTransaction())
             {
                 return this.actorStateProviderHelper.GetStoredActorIdsAsync(
                     itemsCount,

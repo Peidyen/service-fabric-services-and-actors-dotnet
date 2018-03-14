@@ -41,7 +41,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests
             TestEqualityLong(long.MaxValue, long.MaxValue);
             TestEqualityLong(long.MinValue, long.MinValue);
 
-            Guid g = Guid.NewGuid();
+            var g = Guid.NewGuid();
             TestEqualityGuid(g, new Guid(g.ToByteArray()));
 
             TestEqualityString(string.Empty, string.Empty);

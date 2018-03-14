@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
@@ -50,17 +50,17 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
                     .UpdateCounterValue(1);
             }
 
-            Stopwatch requestStopWatch = Stopwatch.StartNew();
-            Stopwatch requestResponseSerializationStopwatch = Stopwatch.StartNew();
+            var requestStopWatch = Stopwatch.StartNew();
+            var requestResponseSerializationStopwatch = Stopwatch.StartNew();
 
             try
             {
-                IServiceRemotingRequestMessage remotingRequestMessage = this.CreateRemotingRequestMessage(
+                var remotingRequestMessage = this.CreateRemotingRequestMessage(
                     fabricTransportMessage,
                     requestResponseSerializationStopwatch
                 );
 
-                IServiceRemotingResponseMessage retval = await
+                var retval = await
                     this.remotingMessageHandler.HandleRequestResponseAsync(
                         new FabricTransportServiceRemotingRequestContext(requestContext, this.serializersManager),
                         remotingRequestMessage);
@@ -103,8 +103,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
                 this.serviceRemotingPerformanceCounterProvider.Dispose();
             }
 
-            var disposableItem = this.remotingMessageHandler as IDisposable;
-            if (null != disposableItem)
+            if (this.remotingMessageHandler is IDisposable disposableItem)
             {
                 disposableItem.Dispose();
             }
@@ -114,8 +113,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
         {
             var header = new ServiceRemotingResponseMessageHeader();
             header.AddHeader("HasRemoteException", new byte[0]);
-            IMessageHeader serializedHeader = this.serializersManager.GetHeaderSerializer().SerializeResponseHeader(header);
-            RemoteException serializedMsg = RemoteException.FromException(ex);
+            var serializedHeader = this.serializersManager.GetHeaderSerializer().SerializeResponseHeader(header);
+            var serializedMsg = RemoteException.FromException(ex);
             var msg = new FabricTransportMessage(
                 new FabricTransportRequestHeader(serializedHeader.GetSendBuffer(), serializedHeader.Dispose),
                 new FabricTransportRequestBody(serializedMsg.Data, null));
@@ -129,23 +128,23 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
                 return new FabricTransportMessage(null, null);
             }
 
-            IMessageHeader responseHeader = this.headerSerializer.SerializeResponseHeader(retval.GetHeader());
-            FabricTransportRequestHeader fabricTransportRequestHeader = responseHeader != null
+            var responseHeader = this.headerSerializer.SerializeResponseHeader(retval.GetHeader());
+            var fabricTransportRequestHeader = responseHeader != null
                 ? new FabricTransportRequestHeader(
                     responseHeader.GetSendBuffer(),
                     responseHeader.Dispose)
                 : new FabricTransportRequestHeader(new ArraySegment<byte>(), null);
-            IServiceRemotingResponseMessageBodySerializer responseSerializer =
+            var responseSerializer =
                 this.serializersManager.GetResponseBodySerializer(interfaceId);
             stopwatch.Restart();
-            IMessageBody responseMsgBody = responseSerializer.Serialize(retval.GetBody());
+            var responseMsgBody = responseSerializer.Serialize(retval.GetBody());
             if (this.serviceRemotingPerformanceCounterProvider.serviceResponseSerializationTimeCounterWriter != null)
             {
                 this.serviceRemotingPerformanceCounterProvider.serviceResponseSerializationTimeCounterWriter
                     .UpdateCounterValue(stopwatch.ElapsedMilliseconds);
             }
 
-            FabricTransportRequestBody fabricTransportRequestBody = responseMsgBody != null
+            var fabricTransportRequestBody = responseMsgBody != null
                 ? new FabricTransportRequestBody(
                     responseMsgBody.GetSendBuffers(),
                     responseMsgBody.Dispose)
@@ -160,9 +159,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
         private IServiceRemotingRequestMessage CreateRemotingRequestMessage(
             FabricTransportMessage fabricTransportMessage, Stopwatch stopwatch)
         {
-            IServiceRemotingRequestMessageHeader deSerializedHeader = this.headerSerializer.DeserializeRequestHeaders(
+            var deSerializedHeader = this.headerSerializer.DeserializeRequestHeaders(
                 new IncomingMessageHeader(fabricTransportMessage.GetHeader().GetRecievedStream()));
-            IServiceRemotingRequestMessageBodySerializer msgBodySerializer =
+            var msgBodySerializer =
                 this.serializersManager.GetRequestBodySerializer(deSerializedHeader.InterfaceId);
             stopwatch.Restart();
             IServiceRemotingRequestMessageBody deserializedMsg;

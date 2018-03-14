@@ -55,7 +55,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
 
         public static ActorEventProxyGenerator GetOrCreateEventProxyGenerator(Type actorEventInterfaceType)
         {
-            ICodeBuilder eventCodeBuilder = ((ActorCodeBuilder) Singleton).eventCodeBuilder;
+            var eventCodeBuilder = ((ActorCodeBuilder) Singleton).eventCodeBuilder;
             lock (BuildLock)
             {
                 return (ActorEventProxyGenerator) eventCodeBuilder.GetOrBuildProxyGenerator(actorEventInterfaceType).ProxyGenerator;
@@ -64,8 +64,8 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
 
         protected override MethodDispatcherBuildResult BuildMethodDispatcher(Type interfaceType)
         {
-            ActorInterfaceDescription actorInterfaceDescription = ActorInterfaceDescription.CreateUsingCRCId(interfaceType);
-            MethodDispatcherBuildResult res = this.methodDispatcherBuilder.Build(actorInterfaceDescription);
+            var actorInterfaceDescription = ActorInterfaceDescription.CreateUsingCRCId(interfaceType);
+            var res = this.methodDispatcherBuilder.Build(actorInterfaceDescription);
             InterfaceDetailsStore.UpdateKnownTypeDetail(actorInterfaceDescription);
             return res;
         }
@@ -79,10 +79,10 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
         protected override ProxyGeneratorBuildResult BuildProxyGenerator(Type interfaceType)
         {
             // get all event interfaces supported by this actorInterface and build method dispatchers for those
-            Type[] actorEventInterfaces = interfaceType.GetActorEventInterfaces();
-            IEnumerable<MethodDispatcherBase> actorEventDispatchers = actorEventInterfaces.Select(
+            var actorEventInterfaces = interfaceType.GetActorEventInterfaces();
+            var actorEventDispatchers = actorEventInterfaces.Select(
                 t => this.eventCodeBuilder.GetOrBuilderMethodDispatcher(t).MethodDispatcher);
-            IEnumerable<ActorMethodDispatcherBase> actorMethodDispatcherBases =
+            var actorMethodDispatcherBases =
                 actorEventDispatchers.Cast<ActorMethodDispatcherBase>();
             // register them with the event subscriber manager
             ActorEventSubscriberManager.Singleton.RegisterEventDispatchers(actorMethodDispatcherBases);
@@ -92,10 +92,10 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
             actorInterfaces.AddRange(interfaceType.GetActorInterfaces());
 
             // create interface descriptions for all interfaces
-            IEnumerable<InterfaceDescription> actorInterfaceDescriptions = actorInterfaces.Select<Type, InterfaceDescription>(
+            var actorInterfaceDescriptions = actorInterfaces.Select<Type, InterfaceDescription>(
                 t => ActorInterfaceDescription.CreateUsingCRCId(t));
 
-            ProxyGeneratorBuildResult res = this.proxyGeneratorBuilder.Build(interfaceType, actorInterfaceDescriptions);
+            var res = this.proxyGeneratorBuilder.Build(interfaceType, actorInterfaceDescriptions);
             InterfaceDetailsStore.UpdateKnownTypesDetails(actorInterfaceDescriptions);
             return res;
         }
@@ -128,8 +128,8 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
 
             protected override MethodDispatcherBuildResult BuildMethodDispatcher(Type interfaceType)
             {
-                ActorEventInterfaceDescription actorEventInterfaceDescription = ActorEventInterfaceDescription.CreateUsingCRCId(interfaceType);
-                MethodDispatcherBuildResult res = this.methodDispatcherBuilder.Build(actorEventInterfaceDescription);
+                var actorEventInterfaceDescription = ActorEventInterfaceDescription.CreateUsingCRCId(interfaceType);
+                var res = this.methodDispatcherBuilder.Build(actorEventInterfaceDescription);
                 InterfaceDetailsStore.UpdateKnownTypeDetail(actorEventInterfaceDescription);
                 return res;
             }
@@ -146,7 +146,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
                 var actorEventInterfaces = new[] {interfaceType};
 
                 // create interface descriptions for all interfaces
-                IEnumerable<InterfaceDescription> actorEventInterfaceDescriptions = actorEventInterfaces.Select<Type, InterfaceDescription>(
+                var actorEventInterfaceDescriptions = actorEventInterfaces.Select<Type, InterfaceDescription>(
                     t => ActorEventInterfaceDescription.CreateUsingCRCId(t));
 
                 InterfaceDetailsStore.UpdateKnownTypesDetails(actorEventInterfaceDescriptions);

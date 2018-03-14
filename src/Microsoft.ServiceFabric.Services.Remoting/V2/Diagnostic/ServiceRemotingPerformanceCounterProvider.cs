@@ -40,7 +40,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Diagnostic
                 replicaOrInstanceId,
                 "_",
                 ticks.ToString("D"));
-            string serviceCounterInstanceName = string.Concat(
+            var serviceCounterInstanceName = string.Concat(
                 this.partitionId.ToString("D"),
                 "_",
                 this.counterInstanceDifferentiator);
@@ -80,7 +80,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Diagnostic
         private static void InitializeAvailableCounterTypes()
         {
             var servicePerformanceCounters = new ServiceRemotingPerformanceCounters();
-            Dictionary<FabricPerformanceCounterSetDefinition, IEnumerable<FabricPerformanceCounterDefinition>> counterSetDefinitions =
+            var counterSetDefinitions =
                 servicePerformanceCounters.GetCounterSets();
             ServiceCounterSet = CreateCounterSet(
                 counterSetDefinitions,
@@ -92,7 +92,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Diagnostic
             Dictionary<FabricPerformanceCounterSetDefinition, IEnumerable<FabricPerformanceCounterDefinition>> counterSetDefinitions,
             string categoryName)
         {
-            KeyValuePair<FabricPerformanceCounterSetDefinition, IEnumerable<FabricPerformanceCounterDefinition>> counterSetDefinition =
+            var counterSetDefinition =
                 counterSetDefinitions.Single(kvp => kvp.Key.Name == categoryName);
             FabricPerformanceCounterSet counterSet = null;
             try
@@ -127,7 +127,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Diagnostic
                     "Created performance counter category {0} with following counters.",
                     counterSet.CounterSetDefinition.Name));
             sb.AppendLine();
-            foreach (FabricPerformanceCounterDefinition counter in activeCounters)
+            foreach (var counter in activeCounters)
             {
                 sb.Append(string.Format("CounterName : {0}", counter.Name));
                 sb.AppendLine();
@@ -188,7 +188,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Diagnostic
             string serviceCounterInstanceName, Type writerType,
             Func<T> writerCreationCallback)
         {
-            T result = default(T);
+            var result = default(T);
             Exception ex = null;
             try
             {

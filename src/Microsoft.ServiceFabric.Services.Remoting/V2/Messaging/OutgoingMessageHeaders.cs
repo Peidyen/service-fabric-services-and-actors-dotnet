@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
@@ -26,7 +26,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
             }
             else
             {
-                IPooledBuffer pooledBuffer = pooledBuffers.ElementAt(0);
+                var pooledBuffer = pooledBuffers.ElementAt(0);
                 this.outgoingBuffer = new ArraySegment<byte>(
                     pooledBuffer.Value.Array,
                     pooledBuffer.Value.Offset,
@@ -68,14 +68,14 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         {
             ServiceTrace.Source.WriteWarning("OutgoingMessageHeaders", "Header has more than 1 Pooled Buffer");
             var length = 0;
-            foreach (IPooledBuffer pooledBuffer in pooledBuffers)
+            foreach (var pooledBuffer in pooledBuffers)
             {
                 length += pooledBuffer.ContentLength;
             }
 
             var sourceArr = new byte[length];
             var writtenBytes = 0;
-            foreach (IPooledBuffer pooledBuffer in pooledBuffers)
+            foreach (var pooledBuffer in pooledBuffers)
             {
                 Array.Copy(pooledBuffer.Value.Array, 0, sourceArr, writtenBytes, pooledBuffer.ContentLength);
                 writtenBytes += pooledBuffer.ContentLength;

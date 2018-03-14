@@ -33,7 +33,7 @@ namespace Microsoft.ServiceFabric.Services.Common
 
         public static void WaitForDebuggerAttach(TimeSpan waitDuration, TimeSpan checkDelay)
         {
-            DateTime start = DateTime.UtcNow;
+            var start = DateTime.UtcNow;
             while (!Debugger.IsAttached)
             {
                 Thread.Sleep(checkDelay);

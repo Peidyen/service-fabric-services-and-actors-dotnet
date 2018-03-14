@@ -88,21 +88,20 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Client
             ServiceRemotingMessageHeaders messageHeaders,
             byte[] requestBody)
         {
-            byte[] header = ServiceRemotingMessageHeaders.Serialize(this.serializer, messageHeaders);
+            var header = ServiceRemotingMessageHeaders.Serialize(this.serializer, messageHeaders);
             return this.nativeClient.RequestResponseAsync(
                 header,
                 requestBody,
                 this.settings.OperationTimeout).ContinueWith(
                 t =>
                 {
-                    FabricTransportReplyMessage retval = t.GetAwaiter().GetResult();
+                    var retval = t.GetAwaiter().GetResult();
                     if (retval.IsException)
                     {
-                        Exception e;
-                        bool isDeserialzied =
+                        var isDeserialzied =
                             RemoteExceptionInformation.ToException(
                                 new RemoteExceptionInformation(retval.GetBody()),
-                                out e);
+                                out var e);
 
                         if (isDeserialzied)
                         {
@@ -123,7 +122,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Client
 
         void IServiceRemotingClient.SendOneWay(ServiceRemotingMessageHeaders messageHeaders, byte[] requestBody)
         {
-            byte[] header = ServiceRemotingMessageHeaders.Serialize(this.serializer, messageHeaders);
+            var header = ServiceRemotingMessageHeaders.Serialize(this.serializer, messageHeaders);
             this.nativeClient.SendOneWay(header, requestBody);
         }
 

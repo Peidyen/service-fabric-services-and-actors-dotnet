@@ -53,8 +53,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             string configPackageName,
             string sectionName)
         {
-            ConfigurationSection section;
-            if (ActorStateProviderHelper.TryGetConfigSection(activationContext, configPackageName, sectionName, out section))
+            if (ActorStateProviderHelper.TryGetConfigSection(activationContext, configPackageName, sectionName, out var section))
             {
                 this.LoadFromSection(section);
             }

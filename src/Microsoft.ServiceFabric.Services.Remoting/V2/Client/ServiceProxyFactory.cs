@@ -78,8 +78,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Client
             TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default,
             string listenerName = null) where TServiceInterface : IService
         {
-            Type serviceInterfaceType = typeof(TServiceInterface);
-            ServiceProxyGenerator proxyGenerator = ServiceCodeBuilder.GetOrCreateProxyGenerator(serviceInterfaceType);
+            var serviceInterfaceType = typeof(TServiceInterface);
+            var proxyGenerator = ServiceCodeBuilder.GetOrCreateProxyGenerator(serviceInterfaceType);
             return this.CreateServiceProxy<TServiceInterface>(
                 serviceUri,
                 partitionKey,
@@ -120,8 +120,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Client
             TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default,
             string listenerName = null)
         {
-            Type serviceInterfaceType = typeof(TServiceInterface);
-            ServiceProxyGenerator proxyGenerator = ServiceCodeBuilder.GetOrCreateProxyGeneratorForNonServiceInterface(serviceInterfaceType);
+            var serviceInterfaceType = typeof(TServiceInterface);
+            var proxyGenerator = ServiceCodeBuilder.GetOrCreateProxyGeneratorForNonServiceInterface(serviceInterfaceType);
             return this.CreateServiceProxy<TServiceInterface>(
                 serviceUri,
                 partitionKey,
@@ -152,7 +152,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Client
             TargetReplicaSelector targetReplicaSelector, string listenerName, Type serviceInterfaceType,
             ServiceProxyGenerator proxyGenerator)
         {
-            IServiceRemotingClientFactory clientFactory = this.GetOrCreateServiceRemotingClientFactory(serviceInterfaceType);
+            var clientFactory = this.GetOrCreateServiceRemotingClientFactory(serviceInterfaceType);
             var serviceRemotingPartitionClient = new ServiceRemotingPartitionClient(
                 clientFactory,
                 serviceUri,
@@ -172,7 +172,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Client
         {
             var callbackClient = new DummyServiceRemotingCallbackClient();
 
-            IServiceRemotingClientFactory factory = this.CreateServiceRemotingClientFactory(callbackClient);
+            var factory = this.CreateServiceRemotingClientFactory(callbackClient);
             if (factory == null)
             {
                 throw new NotSupportedException("ClientFactory can't be null");

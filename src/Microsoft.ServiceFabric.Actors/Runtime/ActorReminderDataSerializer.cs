@@ -17,7 +17,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         internal static byte[] Serialize(ActorReminderData reminderData)
         {
-            int dataSizeInBytes = ComputeSizeInBytes(reminderData);
+            var dataSizeInBytes = ComputeSizeInBytes(reminderData);
 
             using (var stream = new MemoryStream(dataSizeInBytes))
             {
@@ -57,7 +57,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             {
                 using (var reader = new BinaryReader(stream, DataEncoding))
                 {
-                    ushort dataVersion = reader.ReadUInt16();
+                    var dataVersion = reader.ReadUInt16();
                     ReleaseAssert.AssertIfNot(dataVersion >= DataVersionOne, "Invalid data version: {0}", dataVersion);
 
                     if (reader.ReadByte() == BinaryReaderWriterExtensions.NullPrefixByte)
@@ -79,7 +79,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private static int ComputeSizeInBytes(ActorReminderData reminderData)
         {
-            int size = sizeof(ushort); // Data version
+            var size = sizeof(ushort); // Data version
             size += sizeof(byte); // Null value indicator prefix
 
             if (reminderData == null)
@@ -99,7 +99,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private static int ComputeActorIdSize(ActorId actorId)
         {
-            int size = sizeof(byte); // Null indicator prefix
+            var size = sizeof(byte); // Null indicator prefix
 
             if (actorId == null)
             {
@@ -131,7 +131,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private static int ComputeStringSize(string str)
         {
-            int size = sizeof(int); // Actual length or negative length for null indication
+            var size = sizeof(int); // Actual length or negative length for null indication
 
             if (str != null)
             {
@@ -143,7 +143,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private static int ComputeByteArraySize(byte[] byteArr)
         {
-            int size = sizeof(int); // Actual length or negative length for null indication
+            var size = sizeof(int); // Actual length or negative length for null indication
 
             if (byteArr != null)
             {

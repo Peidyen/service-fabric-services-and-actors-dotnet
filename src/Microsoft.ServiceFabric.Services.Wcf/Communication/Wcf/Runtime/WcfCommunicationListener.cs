@@ -186,8 +186,8 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime
                 ar =>
                 {
                     this.ServiceHost.EndOpen(ar);
-                    string listenUri = this.endpoint.Behaviors.Find<ListenUriEndpointBehavior>().ListenUri.ToString();
-                    string publishUri = string.IsNullOrWhiteSpace(this.listenAddress) && string.IsNullOrWhiteSpace(this.publishAddress)
+                    var listenUri = this.endpoint.Behaviors.Find<ListenUriEndpointBehavior>().ListenUri.ToString();
+                    var publishUri = string.IsNullOrWhiteSpace(this.listenAddress) && string.IsNullOrWhiteSpace(this.publishAddress)
                         ? listenUri
                         : listenUri.Replace(this.listenAddress, this.publishAddress);
 
@@ -301,7 +301,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime
             Binding binding,
             string endpointResourceName)
         {
-            Uri listenAddress = GetListenAddress(
+            var listenAddress = GetListenAddress(
                 serviceContext,
                 binding.Scheme,
                 GetEndpointPort(
@@ -319,14 +319,14 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime
         {
             var port = 0;
 
-            string endpointName = endpointResourceName;
+            var endpointName = endpointResourceName;
             if (string.IsNullOrEmpty(endpointName) && serviceContactType != null)
             {
                 endpointName = ServiceNameFormat.GetEndpointName(serviceContactType);
             }
 
-            KeyedCollection<string, EndpointResourceDescription> endpoints = codePackageActivationContext.GetEndpoints();
-            foreach (EndpointResourceDescription endpoint in endpoints)
+            var endpoints = codePackageActivationContext.GetEndpoints();
+            foreach (var endpoint in endpoints)
             {
                 if (string.Compare(endpoint.Name, endpointName, StringComparison.InvariantCultureIgnoreCase) == 0)
                 {

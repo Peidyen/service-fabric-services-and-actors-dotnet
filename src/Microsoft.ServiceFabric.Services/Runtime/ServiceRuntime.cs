@@ -39,7 +39,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             serviceFactory.ThrowIfNull("serviceFactory");
             serviceTypeName.ThrowIfNullOrWhiteSpace("serviceTypeName");
 
-            RuntimeContext runtimeContext = await RuntimeContext.GetOrCreateAsync(timeout, cancellationToken);
+            var runtimeContext = await RuntimeContext.GetOrCreateAsync(timeout, cancellationToken);
             await runtimeContext.Runtime.RegisterStatelessServiceFactoryAsync(
                 serviceTypeName,
                 new StatelessServiceInstanceFactory(runtimeContext, serviceFactory),
@@ -70,7 +70,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             serviceFactory.ThrowIfNull("serviceFactory");
             serviceTypeName.ThrowIfNullOrWhiteSpace("serviceTypeName");
 
-            RuntimeContext runtimeContext = await RuntimeContext.GetOrCreateAsync(timeout, cancellationToken);
+            var runtimeContext = await RuntimeContext.GetOrCreateAsync(timeout, cancellationToken);
             await runtimeContext.Runtime.RegisterStatefulServiceFactoryAsync(
                 serviceTypeName,
                 new StatefulServiceReplicaFactory(runtimeContext, serviceFactory),

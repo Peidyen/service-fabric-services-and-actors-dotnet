@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
@@ -10,7 +10,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
     using System.IO;
 
     /// <summary>
-    ///     Serialized Message Body received from an incoming connection.
+    /// Serialized Message Body received from an incoming connection.
     /// </summary>
     public sealed class IncomingMessageBody : IMessageBody
     {
@@ -19,7 +19,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
 
 
         /// <summary>
-        ///     Creates an incoming Message Body with the received stream .
+        /// Creates an incoming Message Body with the received stream .
         /// </summary>
         /// <param name="receivedBufferStream"></param>
         public IncomingMessageBody(Stream receivedBufferStream)
@@ -28,7 +28,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         }
 
         /// <summary>
-        ///     This is not used for this implementation
+        /// This is not used for this implementation
         /// </summary>
         /// <returns></returns>
         public IEnumerable<ArraySegment<byte>> GetSendBuffers()
@@ -37,7 +37,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         }
 
         /// <summary>
-        ///     Return the Received Buffer Stream
+        /// Return the Received Buffer Stream 
         /// </summary>
         /// <returns></returns>
         public Stream GetReceivedBuffer()
@@ -46,7 +46,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         }
 
         /// <summary>
-        ///     Dispose the Received Buffer stream
+        /// Dispose the Received Buffer stream 
         /// </summary>
         public void Dispose()
         {

@@ -43,15 +43,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private void ApplyUpdate_UnderWriteLock(LinkedListNode<ListEntry> listNode)
         {
-            TType type = listNode.Value.ActorStateDataWrapper.Type;
-            TKey key = listNode.Value.ActorStateDataWrapper.Key;
-            bool isDelete = listNode.Value.ActorStateDataWrapper.IsDelete;
+            var type = listNode.Value.ActorStateDataWrapper.Type;
+            var key = listNode.Value.ActorStateDataWrapper.Key;
+            var isDelete = listNode.Value.ActorStateDataWrapper.IsDelete;
             var newTableEntry = new TableEntry(
                 listNode.Value.ActorStateDataWrapper,
                 listNode);
 
-            Dictionary<TKey, TableEntry> keyTable = null;
-            if (!this.committedEntriesTable.TryGetValue(type, out keyTable))
+            if (!this.committedEntriesTable.TryGetValue(type, out var keyTable))
             {
                 if (isDelete)
                 {
@@ -64,8 +63,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 this.committedEntriesTable[type] = keyTable;
             }
 
-            TableEntry oldTableEntry = null;
-            if (keyTable.TryGetValue(key, out oldTableEntry))
+            if (keyTable.TryGetValue(key, out var oldTableEntry))
             {
                 this.committedEntriesList.Remove(oldTableEntry.ListNode);
             }
@@ -144,7 +142,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 return;
             }
 
-            foreach (ActorStateDataWrapper actorStateDataWrapper in actorStateDataWrapperList)
+            foreach (var actorStateDataWrapper in actorStateDataWrapperList)
             {
                 actorStateDataWrapper.UpdateSequenceNumber(sequenceNumber);
             }
@@ -153,7 +151,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             {
                 var replicationContext = new ReplicationContext();
 
-                foreach (ActorStateDataWrapper actorStateDataWrapper in actorStateDataWrapperList)
+                foreach (var actorStateDataWrapper in actorStateDataWrapperList)
                 {
                     var entry = new ListEntry(actorStateDataWrapper, replicationContext);
                     this.uncommittedEntriesList.AddLast(entry);
@@ -202,7 +200,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                         this.uncommittedEntriesList.Count > 0 &&
                         this.uncommittedEntriesList.First.Value.IsReplicationComplete)
                     {
-                        LinkedListNode<ListEntry> listNode = this.uncommittedEntriesList.First;
+                        var listNode = this.uncommittedEntriesList.First;
 
                         this.uncommittedEntriesList.RemoveFirst();
 
@@ -213,7 +211,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
                         listNode.Value.CompleteReplication();
 
-                        long seqNum = listNode.Value.ActorStateDataWrapper.SequenceNumber;
+                        var seqNum = listNode.Value.ActorStateDataWrapper.SequenceNumber;
                         if (this.pendingReplicationContexts[seqNum].IsAllEntriesComplete)
                         {
                             committedReplicationContexts.Add(this.pendingReplicationContexts[seqNum]);
@@ -226,7 +224,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             }
 
             // Mark the committed replication contexts as complete in order of increasing LSN
-            foreach (ReplicationContext repCtx in committedReplicationContexts)
+            foreach (var repCtx in committedReplicationContexts)
             {
                 repCtx.MarkAsCompleted();
             }
@@ -241,7 +239,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             using (this.rwLock.AcquireWriteLock())
             {
-                foreach (ActorStateDataWrapper actorStateData in actorStateDataList)
+                foreach (var actorStateData in actorStateDataList)
                 {
                     this.ApplyUpdate_UnderWriteLock(
                         new LinkedListNode<ListEntry>(
@@ -254,13 +252,11 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             using (this.rwLock.AcquireReadLock())
             {
-                Dictionary<TKey, TableEntry> keyTable = null;
-                bool exists = this.committedEntriesTable.TryGetValue(type, out keyTable);
+                var exists = this.committedEntriesTable.TryGetValue(type, out var keyTable);
 
                 if (exists)
                 {
-                    TableEntry tableEntry = null;
-                    exists = keyTable.TryGetValue(key, out tableEntry);
+                    exists = keyTable.TryGetValue(key, out var tableEntry);
 
                     value = exists ? tableEntry.ActorStateDataWrapper.Value : default(TValue);
                 }
@@ -283,10 +279,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 // which will also us to always get the keys in sorted order,
                 // the lookup in SortedDictionary<> is O(logN) as opposed to
                 // Dictionary<> which is average O(1).
-                Dictionary<TKey, TableEntry> keyTable = null;
-                if (this.committedEntriesTable.TryGetValue(type, out keyTable))
+                if (this.committedEntriesTable.TryGetValue(type, out var keyTable))
                 {
-                    foreach (KeyValuePair<TKey, TableEntry> kvPair in keyTable)
+                    foreach (var kvPair in keyTable)
                     {
                         if (filter(kvPair.Key))
                         {
@@ -311,10 +306,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             {
                 var actorStateDict = new Dictionary<TKey, TValue>();
 
-                Dictionary<TKey, TableEntry> keyTable = null;
-                if (this.committedEntriesTable.TryGetValue(type, out keyTable))
+                if (this.committedEntriesTable.TryGetValue(type, out var keyTable))
                 {
-                    foreach (TableEntry entry in keyTable.Values)
+                    foreach (var entry in keyTable.Values)
                     {
                         actorStateDict.Add(entry.ActorStateDataWrapper.Key, entry.ActorStateDataWrapper.Value);
                     }
@@ -330,10 +324,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             {
                 var committedEntriesListShallowCopy = new List<ActorStateDataWrapper>();
 
-                Dictionary<TKey, TableEntry> keyTable = null;
-                if (this.committedEntriesTable.TryGetValue(type, out keyTable))
+                if (this.committedEntriesTable.TryGetValue(type, out var keyTable))
                 {
-                    foreach (TableEntry entry in keyTable.Values)
+                    foreach (var entry in keyTable.Values)
                     {
                         committedEntriesListShallowCopy.Add(entry.ActorStateDataWrapper);
                     }
@@ -356,7 +349,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 var uncommittedEntriesListShallowCopy = new List<ActorStateDataWrapper>();
 
                 long copiedSequenceNumber = 0;
-                foreach (ListEntry entry in this.committedEntriesList)
+                foreach (var entry in this.committedEntriesList)
                 {
                     if (entry.ActorStateDataWrapper.SequenceNumber <= maxSequenceNumber)
                     {
@@ -372,7 +365,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
                 if (copiedSequenceNumber < maxSequenceNumber)
                 {
-                    foreach (ListEntry entry in this.uncommittedEntriesList)
+                    foreach (var entry in this.uncommittedEntriesList)
                     {
                         if (entry.ActorStateDataWrapper.SequenceNumber <= maxSequenceNumber)
                         {
@@ -531,10 +524,10 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             {
                 ActorStateDataWrapper item = null;
 
-                int committedCount = this.committedEntriesListShallowCopy.Count;
-                int uncommittedCount = this.uncommittedEntriesListShallowCopy.Count;
+                var committedCount = this.committedEntriesListShallowCopy.Count;
+                var uncommittedCount = this.uncommittedEntriesListShallowCopy.Count;
 
-                int next = this.index;
+                var next = this.index;
 
                 if (next < committedCount)
                 {
@@ -554,10 +547,10 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             public ActorStateDataWrapper GetNext()
             {
-                int committedCount = this.committedEntriesListShallowCopy.Count;
-                int uncommittedCount = this.uncommittedEntriesListShallowCopy.Count;
+                var committedCount = this.committedEntriesListShallowCopy.Count;
+                var uncommittedCount = this.uncommittedEntriesListShallowCopy.Count;
 
-                int next = this.index++;
+                var next = this.index++;
 
                 if (next < committedCount)
                 {

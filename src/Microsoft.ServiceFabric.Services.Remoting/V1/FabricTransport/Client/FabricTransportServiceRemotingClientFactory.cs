@@ -121,7 +121,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            FabricTransportServiceRemotingClient client = await this.impl.GetClientAsync(
+            var client = await this.impl.GetClientAsync(
                 serviceUri,
                 partitionKey,
                 targetReplicaSelector,
@@ -164,7 +164,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            FabricTransportServiceRemotingClient client = await this.impl.GetClientAsync(
+            var client = await this.impl.GetClientAsync(
                 previousRsp,
                 targetReplicaSelector,
                 listenerName,

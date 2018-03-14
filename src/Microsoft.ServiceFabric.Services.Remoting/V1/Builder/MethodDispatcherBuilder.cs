@@ -49,11 +49,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             var result = new MethodDispatcherBuildResult(context);
 
             // ensure that the method body types are built
-            MethodBodyTypesBuildResult methodBodyTypesBuildResult =
+            var methodBodyTypesBuildResult =
                 this.CodeBuilder.GetOrBuildMethodBodyTypes(interfaceDescription.InterfaceType);
 
             // build dispatcher class
-            TypeBuilder classBuilder = CodeBuilderUtils.CreateClassBuilder(
+            var classBuilder = CodeBuilderUtils.CreateClassBuilder(
                 context.ModuleBuilder,
                 context.AssemblyNamespace,
                 this.CodeBuilder.Names.GetMethodDispatcherClassName(interfaceDescription.InterfaceType),
@@ -63,7 +63,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             this.AddOnDispatchAsyncMethod(classBuilder, interfaceDescription, methodBodyTypesBuildResult);
             this.AddOnDispatchMethod(classBuilder, interfaceDescription, methodBodyTypesBuildResult);
 
-            IReadOnlyDictionary<int, string> methodNameMap = GetMethodNameMap(interfaceDescription);
+            var methodNameMap = GetMethodNameMap(interfaceDescription);
 
             // create the dispatcher type, instantiate and initialize it
             result.MethodDispatcherType = classBuilder.CreateTypeInfo().AsType();
@@ -86,24 +86,24 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             InterfaceDescription interfaceDescription,
             MethodBodyTypesBuildResult methodBodyTypesBuildResult)
         {
-            MethodBuilder methodBuilder = CodeBuilderUtils.CreateProtectedMethodBuilder(
+            var methodBuilder = CodeBuilderUtils.CreateProtectedMethodBuilder(
                 classBuilder,
                 "CreateResponseBody",
                 typeof(object), // responseBody - return value
                 typeof(int), // methodId
                 typeof(object)); // retval from the invoked method on the remoted object
 
-            ILGenerator ilGen = methodBuilder.GetILGenerator();
+            var ilGen = methodBuilder.GetILGenerator();
 
-            foreach (MethodDescription methodDescription in interfaceDescription.Methods)
+            foreach (var methodDescription in interfaceDescription.Methods)
             {
-                MethodBodyTypes methodBodyTypes = methodBodyTypesBuildResult.MethodBodyTypesMap[methodDescription.Name];
+                var methodBodyTypes = methodBodyTypesBuildResult.MethodBodyTypesMap[methodDescription.Name];
                 if (methodBodyTypes.ResponseBodyType == null)
                 {
                     continue;
                 }
 
-                Label elseLabel = ilGen.DefineLabel();
+                var elseLabel = ilGen.DefineLabel();
 
                 this.AddIfMethodIdCreateResponseBlock(
                     ilGen,
@@ -131,17 +131,17 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             ilGen.Emit(OpCodes.Ldc_I4, methodId);
             ilGen.Emit(OpCodes.Bne_Un_S, elseLabel);
 
-            ConstructorInfo ctorInfo = responseType.GetConstructor(Type.EmptyTypes);
+            var ctorInfo = responseType.GetConstructor(Type.EmptyTypes);
             if (ctorInfo != null)
             {
-                LocalBuilder localBuilder = ilGen.DeclareLocal(responseType);
+                var localBuilder = ilGen.DeclareLocal(responseType);
                 // new <ResponseBodyType>    
                 ilGen.Emit(OpCodes.Newobj, ctorInfo);
                 ilGen.Emit(OpCodes.Stloc, localBuilder);
                 ilGen.Emit(OpCodes.Ldloc, localBuilder);
 
                 // responseBody.retval = (<retvaltype>)retval;
-                FieldInfo fInfo = responseType.GetField(this.CodeBuilder.Names.RetVal);
+                var fInfo = responseType.GetField(this.CodeBuilder.Names.RetVal);
                 ilGen.Emit(OpCodes.Ldarg_2);
                 ilGen.Emit(
                     fInfo.FieldType.GetTypeInfo().IsClass ? OpCodes.Castclass : OpCodes.Unbox_Any,
@@ -162,7 +162,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             InterfaceDescription interfaceDescription,
             MethodBodyTypesBuildResult methodBodyTypesBuildResult)
         {
-            MethodBuilder dispatchMethodImpl = CodeBuilderUtils.CreateProtectedMethodBuilder(
+            var dispatchMethodImpl = CodeBuilderUtils.CreateProtectedMethodBuilder(
                 classBuilder,
                 "OnDispatchAsync",
                 typeof(Task<object>),
@@ -171,21 +171,21 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
                 typeof(object), // requestBody
                 typeof(CancellationToken)); // CancellationToken
 
-            ILGenerator ilGen = dispatchMethodImpl.GetILGenerator();
+            var ilGen = dispatchMethodImpl.GetILGenerator();
 
-            LocalBuilder castedObject = ilGen.DeclareLocal(interfaceDescription.InterfaceType);
+            var castedObject = ilGen.DeclareLocal(interfaceDescription.InterfaceType);
             ilGen.Emit(OpCodes.Ldarg_2); // load remoted object
             ilGen.Emit(OpCodes.Castclass, interfaceDescription.InterfaceType);
             ilGen.Emit(OpCodes.Stloc, castedObject); // store casted result to local 0
 
-            foreach (MethodDescription methodDescription in interfaceDescription.Methods)
+            foreach (var methodDescription in interfaceDescription.Methods)
             {
                 if (!TypeUtility.IsTaskType(methodDescription.ReturnType))
                 {
                     continue;
                 }
 
-                Label elseLable = ilGen.DefineLabel();
+                var elseLable = ilGen.DefineLabel();
 
                 this.AddIfMethodIdInvokeAsyncBlock(
                     ilGen,
@@ -212,7 +212,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             ilGen.Emit(OpCodes.Ldc_I4, methodDescription.Id);
             ilGen.Emit(OpCodes.Bne_Un_S, elseLabel);
 
-            LocalBuilder invokeTask = ilGen.DeclareLocal(methodDescription.ReturnType);
+            var invokeTask = ilGen.DeclareLocal(methodDescription.ReturnType);
 
             LocalBuilder castedRequestBody = null;
             if (methodBodyTypes.RequestBodyType != null)
@@ -230,7 +230,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
 
             if (methodBodyTypes.RequestBodyType != null)
             {
-                foreach (FieldInfo field in methodBodyTypes.RequestBodyType.GetFields())
+                foreach (var field in methodBodyTypes.RequestBodyType.GetFields())
                 {
                     // ReSharper disable once AssignNullToNotNullAttribute
                     // castedRequestBody is set to non-null in the previous if check on the same condition
@@ -251,7 +251,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             if (methodBodyTypes.ResponseBodyType != null)
             {
                 // the return is Task<T>
-                MethodInfo continueWithGenericMethodInfo = this.continueWithResultMethodInfo.MakeGenericMethod(
+                var continueWithGenericMethodInfo = this.continueWithResultMethodInfo.MakeGenericMethod(
                     methodDescription.ReturnType.GenericTypeArguments[0]);
 
                 ilGen.Emit(OpCodes.Ldarg_0);
@@ -274,7 +274,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             InterfaceDescription interfaceDescription,
             MethodBodyTypesBuildResult methodBodyTypesBuildResult)
         {
-            MethodBuilder dispatchMethodImpl = CodeBuilderUtils.CreateProtectedMethodBuilder(
+            var dispatchMethodImpl = CodeBuilderUtils.CreateProtectedMethodBuilder(
                 classBuilder,
                 "OnDispatch",
                 typeof(void),
@@ -282,21 +282,21 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
                 typeof(object), // remote object
                 typeof(object)); // message body
 
-            ILGenerator ilGen = dispatchMethodImpl.GetILGenerator();
+            var ilGen = dispatchMethodImpl.GetILGenerator();
 
-            LocalBuilder castedObject = ilGen.DeclareLocal(interfaceDescription.InterfaceType);
+            var castedObject = ilGen.DeclareLocal(interfaceDescription.InterfaceType);
             ilGen.Emit(OpCodes.Ldarg_2); // load object
             ilGen.Emit(OpCodes.Castclass, interfaceDescription.InterfaceType);
             ilGen.Emit(OpCodes.Stloc, castedObject); // store casted result to local 0
 
-            foreach (MethodDescription methodDescription in interfaceDescription.Methods)
+            foreach (var methodDescription in interfaceDescription.Methods)
             {
                 if (!TypeUtility.IsVoidType(methodDescription.ReturnType))
                 {
                     continue;
                 }
 
-                Label elseLable = ilGen.DefineLabel();
+                var elseLable = ilGen.DefineLabel();
 
                 this.AddIfMethodIdInvokeBlock(
                     ilGen,
@@ -339,7 +339,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
 
             if (requestBodyType != null)
             {
-                foreach (FieldInfo field in requestBodyType.GetFields())
+                foreach (var field in requestBodyType.GetFields())
                 {
                     // ReSharper disable once AssignNullToNotNullAttribute
                     // castedEventBody is set to non-null in the previous if check on the same condition

@@ -68,7 +68,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public void Add(ActorId actorId, IActorReminderState reminderState)
         {
-            IReadOnlyCollection<IActorReminderState> collection = this.reminderCollectionsByActorId.GetOrAdd(
+            var collection = this.reminderCollectionsByActorId.GetOrAdd(
                 actorId,
                 k => new ConcurrentCollection<IActorReminderState>());
 

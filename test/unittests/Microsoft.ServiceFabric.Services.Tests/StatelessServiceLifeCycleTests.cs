@@ -24,14 +24,14 @@ namespace Microsoft.ServiceFabric.Services.Tests
         {
             Console.WriteLine("StatelessServiceLifeCycleTests - Test Method: RunAsyncBlockingCall()");
 
-            StatelessServiceContext serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
+            var serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
 
             var testService = new RunAsyncBlockingCallTestService(serviceContext);
             IStatelessServiceInstance testServiceReplica = new StatelessServiceInstanceAdapter(serviceContext, testService);
 
             var partition = new Mock<IStatelessServicePartition>();
 
-            Task<string> openTask = testServiceReplica.OpenAsync(partition.Object, CancellationToken.None);
+            var openTask = testServiceReplica.OpenAsync(partition.Object, CancellationToken.None);
 
             var source = new CancellationTokenSource(10000);
             while (!testService.RunAsyncInvoked)
@@ -50,7 +50,7 @@ namespace Microsoft.ServiceFabric.Services.Tests
         {
             Console.WriteLine("StatelessServiceLifeCycleTests - Test Method: RunAsyncCancellation()");
 
-            StatelessServiceContext serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
+            var serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
 
             var testService = new RunAsyncCancellationTestService(serviceContext);
             IStatelessServiceInstance testServiceReplica = new StatelessServiceInstanceAdapter(serviceContext, testService);
@@ -76,7 +76,7 @@ namespace Microsoft.ServiceFabric.Services.Tests
         {
             Console.WriteLine("StatelessServiceLifeCycleTests - Test Method: RunAsyncSlowCancellation()");
 
-            StatelessServiceContext serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
+            var serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
 
             var testService = new RunAsyncSlowCancellationTestService(serviceContext);
             IStatelessServiceInstance testServiceReplica = new StatelessServiceInstanceAdapter(serviceContext, testService);
@@ -105,7 +105,7 @@ namespace Microsoft.ServiceFabric.Services.Tests
         {
             Console.WriteLine("StatelessServiceLifeCycleTests - Test Method: RunAsyncFail()");
 
-            StatelessServiceContext serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
+            var serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
 
             IStatelessServiceInstance testServiceReplica = new StatelessServiceInstanceAdapter(serviceContext, new RunAsyncFailTestService(serviceContext));
 
@@ -142,7 +142,7 @@ namespace Microsoft.ServiceFabric.Services.Tests
         {
             Console.WriteLine("StatelessServiceLifeCycleTests - Test Method: RunAsyncFail()");
 
-            StatelessServiceContext serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
+            var serviceContext = TestMocksRepository.GetMockStatelessServiceContext();
 
             IStatelessServiceInstance testServiceInstance =
                 new StatelessServiceInstanceAdapter(serviceContext, new ListenerExceptionOnAbortService(serviceContext));

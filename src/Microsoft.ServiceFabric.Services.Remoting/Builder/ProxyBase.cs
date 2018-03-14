@@ -55,7 +55,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
         protected async Task<TRetval> ContinueWithResultV2<TRetval>(
             Task<IServiceRemotingResponseMessageBody> task)
         {
-            IServiceRemotingResponseMessageBody responseBody = await task;
+            var responseBody = await task;
             return (TRetval) responseBody.Get(typeof(TRetval));
         }
 
@@ -73,7 +73,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             IServiceRemotingRequestMessageBody requestMsgBodyValue,
             CancellationToken cancellationToken)
         {
-            IServiceRemotingResponseMessage responseMsg = await this.InvokeAsyncImplV2(
+            var responseMsg = await this.InvokeAsyncImplV2(
                 interfaceId,
                 methodId,
                 requestMsgBodyValue,
@@ -140,7 +140,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
                 requestMsgBody = this.CreateRequestMessageBody(requestMsgBodyValue);
             }
 
-            byte[] requestMsgBodyBytes = SerializationUtility.Serialize(
+            var requestMsgBodyBytes = SerializationUtility.Serialize(
                 this.GetRequestMessageBodySerializer(interfaceId),
                 requestMsgBody);
 
@@ -167,17 +167,17 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
                 requestMsgBody = this.CreateRequestMessageBody(requestMsgBodyValue);
             }
 
-            byte[] requestMsgBodyBytes = SerializationUtility.Serialize(
+            var requestMsgBodyBytes = SerializationUtility.Serialize(
                 this.GetRequestMessageBodySerializer(interfaceId),
                 requestMsgBody);
 
-            byte[] responseMsgBodyBytes = await this.InvokeAsync(
+            var responseMsgBodyBytes = await this.InvokeAsync(
                 interfaceId,
                 methodId,
                 requestMsgBodyBytes,
                 cancellationToken);
 
-            object responseMsgBody = SerializationUtility.Deserialize(
+            var responseMsgBody = SerializationUtility.Deserialize(
                 this.GetResponseMessageBodySerializer(interfaceId),
                 responseMsgBodyBytes);
 
@@ -200,7 +200,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             int methodId,
             Task<object> task)
         {
-            object responseBody = await task;
+            var responseBody = await task;
             return (TRetval) this.GetReturnValue(interfaceId, methodId, responseBody);
         }
 

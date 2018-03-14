@@ -674,7 +674,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             string arg6)
         {
             const int dataDescCount = 7;
-            EventData* dataDesc = stackalloc EventData[dataDescCount];
+            var dataDesc = stackalloc EventData[dataDescCount];
 
             this.SetLongData(&arg0, out dataDesc[0]);
             this.SetGuidData(&arg1, out dataDesc[1]);
@@ -710,7 +710,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             string arg9)
         {
             const int DataDescCount = 10;
-            EventData* dataDesc = stackalloc EventData[DataDescCount];
+            var dataDesc = stackalloc EventData[DataDescCount];
 
             this.SetIntData(&arg2, out dataDesc[2]);
             this.SetLongData(&arg3, out dataDesc[3]);
@@ -751,7 +751,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             string arg10)
         {
             const int DataDescCount = 11;
-            EventData* dataDesc = stackalloc EventData[DataDescCount];
+            var dataDesc = stackalloc EventData[DataDescCount];
 
             this.SetLongData(&arg0, out dataDesc[0]);
             this.SetIntData(&arg3, out dataDesc[3]);
@@ -797,9 +797,9 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             const int minDataDescCount = 12;
             const int maxDataDescCount = 14;
-            int dataDescCount = minDataDescCount;
+            var dataDescCount = minDataDescCount;
 
-            EventData* dataDesc = stackalloc EventData[maxDataDescCount];
+            var dataDesc = stackalloc EventData[maxDataDescCount];
 
             if (long.MaxValue != methodExecutionTimeTicks)
             {
@@ -830,7 +830,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
                 this.SetStringData(applicationTypeName, str8, out dataDesc[12]);
                 this.SetStringData(nodeName, str9, out dataDesc[13]);
 
-                int offset = maxDataDescCount - dataDescCount;
+                var offset = maxDataDescCount - dataDescCount;
                 this.WriteEventCore(eventId, dataDescCount, dataDesc + offset);
             }
         }

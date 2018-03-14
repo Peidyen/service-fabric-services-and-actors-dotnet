@@ -21,11 +21,11 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             this.actorMethodDescriptions = new Dictionary<Type, ActorInterfaceDescription>();
             this.actorMethodDescriptionsV2 = new Dictionary<Type, ActorInterfaceDescription>();
 
-            foreach (Type actorInterfaceType in actorTypeInformation.InterfaceTypes)
+            foreach (var actorInterfaceType in actorTypeInformation.InterfaceTypes)
             {
-                ActorInterfaceDescription actorInterfaceDescription = ActorInterfaceDescription.Create(actorInterfaceType);
+                var actorInterfaceDescription = ActorInterfaceDescription.Create(actorInterfaceType);
                 this.actorMethodDescriptions[actorInterfaceType] = actorInterfaceDescription;
-                ActorInterfaceDescription actorInterfaceDescriptionV2 = ActorInterfaceDescription.CreateUsingCRCId(actorInterfaceType);
+                var actorInterfaceDescriptionV2 = ActorInterfaceDescription.CreateUsingCRCId(actorInterfaceType);
                 this.actorMethodDescriptionsV2[actorInterfaceType] = actorInterfaceDescriptionV2;
             }
         }

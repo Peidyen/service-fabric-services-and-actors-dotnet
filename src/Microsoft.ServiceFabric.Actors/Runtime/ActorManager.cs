@@ -142,12 +142,12 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             this.ThrowIfClosed();
 
-            ActorMethodDispatcherBase methodDispatcher = this.ActorService.MethodDispatcherMapV1.GetDispatcher(interfaceId, methodId);
-            string actorMethodName = methodDispatcher.GetMethodName(methodId);
-            ActorMethodContext actorMethodContext = ActorMethodContext.CreateForActor(actorMethodName);
+            var methodDispatcher = this.ActorService.MethodDispatcherMapV1.GetDispatcher(interfaceId, methodId);
+            var actorMethodName = methodDispatcher.GetMethodName(methodId);
+            var actorMethodContext = ActorMethodContext.CreateForActor(actorMethodName);
 
-            DateTime deserializationStartTime = DateTime.UtcNow;
-            object requestBody = methodDispatcher.DeserializeRequestMessageBody(requestMsgBody);
+            var deserializationStartTime = DateTime.UtcNow;
+            var requestBody = methodDispatcher.DeserializeRequestMessageBody(requestMsgBody);
             this.DiagnosticsEventManager.ActorRequestDeserializationFinish(deserializationStartTime);
 
             return this.DispatchToActorAsync(
@@ -181,19 +181,19 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             ExceptionDispatchInfo exceptionInfo = null;
             Exception exception = null;
-            T retval = default(T);
+            var retval = default(T);
 
 
             // get activeActor from the activeActors table
-            using (ActorUseScope actorUseScope = this.GetActor(actorId, createIfRequired, timerCall))
+            using (var actorUseScope = this.GetActor(actorId, createIfRequired, timerCall))
             {
-                ActorBase actor = actorUseScope.Actor;
+                var actor = actorUseScope.Actor;
 
                 //
                 // START: CRITICAL CODE
                 //
                 // Emit diagnostic info - before acquiring actor lock
-                DateTime lockAcquireStartTime = this.DiagnosticsEventManager.AcquireActorLockStart(actor);
+                var lockAcquireStartTime = this.DiagnosticsEventManager.AcquireActorLockStart(actor);
                 DateTime? lockAcquireFinishTime = null;
                 try
                 {
@@ -283,9 +283,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             this.ThrowIfClosed();
 
-            Remoting.V2.Builder.ActorMethodDispatcherBase methodDispatcher = this.ActorService.MethodDispatcherMapV2.GetDispatcher(interfaceId, methodId);
-            string actorMethodName = methodDispatcher.GetMethodName(methodId);
-            ActorMethodContext actorMethodContext = ActorMethodContext.CreateForActor(actorMethodName);
+            var methodDispatcher = this.ActorService.MethodDispatcherMapV2.GetDispatcher(interfaceId, methodId);
+            var actorMethodName = methodDispatcher.GetMethodName(methodId);
+            var actorMethodContext = ActorMethodContext.CreateForActor(actorMethodName);
 
 
             return this.DispatchToActorAsync(
@@ -353,11 +353,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             this.ThrowIfClosed();
 
-            ConcurrentDictionary<string, ActorReminder> actorReminders;
-            if (this.remindersByActorId.TryGetValue(actorId, out actorReminders))
+            if (this.remindersByActorId.TryGetValue(actorId, out var actorReminders))
             {
-                ActorReminder reminder;
-                if (actorReminders.TryGetValue(reminderName, out reminder))
+                if (actorReminders.TryGetValue(reminderName, out var reminder))
                 {
                     return reminder;
                 }
@@ -384,11 +382,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 await this.StateProvider.DeleteReminderAsync(actorId, reminderName);
             }
 
-            ConcurrentDictionary<string, ActorReminder> actorReminders;
-            if (this.remindersByActorId.TryGetValue(actorId, out actorReminders))
+            if (this.remindersByActorId.TryGetValue(actorId, out var actorReminders))
             {
-                ActorReminder reminder;
-                if (actorReminders.TryRemove(reminderName, out reminder))
+                if (actorReminders.TryRemove(reminderName, out var reminder))
                 {
                     reminder.Dispose();
                 }
@@ -415,9 +411,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             try
             {
-                using (ActorUseScope actorScope = this.GetActor(reminder.OwnerActorId, true, false))
+                using (var actorScope = this.GetActor(reminder.OwnerActorId, true, false))
                 {
-                    ActorBase actorBase = actorScope.Actor;
+                    var actorBase = actorScope.Actor;
 
                     // if Actor is deleted, reminder should not be fired or armed again.
                     // Its an optimization so that we don't fire the reminder if the actor
@@ -513,13 +509,13 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             // If the Actor is active, its ActorConcurrencyLock is used for synchronization.
             // If the actor is inactive, a Dummy Actor instance is created and its ActorConcurrencyLock is used for synchronization.
             using (
-                ActorUseScope actorUseScope = this.GetActor(
+                var actorUseScope = this.GetActor(
                     actorId,
                     true,
                     false,
                     true))
             {
-                ActorBase actor = actorUseScope.Actor;
+                var actor = actorUseScope.Actor;
 
                 await
                     actor.ConcurrencyLock.Acquire(
@@ -567,12 +563,11 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                             "DeleteActorAsync: Unregistering all reminders for Actor {0}.",
                             actor.Id);
 
-                        ConcurrentDictionary<string, ActorReminder> actorReminders;
-                        if (this.remindersByActorId.TryGetValue(actorId, out actorReminders))
+                        if (this.remindersByActorId.TryGetValue(actorId, out var actorReminders))
                         {
-                            ReadOnlyCollection<string> reminderNames = actorReminders.Values.Select(r => r.Name).ToList().AsReadOnly();
+                            var reminderNames = actorReminders.Values.Select(r => r.Name).ToList().AsReadOnly();
 
-                            foreach (string reminderName in reminderNames)
+                            foreach (var reminderName in reminderNames)
                             {
                                 await this.UnregisterReminderAsync(reminderName, actor.Id, false);
                             }
@@ -604,8 +599,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                         // deactivate must happen outside of above try catch to avoid scenarios
                         // in which Remove actor state and reminder from state provider throws.
 
-                        ActorBase removedActor;
-                        if (this.activeActors.TryRemove(actorId, out removedActor))
+                        if (this.activeActors.TryRemove(actorId, out var removedActor))
                         {
                             ActorTrace.Source.WriteInfoWithId(
                                 TraceType,
@@ -655,11 +649,11 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             // Get the Actors list from State provider and mark them Active or Inactive
             const int maxCount = PagedResult<ActorInformation>.MaxItemsToReturn;
-            PagedResult<ActorId> queryResult = await this.StateProvider.GetActorsAsync(maxCount, continuationToken, cancellationToken);
+            var queryResult = await this.StateProvider.GetActorsAsync(maxCount, continuationToken, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            List<ActorInformation> actorInfos =
+            var actorInfos =
                 queryResult.Items.Select(x => new ActorInformation(x, this.activeActors.ContainsKey(x))).ToList();
 
             return new PagedResult<ActorInformation>
@@ -702,7 +696,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             object requestBody,
             CancellationToken innerCancellationToken)
         {
-            long actorInterfaceMethodKey = DiagnosticsEventManager.GetInterfaceMethodKey(
+            var actorInterfaceMethodKey = DiagnosticsEventManager.GetInterfaceMethodKey(
                 (uint) interfaceId,
                 (uint) methodId);
             this.DiagnosticsEventManager.ActorMethodStart(actorInterfaceMethodKey, actor, RemotingListener.V1Listener);
@@ -746,8 +740,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                         null,
                         RemotingListener.V1Listener);
 
-                    DateTime serializationStartTime = DateTime.UtcNow;
-                    byte[] serializedResponse = methodDispatcher.SerializeResponseMessageBody(responseMsgBody);
+                    var serializationStartTime = DateTime.UtcNow;
+                    var serializedResponse = methodDispatcher.SerializeResponseMessageBody(responseMsgBody);
                     this.DiagnosticsEventManager.ActorResponseSerializationFinish(serializationStartTime);
 
                     return serializedResponse;
@@ -762,7 +756,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             IServiceRemotingRequestMessageBody requestBody,
             IServiceRemotingMessageBodyFactory remotingMessageBodyFactory, CancellationToken innerCancellationToken)
         {
-            long actorInterfaceMethodKey =
+            var actorInterfaceMethodKey =
                 DiagnosticsEventManager.GetInterfaceMethodKey((uint) interfaceId, (uint) methodId);
             this.DiagnosticsEventManager.ActorMethodStart(actorInterfaceMethodKey, actor, RemotingListener.V2Listener);
 
@@ -824,7 +818,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             string callContext,
             CancellationToken cancellationToken)
         {
-            T retval = default(T);
+            var retval = default(T);
 
             // if this actor has been deleted or is a dummy actor, then calls must be made on new object.
             if (actor.MarkedForDeletion || actor.IsDummy)
@@ -882,8 +876,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         private ActorUseScope GetExistingActor(ActorId actorId, bool timerUse)
         {
             ActorUseScope scope = null;
-            ActorBase activeActor;
-            if (this.activeActors.TryGetValue(actorId, out activeActor))
+            if (this.activeActors.TryGetValue(actorId, out var activeActor))
             {
                 scope = ActorUseScope.TryCreate(activeActor, timerUse);
             }
@@ -902,8 +895,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             var sw = new SpinWait();
             while (scope == null)
             {
-                ActorBase actor;
-                if (!this.activeActors.TryGetValue(actorId, out actor))
+                if (!this.activeActors.TryGetValue(actorId, out var actor))
                 {
                     actor = this.activeActors.GetOrAdd(actorId, l => this.CreateActor(actorId, createDummyActor));
                 }
@@ -920,7 +912,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private ActorBase CreateActor(ActorId actorId, bool createDummyActor)
         {
-            ActorBase actor = createDummyActor
+            var actor = createDummyActor
                 ? this.CreateDummyActor(actorId)
                 : this.ActorActivator.Activate(this.ActorService, actorId);
             return actor;
@@ -1015,7 +1007,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 // if the host is closed, mark active actors for early collection rather than waiting till idleTimeout.
                 if (this.IsClosed)
                 {
-                    foreach (KeyValuePair<ActorId, ActorBase> activeActor in this.activeActors)
+                    foreach (var activeActor in this.activeActors)
                     {
                         activeActor.Value.GcHandler.MarkForEarlyCollection();
                     }
@@ -1047,12 +1039,11 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             var deactivatedActors = new List<ActorBase>();
 
-            foreach (KeyValuePair<ActorId, ActorBase> activeActor in this.activeActors)
+            foreach (var activeActor in this.activeActors)
             {
                 if (activeActor.Value.GcHandler.TryCollect())
                 {
-                    ActorBase deactivatedActor;
-                    if (this.activeActors.TryRemove(activeActor.Key, out deactivatedActor))
+                    if (this.activeActors.TryRemove(activeActor.Key, out var deactivatedActor))
                     {
                         deactivatedActors.Add(deactivatedActor);
                     }
@@ -1075,7 +1066,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         private Task DeactivateActorsAsync(IEnumerable<ActorBase> deactivatedActors)
         {
             var deactivateTasks = new List<Task>();
-            foreach (ActorBase a in deactivatedActors)
+            foreach (var a in deactivatedActors)
             {
                 try
                 {
@@ -1156,20 +1147,20 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                     e.ToString());
             }
 
-            ICollection<ConcurrentDictionary<string, ActorReminder>> remindersForActor = this.remindersByActorId.Values;
+            var remindersForActor = this.remindersByActorId.Values;
             ActorTrace.Source.WriteInfoWithId(
                 TraceType,
                 this.traceId,
                 "CleanupRemindersAsync: Disposing reminders for {0} actors.",
                 remindersForActor.Count);
 
-            foreach (ConcurrentDictionary<string, ActorReminder> reminders in this.remindersByActorId.Values)
+            foreach (var reminders in this.remindersByActorId.Values)
             {
-                ICollection<ActorReminder> allReminders = reminders.Values;
+                var allReminders = reminders.Values;
 
                 if (allReminders.Count > 0)
                 {
-                    ActorId actorId = allReminders.First().OwnerActorId;
+                    var actorId = allReminders.First().OwnerActorId;
                     ActorTrace.Source.WriteInfoWithId(
                         TraceType,
                         this.traceId,
@@ -1177,7 +1168,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                         allReminders.Count,
                         actorId.ToString());
 
-                    foreach (ActorReminder reminder in allReminders)
+                    foreach (var reminder in allReminders)
                     {
                         reminder.Dispose();
                     }
@@ -1201,7 +1192,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private async Task LoadRemindersAsync(CancellationToken cancellationToken)
         {
-            IActorReminderCollection reminders = await this.StateProvider.LoadRemindersAsync(cancellationToken);
+            var reminders = await this.StateProvider.LoadRemindersAsync(cancellationToken);
 
             if (reminders.Count > 0 && !this.ActorService.ActorTypeInformation.IsRemindable)
             {
@@ -1214,15 +1205,15 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 return;
             }
 
-            foreach (KeyValuePair<ActorId, IReadOnlyCollection<IActorReminderState>> actorReminders in reminders)
+            foreach (var actorReminders in reminders)
             {
-                ActorId actorId = actorReminders.Key;
+                var actorId = actorReminders.Key;
 
                 try
                 {
                     var remindersToDelete = new List<string>();
 
-                    foreach (IActorReminderState reminderState in actorReminders.Value)
+                    foreach (var reminderState in actorReminders.Value)
                     {
                         if (this.ActorService.Settings.ReminderSettings.AutoDeleteOneTimeReminders &&
                             reminderState.RemainingDueTime < TimeSpan.Zero &&
@@ -1272,7 +1263,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 remainingDueTime,
                 saveState);
 
-            ConcurrentDictionary<string, ActorReminder> reminderDictionary = this.remindersByActorId.GetOrAdd(
+            var reminderDictionary = this.remindersByActorId.GetOrAdd(
                 actorReminder.OwnerActorId,
                 k => new ConcurrentDictionary<string, ActorReminder>());
 
@@ -1387,8 +1378,10 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             try
             {
-                var reminderNames = new Dictionary<ActorId, IReadOnlyCollection<string>>();
-                reminderNames.Add(actorId, remindersToDelete);
+                var reminderNames = new Dictionary<ActorId, IReadOnlyCollection<string>>
+                {
+                    { actorId, remindersToDelete }
+                };
 
                 await this.StateProvider.DeleteRemindersAsync(reminderNames, cancellationToken);
             }
@@ -1407,7 +1400,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
                 ActorTrace.Source.WriteWarningWithId(TraceType, this.traceId, msg.ToString());
 
-                foreach (string reminderName in remindersToDelete)
+                foreach (var reminderName in remindersToDelete)
                 {
                     await this.StateProvider.DeleteReminderAsync(actorId, reminderName, cancellationToken);
                 }

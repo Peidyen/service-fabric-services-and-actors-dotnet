@@ -58,7 +58,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             TimeSpan createdOrLastCompletedTime,
             TimeSpan dueTimeOrPeriod)
         {
-            TimeSpan elapsedTime = TimeSpan.Zero;
+            var elapsedTime = TimeSpan.Zero;
 
             if (currentLogicalTime > createdOrLastCompletedTime)
             {
@@ -72,7 +72,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 return Timeout.InfiniteTimeSpan;
             }
 
-            TimeSpan remainingTime = TimeSpan.Zero;
+            var remainingTime = TimeSpan.Zero;
 
             if (dueTimeOrPeriod > elapsedTime)
             {

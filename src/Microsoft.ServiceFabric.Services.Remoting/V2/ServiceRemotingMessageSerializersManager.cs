@@ -1,13 +1,12 @@
 // ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2
 {
     using System;
     using System.Collections.Concurrent;
-    using System.Collections.Generic;
     using Microsoft.ServiceFabric.Services.Remoting.V2.Builder;
     using Microsoft.ServiceFabric.Services.Remoting.V2.Messaging;
 
@@ -58,13 +57,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
         internal virtual CacheEntry CreateSerializers(int interfaceId)
         {
-            InterfaceDetails interfaceDetails = this.GetInterfaceDetails(interfaceId);
-            Type serviceInterfaceType = interfaceDetails.ServiceInterfaceType;
+            var interfaceDetails = this.GetInterfaceDetails(interfaceId);
+            var serviceInterfaceType = interfaceDetails.ServiceInterfaceType;
             // get the service interface type from the code gen layer
 
-            List<Type> requestBodyTypes = interfaceDetails.RequestKnownTypes;
+            var requestBodyTypes = interfaceDetails.RequestKnownTypes;
             // get the known types from the codegen layer
-            List<Type> responseBodyTypes = interfaceDetails.ResponseKnownTypes;
+            var responseBodyTypes = interfaceDetails.ResponseKnownTypes;
             // get the known types from the codegen layer
 
             return new CacheEntry(
@@ -74,8 +73,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
         internal virtual InterfaceDetails GetInterfaceDetails(int interfaceId)
         {
-            InterfaceDetails interfaceDetails;
-            if (!ServiceCodeBuilder.TryGetKnownTypes(interfaceId, out interfaceDetails))
+            if (!ServiceCodeBuilder.TryGetKnownTypes(interfaceId, out var interfaceDetails))
             {
                 throw new ArgumentException("No interface found with this Id  " + interfaceId);
             }

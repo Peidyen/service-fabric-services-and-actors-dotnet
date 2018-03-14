@@ -285,7 +285,7 @@ namespace Microsoft.ServiceFabric.Services
             var crc = 0xffffffffffffffff;
             for (var i = 0; i < value.Length; i++)
             {
-                uint tableIndex = ((uint) (crc >> 56) ^ value[i]) & 0xff;
+                var tableIndex = ((uint) (crc >> 56) ^ value[i]) & 0xff;
                 crc = Crc64Table[tableIndex] ^ (crc << 8);
             }
 
@@ -304,7 +304,7 @@ namespace Microsoft.ServiceFabric.Services
             {
                 for (var i = 0; i < values[x].Length; i++)
                 {
-                    uint tableIndex = ((uint) (crc >> 56) ^ values[x][i]) & 0xff;
+                    var tableIndex = ((uint) (crc >> 56) ^ values[x][i]) & 0xff;
                     crc = Crc64Table[tableIndex] ^ (crc << 8);
                 }
             }
@@ -319,7 +319,7 @@ namespace Microsoft.ServiceFabric.Services
         /// <returns>CRC64 value.</returns>
         public static string ToCrc64String(byte[] value)
         {
-            ulong crc64 = ToCRC64(value);
+            var crc64 = ToCRC64(value);
             return crc64.ToString("X", CultureInfo.InvariantCulture);
         }
     }

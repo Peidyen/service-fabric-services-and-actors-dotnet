@@ -54,7 +54,7 @@ namespace Microsoft.ServiceFabric.Services.Communication
         {
             lock (this.endpointsLock)
             {
-                foreach (KeyValuePair<string, string> item in newEndpoints.endpoints)
+                foreach (var item in newEndpoints.endpoints)
                 {
                     this.AddEndpointCallerHoldsLock(item.Key, item.Value);
                 }
@@ -89,7 +89,7 @@ namespace Microsoft.ServiceFabric.Services.Communication
                     return false;
                 }
 
-                Dictionary<string, string>.Enumerator enumerator = this.endpoints.GetEnumerator();
+                var enumerator = this.endpoints.GetEnumerator();
                 enumerator.MoveNext();
                 endpointAddress = enumerator.Current.Value;
                 return true;

@@ -81,8 +81,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1
             remoteExceptionInformation.ThrowIfNull("RemoteExceptionInformation");
 
             // try to de-serialize the bytes in to the exception
-            Exception res;
-            if (TryDeserializeException(remoteExceptionInformation.Data, out res))
+            if (TryDeserializeException(remoteExceptionInformation.Data, out var res))
             {
                 result = res;
                 return true;
@@ -125,8 +124,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1
         {
             try
             {
-                ServiceExceptionData eData;
-                if (TryDeserializeExceptionData(data, out eData))
+                if (TryDeserializeExceptionData(data, out var eData))
                 {
                     result = new ServiceException(eData.Type, eData.Message);
                     return true;
@@ -178,7 +176,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1
                 exception);
             var exceptionData = new ServiceExceptionData(exception.GetType().FullName, exceptionStringBuilder.ToString());
 
-            byte[] exceptionBytes = SerializationUtility.Serialize(serializer, exceptionData);
+            var exceptionBytes = SerializationUtility.Serialize(serializer, exceptionData);
 
             return new RemoteExceptionInformation(exceptionBytes);
         }

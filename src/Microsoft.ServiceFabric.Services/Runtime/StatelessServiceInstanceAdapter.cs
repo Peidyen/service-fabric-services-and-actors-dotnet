@@ -305,15 +305,15 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             var endpointsCollection = new ServiceEndpointCollection();
             var listenerOpenedCount = 0;
 
-            foreach (ServiceInstanceListener entry in this.instanceListeners)
+            foreach (var entry in this.instanceListeners)
             {
-                ICommunicationListener communicationListener = entry.CreateCommunicationListener(this.serviceContext);
+                var communicationListener = entry.CreateCommunicationListener(this.serviceContext);
                 this.AddCommunicationListener(communicationListener);
-                string endpointAddress = await communicationListener.OpenAsync(cancellationToken);
+                var endpointAddress = await communicationListener.OpenAsync(cancellationToken);
                 endpointsCollection.AddEndpoint(entry.Name, endpointAddress);
                 listenerOpenedCount++;
 
-                string traceMsg = entry.Name.Equals(ServiceInstanceListener.DefaultName)
+                var traceMsg = entry.Name.Equals(ServiceInstanceListener.DefaultName)
                     ? "Opened communication listener with default name."
                     : $"Opened communication listener with name {entry.Name}.";
 
@@ -336,7 +336,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             {
                 try
                 {
-                    foreach (ICommunicationListener entry in this.communicationListeners)
+                    foreach (var entry in this.communicationListeners)
                     {
                         await entry.CloseAsync(cancellationToken);
                     }
@@ -381,7 +381,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             if (this.communicationListeners != null)
             {
                 List<Exception> exceptions = null;
-                foreach (ICommunicationListener entry in this.communicationListeners)
+                foreach (var entry in this.communicationListeners)
                 {
                     try
                     {

@@ -136,14 +136,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             }
 
             string actorServiceName = null;
-            ActorServiceAttribute actorServiceAttr = ActorServiceAttribute.Get(actorType);
+            var actorServiceAttr = ActorServiceAttribute.Get(actorType);
             if (actorServiceAttr != null)
             {
                 actorServiceName = actorServiceAttr.Name;
             }
 
             // get all actor interfaces
-            Type[] actorInterfaces = actorType.GetActorInterfaces();
+            var actorInterfaces = actorType.GetActorInterfaces();
 
             // ensure that the if the actor type is not abstract it implements at least one actor interface
             if (actorInterfaces.Length == 0 && !actorType.GetTypeInfo().IsAbstract)
@@ -158,7 +158,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             }
 
             // ensure that all actor interfaces can be remoted
-            foreach (Type actorInterface in actorInterfaces)
+            foreach (var actorInterface in actorInterfaces)
             {
                 ActorInterfaceDescription.Create(actorInterface);
             }
@@ -176,12 +176,12 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             }
 
             // get actor event interfaces
-            Type[] eventInterfaces = actorType.GetActorEventInterfaces();
+            var eventInterfaces = actorType.GetActorEventInterfaces();
 
             // ensure that all of the event interfaces can be remoted
             if (eventInterfaces != null)
             {
-                foreach (Type eventInterface in eventInterfaces)
+                foreach (var eventInterface in eventInterfaces)
                 {
                     ActorEventInterfaceDescription.Create(eventInterface);
                 }
@@ -194,7 +194,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 #else
             var remotingserver = Services.Remoting.RemotingListener.V2Listener;
 #endif
-            ActorRemotingProviderAttribute remotingserverAttribuite = ActorRemotingProviderAttribute.GetProvider(types);
+            var remotingserverAttribuite = ActorRemotingProviderAttribute.GetProvider(types);
             if (remotingserverAttribuite != null)
             {
                 remotingserver = remotingserverAttribuite.RemotingListener;

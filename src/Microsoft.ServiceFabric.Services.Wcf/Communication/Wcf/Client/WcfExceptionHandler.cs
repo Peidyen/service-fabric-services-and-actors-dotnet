@@ -161,7 +161,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Client
             OperationRetrySettings retrySettings,
             out ExceptionHandlingResult result)
         {
-            Exception e = exceptionInformation.Exception;
+            var e = exceptionInformation.Exception;
 
             // retry with resolve - these exceptions indicate a possible fail over
             if (e is EndpointNotFoundException ||
@@ -219,7 +219,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Client
             {
                 if (faultException.Code.Name == WcfRemoteExceptionInformation.FaultCodeName)
                 {
-                    Exception actualException = WcfRemoteExceptionInformation.ToException(faultException.Reason.ToString());
+                    var actualException = WcfRemoteExceptionInformation.ToException(faultException.Reason.ToString());
 
                     if (faultException.Code.SubCode.Name == WcfRemoteExceptionInformation.FaultSubCodeRetryName)
                     {

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2
@@ -17,7 +17,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
         private Dictionary<string, byte[]> headers;
 
         /// <summary>
-        ///     Instantiates a new instance of the ServiceRemotingResponseMessageHeader
+        /// Instantiates a new instance of the ServiceRemotingResponseMessageHeader
         /// </summary>
         public ServiceRemotingResponseMessageHeader()
         {

@@ -78,8 +78,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Runtime
             ServiceRemotingMessageHeaders messageHeaders,
             byte[] requestMsgBodyBytes)
         {
-            ActorMessageHeaders actorMessageHeaders;
-            if (!ActorMessageHeaders.TryFromServiceMessageHeaders(messageHeaders, out actorMessageHeaders))
+            if (!ActorMessageHeaders.TryFromServiceMessageHeaders(messageHeaders, out var actorMessageHeaders))
             {
                 //This can only happen if there is issue in our product code like Message Corruption or changing headers format.
                 ReleaseAssert.Failfast("ActorMessageHeaders Deserialization failed");
@@ -120,9 +119,8 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Runtime
             ServiceRemotingMessageHeaders messageHeaders,
             byte[] requestMsgBodyBytes)
         {
-            DateTime startTime = DateTime.UtcNow;
-            ActorMessageHeaders actorMessageHeaders;
-            if (!ActorMessageHeaders.TryFromServiceMessageHeaders(messageHeaders, out actorMessageHeaders))
+            var startTime = DateTime.UtcNow;
+            if (!ActorMessageHeaders.TryFromServiceMessageHeaders(messageHeaders, out var actorMessageHeaders))
             {
                 throw new SerializationException(SR.ErrorActorMessageHeadersDeserializationFailed);
             }

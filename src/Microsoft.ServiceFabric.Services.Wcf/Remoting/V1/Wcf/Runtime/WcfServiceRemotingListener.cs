@@ -191,8 +191,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Wcf.Runtime
 
         private void DisposeIfNeeded()
         {
-            var disposableItem = this.messageHandler as IDisposable;
-            if (null != disposableItem)
+            if (this.messageHandler is IDisposable disposableItem)
             {
                 disposableItem.Dispose();
             }

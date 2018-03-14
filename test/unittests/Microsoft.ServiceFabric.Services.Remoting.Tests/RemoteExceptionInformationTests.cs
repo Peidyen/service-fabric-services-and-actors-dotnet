@@ -20,7 +20,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Tests
             var exception = new Exception("Test Exception");
 
             // Act
-            RemoteExceptionInformation result = RemoteExceptionInformation.FromException(exception);
+            var result = RemoteExceptionInformation.FromException(exception);
 
             // Assert
             result.Data.Length.Should().Be(expectedLength);

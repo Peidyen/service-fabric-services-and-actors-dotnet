@@ -149,7 +149,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             while (true)
             {
                 Exception exception;
-                TCommunicationClient client = await this.GetCommunicationClientAsync(cancellationToken);
+                var client = await this.GetCommunicationClientAsync(cancellationToken);
 
                 try
                 {
@@ -158,7 +158,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
                     //
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    TResult result = await func.Invoke(client);
+                    var result = await func.Invoke(client);
                     return result;
                 }
                 catch (AggregateException ae)
@@ -191,7 +191,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
                 // The exception that is being processed by the factory could be because of the cancellation 
                 // requested to the remote call, so not passing the same cancellation token to the api below
                 // to not let the regular exception processing be interrupted.
-                OperationRetryControl exceptionReportResult = await this.Factory.ReportOperationExceptionAsync(
+                var exceptionReportResult = await this.Factory.ReportOperationExceptionAsync(
                     client,
                     new ExceptionInformation(exception, this.TargetReplicaSelector),
                     this.retrySettings,
@@ -284,7 +284,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             Func<TCommunicationClient, TResult> func,
             params Type[] doNotRetryExceptionTypes)
         {
-            Task<TResult> task = this.InvokeWithRetryAsync(
+            var task = this.InvokeWithRetryAsync(
                 client =>
                 {
                     var tcs = new TaskCompletionSource<TResult>();

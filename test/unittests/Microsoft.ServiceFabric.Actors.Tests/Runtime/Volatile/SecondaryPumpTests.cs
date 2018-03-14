@@ -64,11 +64,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder]);
 
             var maxReplicationMessageSize = 2048;
-            int maxCopyMessageSize = maxReplicationMessageSize / 2;
+            var maxCopyMessageSize = maxReplicationMessageSize / 2;
 
-            DataContractSerializer copyOrReplicationSerializer = VolatileActorStateProvider.CreateCopyOrReplicationOperationSerializer();
+            var copyOrReplicationSerializer = VolatileActorStateProvider.CreateCopyOrReplicationOperationSerializer();
 
-            int dataLength = maxCopyMessageSize / (3 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]) + 1;
+            var dataLength = maxCopyMessageSize / (3 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]) + 1;
             var primaryStateTable = new ActorStateTable();
             var copyKeyPrefixs = new[] {"a", "b", "c", "d", "e"};
             var primarySequenceNumber = 0;
@@ -76,9 +76,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             var replicationUnitBatch = new List<ReplicationUnit>();
             var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            foreach (string keyPrefix in copyKeyPrefixs)
+            foreach (var keyPrefix in copyKeyPrefixs)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -90,7 +90,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestApplyBatch(primaryStateTable, replicationUnitBatch);
 
-            foreach (string keyPrefix in copyKeyPrefixs)
+            foreach (var keyPrefix in copyKeyPrefixs)
             {
                 VerifyReads(
                     primaryStateTable,
@@ -113,9 +113,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             replicationUnitBatch = new List<ReplicationUnit>();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -125,9 +125,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 replicationUnitDict[keyPrefix] = replicationUnit;
             }
 
-            List<List<ActorStateDataWrapper>> replicationData = TestApplyBatch(primaryStateTable, replicationUnitBatch);
+            var replicationData = TestApplyBatch(primaryStateTable, replicationUnitBatch);
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     primaryStateTable,
@@ -162,7 +162,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             secondaryPump.StartCopyAndReplicationPump();
 
-            Task pumpCompletionTask = secondaryPump.WaitForPumpCompletionAsync();
+            var pumpCompletionTask = secondaryPump.WaitForPumpCompletionAsync();
 
             // Wait for copy pump to drain copy stream
             Thread.Sleep(TimeSpan.FromSeconds(5));
@@ -171,7 +171,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 pumpCompletionTask.IsCompleted,
                 "Pump CopyAndReplicationTask completed before replication stream is ready.");
 
-            foreach (string keyPrefix in copyKeyPrefixs)
+            foreach (var keyPrefix in copyKeyPrefixs)
             {
                 VerifyReads(
                     secondaryStateTable,
@@ -189,7 +189,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             pumpCompletionTask.Wait();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     secondaryStateTable,
@@ -207,7 +207,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             secondaryPump.StartReplicationPump();
             secondaryPump.WaitForPumpCompletionAsync().Wait();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     secondaryStateTable,
@@ -234,11 +234,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder]);
 
             var maxReplicationMessageSize = 2048;
-            int maxCopyMessageSize = maxReplicationMessageSize / 2;
+            var maxCopyMessageSize = maxReplicationMessageSize / 2;
 
-            DataContractSerializer copyOrReplicationSerializer = VolatileActorStateProvider.CreateCopyOrReplicationOperationSerializer();
+            var copyOrReplicationSerializer = VolatileActorStateProvider.CreateCopyOrReplicationOperationSerializer();
 
-            int dataLength = maxCopyMessageSize / (3 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]) + 1;
+            var dataLength = maxCopyMessageSize / (3 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]) + 1;
             var primaryStateTable = new ActorStateTable();
             var copyKeyPrefixes = new[] {"a", "b", "c", "d", "e"};
             var primarySequenceNumber = 0;
@@ -246,9 +246,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             var replicationUnitBatch = new List<ReplicationUnit>();
             var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            foreach (string keyPrefix in copyKeyPrefixes)
+            foreach (var keyPrefix in copyKeyPrefixes)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -260,7 +260,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestApplyBatch(primaryStateTable, replicationUnitBatch);
 
-            foreach (string keyPrefix in copyKeyPrefixes)
+            foreach (var keyPrefix in copyKeyPrefixes)
             {
                 VerifyReads(
                     primaryStateTable,
@@ -277,9 +277,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             replicationUnitBatch = new List<ReplicationUnit>();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -291,7 +291,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestApplyBatch(primaryStateTable, replicationUnitBatch);
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     primaryStateTable,
@@ -304,7 +304,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                     primarySequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
             }
 
-            int upToSequenceNumber = copyKeyPrefixes.Length + replicationKeyPrefixes.Length / 2;
+            var upToSequenceNumber = copyKeyPrefixes.Length + replicationKeyPrefixes.Length / 2;
             var copyStateEnumerator = new VolatileActorStateProvider.CopyStateEnumerator(
                 primaryStateTable.GetShallowCopiesEnumerator(upToSequenceNumber),
                 copyOrReplicationSerializer,
@@ -333,7 +333,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             secondaryPump.StartCopyAndReplicationPump();
 
-            Task pumpCompletionTask = secondaryPump.WaitForPumpCompletionAsync();
+            var pumpCompletionTask = secondaryPump.WaitForPumpCompletionAsync();
 
             Thread.Sleep(TimeSpan.FromSeconds(5));
 
@@ -341,7 +341,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 pumpCompletionTask.IsCompleted,
                 "Pump CopyAndReplicationTask completed before replication stream is ready.");
 
-            foreach (string keyPrefix in copyKeyPrefixes)
+            foreach (var keyPrefix in copyKeyPrefixes)
             {
                 VerifyReads(
                     secondaryStateTable,
@@ -359,7 +359,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             pumpCompletionTask.Wait();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     secondaryStateTable,
@@ -377,7 +377,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             secondaryPump.StartReplicationPump();
             secondaryPump.WaitForPumpCompletionAsync().Wait();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     secondaryStateTable,
@@ -404,11 +404,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder]);
 
             var maxReplicationMessageSize = 2048;
-            int maxCopyMessageSize = maxReplicationMessageSize / 2;
+            var maxCopyMessageSize = maxReplicationMessageSize / 2;
 
-            DataContractSerializer copyOrReplicationSerializer = VolatileActorStateProvider.CreateCopyOrReplicationOperationSerializer();
+            var copyOrReplicationSerializer = VolatileActorStateProvider.CreateCopyOrReplicationOperationSerializer();
 
-            int dataLength = maxCopyMessageSize / (3 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]) + 1;
+            var dataLength = maxCopyMessageSize / (3 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]) + 1;
             var primaryStateTable = new ActorStateTable();
             var copyKeyPrefixes = new[] {"a", "b", "c", "d", "e"};
             var primarySequenceNumber = 0;
@@ -416,9 +416,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             var replicationUnitBatch = new List<ReplicationUnit>();
             var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            foreach (string keyPrefix in copyKeyPrefixes)
+            foreach (var keyPrefix in copyKeyPrefixes)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -430,7 +430,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestApplyBatch(primaryStateTable, replicationUnitBatch);
 
-            foreach (string keyPrefix in copyKeyPrefixes)
+            foreach (var keyPrefix in copyKeyPrefixes)
             {
                 VerifyReads(
                     primaryStateTable,
@@ -444,9 +444,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             }
 
             var deletedCopyKeyPrefixes = new[] {"a", "c", "e"};
-            foreach (string keyPrefix in deletedCopyKeyPrefixes)
+            foreach (var keyPrefix in deletedCopyKeyPrefixes)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForDeleteActor(
+                var replicationUnit = ReplicationUnit.CreateForDeleteActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
@@ -465,9 +465,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             replicationUnitBatch = new List<ReplicationUnit>();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -477,7 +477,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 replicationUnitDict[keyPrefix] = replicationUnit;
             }
 
-            List<List<ActorStateDataWrapper>> replicationData = TestApplyBatch(primaryStateTable, replicationUnitBatch);
+            var replicationData = TestApplyBatch(primaryStateTable, replicationUnitBatch);
 
             long expectedCount =
                 (copyKeyPrefixes.Length
@@ -485,7 +485,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                  replicationKeyPrefixes.Length) *
                 statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor];
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     primaryStateTable,
@@ -499,9 +499,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             }
 
             var deletedReplicationKeyPrefixes = new[] {"v", "x", "z"};
-            foreach (string keyPrefix in deletedReplicationKeyPrefixes)
+            foreach (var keyPrefix in deletedReplicationKeyPrefixes)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForDeleteActor(
+                var replicationUnit = ReplicationUnit.CreateForDeleteActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
@@ -535,7 +535,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             secondaryPump.StartCopyAndReplicationPump();
 
-            Task pumpCompletionTask = secondaryPump.WaitForPumpCompletionAsync();
+            var pumpCompletionTask = secondaryPump.WaitForPumpCompletionAsync();
 
             // Wait for copy pump to drain copy stream
             Thread.Sleep(TimeSpan.FromSeconds(5));
@@ -545,9 +545,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 "pumpCompletionTask.IsCompleted. Expected: false Actual: {0}.",
                 pumpCompletionTask.IsCompleted);
 
-            foreach (string keyPrefix in copyKeyPrefixes)
+            foreach (var keyPrefix in copyKeyPrefixes)
             {
-                bool expectedExists = !deletedCopyKeyPrefixes.ToList().Exists(o => o == keyPrefix);
+                var expectedExists = !deletedCopyKeyPrefixes.ToList().Exists(o => o == keyPrefix);
 
                 VerifyReads(
                     secondaryStateTable,
@@ -572,9 +572,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                  - deletedReplicationKeyPrefixes.Length)
                 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor] + 1;
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
-                bool expectedExists = !deletedReplicationKeyPrefixes.ToList().Exists(o => o == keyPrefix);
+                var expectedExists = !deletedReplicationKeyPrefixes.ToList().Exists(o => o == keyPrefix);
 
                 VerifyReads(
                     secondaryStateTable,
@@ -592,9 +592,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             secondaryPump.StartReplicationPump();
             secondaryPump.WaitForPumpCompletionAsync().Wait();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
-                bool expectedExists = !deletedReplicationKeyPrefixes.ToList().Exists(o => o == keyPrefix);
+                var expectedExists = !deletedReplicationKeyPrefixes.ToList().Exists(o => o == keyPrefix);
 
                 VerifyReads(
                     secondaryStateTable,
@@ -621,11 +621,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder]);
 
             var maxReplicationMessageSize = 2048;
-            int maxCopyMessageSize = maxReplicationMessageSize / 2;
+            var maxCopyMessageSize = maxReplicationMessageSize / 2;
 
-            DataContractSerializer copyOrReplicationSerializer = VolatileActorStateProvider.CreateCopyOrReplicationOperationSerializer();
+            var copyOrReplicationSerializer = VolatileActorStateProvider.CreateCopyOrReplicationOperationSerializer();
 
-            int dataLength = maxCopyMessageSize / (3 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]) + 1;
+            var dataLength = maxCopyMessageSize / (3 * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]) + 1;
             var primaryStateTable = new ActorStateTable();
             var copyKeyPrefixs = new[] {"a", "b", "c", "d", "e"};
             var primarySequenceNumber = 0;
@@ -633,9 +633,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             var replicationUnitBatch = new List<ReplicationUnit>();
             var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            foreach (string keyPrefix in copyKeyPrefixs)
+            foreach (var keyPrefix in copyKeyPrefixs)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -647,7 +647,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestApplyBatch(primaryStateTable, replicationUnitBatch);
 
-            foreach (string keyPrefix in copyKeyPrefixs)
+            foreach (var keyPrefix in copyKeyPrefixs)
             {
                 VerifyReads(
                     primaryStateTable,
@@ -670,9 +670,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             replicationUnitBatch = new List<ReplicationUnit>();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     ++primarySequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -682,9 +682,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 replicationUnitDict[keyPrefix] = replicationUnit;
             }
 
-            List<List<ActorStateDataWrapper>> replicationData = TestApplyBatch(primaryStateTable, replicationUnitBatch);
+            var replicationData = TestApplyBatch(primaryStateTable, replicationUnitBatch);
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     primaryStateTable,
@@ -718,7 +718,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             secondaryPump.StartReplicationPump();
             secondaryPump.WaitForPumpCompletionAsync().Wait();
 
-            foreach (string keyPrefix in replicationKeyPrefixes)
+            foreach (var keyPrefix in replicationKeyPrefixes)
             {
                 VerifyReads(
                     secondaryStateTable,
@@ -788,10 +788,10 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             Task<IOperation> IOperationStream.GetOperationAsync(CancellationToken cancellationToken)
             {
-                OperationData operationData = this._copyStateEnumerator.GetNextAsync(cancellationToken).Result;
+                var operationData = this._copyStateEnumerator.GetNextAsync(cancellationToken).Result;
 
                 // Secondary pump should take sequence number off each operation data itself
-                long copySequenceNumber = ++this._sequenceNumber;
+                var copySequenceNumber = ++this._sequenceNumber;
 
                 return CreateCompletedTask<IOperation>(
                     operationData == null ? null : new MockOperation(operationData, copySequenceNumber));
@@ -822,14 +822,14 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 if (this._replicationDataIndex < this._replicationData.Count)
                 {
-                    List<ActorStateDataWrapper> actorStateDataWrapperList = this._replicationData[this._replicationDataIndex++];
-                    long replicationSequenceNumber = actorStateDataWrapperList[0].SequenceNumber;
+                    var actorStateDataWrapperList = this._replicationData[this._replicationDataIndex++];
+                    var replicationSequenceNumber = actorStateDataWrapperList[0].SequenceNumber;
                     var replicationOperation = new VolatileActorStateProvider.CopyOrReplicationOperation(actorStateDataWrapperList);
 
                     // Secondary pump should take sequence number off the replication operation
                     // rather than the data
                     //
-                    foreach (ActorStateDataWrapper actorStateDataWrapper in actorStateDataWrapperList)
+                    foreach (var actorStateDataWrapper in actorStateDataWrapperList)
                     {
                         actorStateDataWrapper.UpdateSequenceNumber(0);
                     }

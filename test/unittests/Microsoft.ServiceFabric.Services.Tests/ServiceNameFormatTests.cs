@@ -17,7 +17,7 @@ namespace Microsoft.ServiceFabric.Services.Tests
             var serviceName = "ObjectServiceEndpoint";
 
             // Act
-            string result = ServiceNameFormat.GetEndpointName(typeof(object));
+            var result = ServiceNameFormat.GetEndpointName(typeof(object));
 
             // Assert
             result.Should().Be(serviceName);

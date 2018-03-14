@@ -33,9 +33,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Runtime
         {
             if (callContext != null)
             {
-                ServiceRemotingCancellationTracker cancellationTracker = this.GetCancellationTracker(interfaceId);
+                var cancellationTracker = this.GetCancellationTracker(interfaceId);
 
-                CancellationTokenResult cancellationTokenResult = await cancellationTracker.TryGetCancellationTokenSource(
+                var cancellationTokenResult = await cancellationTracker.TryGetCancellationTokenSource(
                     methodId,
                     callContext);
 
@@ -80,15 +80,15 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Runtime
             string callContext,
             Func<CancellationToken, Task<T>> dispatchFunc)
         {
-            CancellationToken cancellationToken = CancellationToken.None;
+            var cancellationToken = CancellationToken.None;
             if (callContext != null)
             {
-                ServiceRemotingCancellationTracker cancellationTracker = this.GetCancellationTracker(interfaceId);
+                var cancellationTracker = this.GetCancellationTracker(interfaceId);
                 //
                 // A cancellation token is created only when the remoting client specifies a callcontext to track
                 // the call.
                 //
-                CancellationTokenSource cancellationTokenSource = await cancellationTracker.GetOrAddCancellationTokenSource(
+                var cancellationTokenSource = await cancellationTracker.GetOrAddCancellationTokenSource(
                     methodId,
                     callContext);
 
@@ -96,7 +96,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Runtime
             }
 
             ExceptionDispatchInfo exceptionToThrow = null;
-            T result = default(T);
+            var result = default(T);
             try
             {
                 result = await dispatchFunc(cancellationToken);

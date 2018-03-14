@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
@@ -19,8 +19,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
     using Microsoft.ServiceFabric.Services.Remoting.V2.Builder;
 
     /// <summary>
-    ///     Provides an implementation of <see cref="IServiceRemotingMessageHandler" /> that can dispatch
-    ///     messages to the service implementing <see cref="IService" /> interface.
+    /// Provides an implementation of <see cref="IServiceRemotingMessageHandler" /> that can dispatch
+    /// messages to the service implementing <see cref="IService" /> interface.
     /// </summary>
     public class ServiceRemotingMessageDispatcher : IServiceRemotingMessageHandler, IDisposable
     {
@@ -32,9 +32,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
         private ServicePerformanceCounterProvider servicePerformanceCounterProvider;
 
         /// <summary>
-        ///     Instantiates the ServiceRemotingDispatcher that uses the given service context and
-        ///     dispatches messages to the given service implementation.
-        ///     This dispatcher can be used to dispatch request to the specified Remoting types.
+        /// Instantiates the ServiceRemotingDispatcher that uses the given service context and
+        /// dispatches messages to the given service implementation.
+        /// This dispatcher can be used to dispatch request to the specified Remoting types.
         /// </summary>
         /// <param name="remotingTypes">Types to which you can dispatch request to  </param>
         /// <param name="serviceContext">Service context</param>
@@ -47,9 +47,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
             IServiceRemotingMessageBodyFactory serviceRemotingMessageBodyFactory = null)
         {
             var allRemotingTypes = new List<Type>();
-            foreach (Type type in remotingTypes)
+            foreach (var type in remotingTypes)
             {
-                foreach (Type baseType in type.GetAllBaseInterfaces())
+                foreach (var baseType in type.GetAllBaseInterfaces())
                 {
                     if (!allRemotingTypes.Contains(baseType))
                     {
@@ -78,7 +78,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
             IService serviceImplementation,
             IServiceRemotingMessageBodyFactory serviceRemotingMessageBodyFactory = null)
         {
-            ServiceTypeInformation serviceTypeInformation = ServiceTypeInformation.Get(serviceImplementation.GetType());
+            var serviceTypeInformation = ServiceTypeInformation.Get(serviceImplementation.GetType());
             this.Initialize(serviceContext, serviceImplementation, serviceTypeInformation.InterfaceTypes, false, serviceRemotingMessageBodyFactory);
         }
 
@@ -111,8 +111,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
                 return null;
             }
 
-            IServiceRemotingRequestMessageHeader messageHeaders = requestMessage.GetHeader();
-            IServiceRemotingResponseMessage retval = await this.cancellationHelper.DispatchRequest(
+            var messageHeaders = requestMessage.GetHeader();
+            var retval = await this.cancellationHelper.DispatchRequest(
                 messageHeaders.InterfaceId,
                 messageHeaders.MethodId,
                 messageHeaders.InvocationId,
@@ -160,17 +160,16 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
             IServiceRemotingRequestMessageBody requestMessageBody,
             CancellationToken cancellationToken)
         {
-            IServiceRemotingRequestMessageHeader header = this.CreateServiceRemotingRequestMessageHeader(requestMessageDispatchHeaders);
+            var header = this.CreateServiceRemotingRequestMessageHeader(requestMessageDispatchHeaders);
             return this.HandleRequestResponseAsync(header, requestMessageBody, cancellationToken);
         }
 
         internal bool IsCancellationRequest(IServiceRemotingRequestMessageHeader requestMessageHeaders)
         {
-            byte[] headerValue;
             if (requestMessageHeaders.InvocationId != null &&
                 requestMessageHeaders.TryGetHeaderValue(
                     ServiceRemotingRequestMessageHeader.CancellationHeaderName,
-                    out headerValue))
+                    out var headerValue))
             {
                 return true;
             }
@@ -183,8 +182,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
             IServiceRemotingRequestMessageHeader requestMessageHeaders,
             IServiceRemotingRequestMessageBody requestBody, CancellationToken cancellationToken)
         {
-            MethodDispatcherBase methodDispatcher;
-            if (!this.methodDispatcherMap.TryGetValue(requestMessageHeaders.InterfaceId, out methodDispatcher))
+            if (!this.methodDispatcherMap.TryGetValue(requestMessageHeaders.InterfaceId, out var methodDispatcher))
             {
                 throw new NotImplementedException(
                     string.Format(
@@ -195,7 +193,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
             }
 
             Task<IServiceRemotingResponseMessageBody> dispatchTask = null;
-            Stopwatch stopwatch = Stopwatch.StartNew();
+            var stopwatch = Stopwatch.StartNew();
 
             try
             {
@@ -208,7 +206,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
             }
             catch (Exception e)
             {
-                ExceptionDispatchInfo info = ExceptionDispatchInfo.Capture(e);
+                var info = ExceptionDispatchInfo.Capture(e);
                 this.servicePerformanceCounterProvider.OnServiceMethodFinish(
                     requestMessageHeaders.InterfaceId,
                     requestMessageHeaders.MethodId,
@@ -227,7 +225,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
                     }
                     catch (Exception e)
                     {
-                        ExceptionDispatchInfo info = ExceptionDispatchInfo.Capture(e);
+                        var info = ExceptionDispatchInfo.Capture(e);
 
                         this.servicePerformanceCounterProvider.OnServiceMethodFinish(
                             requestMessageHeaders.InterfaceId,
@@ -241,9 +239,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
                         requestMessageHeaders.InterfaceId,
                         requestMessageHeaders.MethodId,
                         stopwatch.Elapsed);
-                    return (IServiceRemotingResponseMessage) new ServiceRemotingResponseMessage(
+                    return (IServiceRemotingResponseMessage)new ServiceRemotingResponseMessage(
                         null,
-                        (IServiceRemotingResponseMessageBody) responseBody);
+                        (IServiceRemotingResponseMessageBody)responseBody);
                 },
                 TaskContinuationOptions.ExecuteSynchronously);
         }
@@ -251,13 +249,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
         private IServiceRemotingRequestMessageHeader CreateServiceRemotingRequestMessageHeader(
             ServiceRemotingDispatchHeaders serviceRemotingDispatchHeaders)
         {
-            InterfaceDetails details;
-            if (ServiceCodeBuilder.TryGetKnownTypes(serviceRemotingDispatchHeaders.ServiceInterfaceName, out details))
+            if (ServiceCodeBuilder.TryGetKnownTypes(serviceRemotingDispatchHeaders.ServiceInterfaceName, out var details))
             {
                 var headers = new ServiceRemotingRequestMessageHeader();
                 headers.InterfaceId = details.Id;
-                var headersMethodId = 0;
-                if (details.MethodNames.TryGetValue(serviceRemotingDispatchHeaders.MethodName, out headersMethodId))
+                if (details.MethodNames.TryGetValue(serviceRemotingDispatchHeaders.MethodName, out var headersMethodId))
                 {
                     headers.MethodId = headersMethodId;
                 }
@@ -291,7 +287,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
             if (serviceImplementation != null)
             {
                 var interfaceDescriptions = new List<ServiceInterfaceDescription>();
-                foreach (Type interfaceType in remotedInterfaces)
+                foreach (var interfaceType in remotedInterfaces)
                 {
                     MethodDispatcherBase methodDispatcher;
                     if (nonServiceInterface)
@@ -322,7 +318,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Runtime
             IServiceRemotingRequestMessageBody requestMessageBody,
             CancellationToken cancellationToken)
         {
-            IServiceRemotingResponseMessage retval = await this.OnDispatch(
+            var retval = await this.OnDispatch(
                 remotingRequestMessageHeader,
                 requestMessageBody,
                 cancellationToken);

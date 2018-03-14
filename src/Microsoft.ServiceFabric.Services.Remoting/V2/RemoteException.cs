@@ -1,6 +1,6 @@
-﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// ------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2
@@ -17,18 +17,18 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
     using Microsoft.ServiceFabric.Services.Communication;
 
     /// <summary>
-    ///     Fault type used by Service Remoting to transfer the exception details from the Service Replica to the client.
+    /// Fault type used by Service Remoting to transfer the exception details from the Service Replica to the client.
     /// </summary>
     [DataContract(Name = "RemoteException", Namespace = Constants.ServiceCommunicationNamespace)]
     internal class RemoteException
     {
-        private static readonly BinaryFormatter binaryFormatter;
-        private static readonly DataContractSerializer serviceExceptionDataSerializer = new DataContractSerializer(typeof(ServiceExceptionData));
+        private static readonly BinaryFormatter BinaryFormatter;
+        private static readonly DataContractSerializer ServiceExceptionDataSerializer = new DataContractSerializer(typeof(ServiceExceptionData));
 
         static RemoteException()
         {
-            binaryFormatter = new BinaryFormatter();
-            binaryFormatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
+            BinaryFormatter = new BinaryFormatter();
+            BinaryFormatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
         }
 
         public RemoteException(List<ArraySegment<byte>> buffers)
@@ -37,14 +37,14 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
         }
 
         /// <summary>
-        ///     Serialized exception or the exception message encoded as UTF8 if the exception cannot be serialized.
+        /// Serialized exception or the exception message encoded as UTF8 if the exception cannot be serialized.
         /// </summary>
         /// <value>Data in the exception</value>
         [DataMember(Name = "Data", Order = 0)]
         public List<ArraySegment<byte>> Data { get; private set; }
 
         /// <summary>
-        ///     Factory method that constructs the RemoteException from an exception.
+        /// Factory method that constructs the RemoteException from an exception.
         /// </summary>
         /// <param name="exception">Exception</param>
         /// <returns>RemoteException</returns>
@@ -54,10 +54,12 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
             {
                 using (var stream = new MemoryStream())
                 {
-                    binaryFormatter.Serialize(stream, exception);
+                    BinaryFormatter.Serialize(stream, exception);
                     stream.Flush();
-                    var buffers = new List<ArraySegment<byte>>();
-                    buffers.Add(new ArraySegment<byte>(stream.ToArray()));
+                    var buffers = new List<ArraySegment<byte>>
+                    {
+                        new ArraySegment<byte>(stream.ToArray())
+                    };
                     return new RemoteException(buffers);
                 }
             }
@@ -69,13 +71,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
                     "Serialization failed for Exception Type {0} : Reason  {1}",
                     exception.GetType().FullName,
                     e);
-                List<ArraySegment<byte>> buffer = FromExceptionString(exception);
+                var buffer = FromExceptionString(exception);
                 return new RemoteException(buffer);
             }
         }
 
         /// <summary>
-        ///     Gets the exception from the RemoteException
+        /// Gets the exception from the RemoteException
         /// </summary>
         /// <param name="messageBuffer"></param>
         /// <param name="result">Exception from the remote side</param>
@@ -83,8 +85,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
         public static bool ToException(Stream messageBuffer, out Exception result)
         {
             // try to de-serialize the bytes in to the exception
-            Exception res;
-            if (TryDeserializeException(messageBuffer, out res))
+            if (TryDeserializeException(messageBuffer, out var res))
             {
                 result = res;
                 return true;
@@ -143,9 +144,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
                 exception);
             var exceptionData = new ServiceExceptionData(exception.GetType().FullName, exceptionStringBuilder.ToString());
 
-            byte[] exceptionBytes = SerializeServiceExceptionData(exceptionData);
-            var buffers = new List<ArraySegment<byte>>();
-            buffers.Add(new ArraySegment<byte>(exceptionBytes));
+            var exceptionBytes = SerializeServiceExceptionData(exceptionData);
+            var buffers = new List<ArraySegment<byte>>
+            {
+                new ArraySegment<byte>(exceptionBytes)
+            };
             return buffers;
         }
 
@@ -153,7 +156,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
         {
             try
             {
-                result = (Exception) binaryFormatter.Deserialize(data);
+                result = (Exception) BinaryFormatter.Deserialize(data);
                 return true;
             }
             catch (Exception ex)
@@ -168,9 +171,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
         {
             try
             {
-                ServiceExceptionData eData;
                 data.Seek(0, SeekOrigin.Begin);
-                if (TryDeserializeExceptionData(data, out eData))
+                if (TryDeserializeExceptionData(data, out var eData))
                 {
                     result = new ServiceException(eData.Type, eData.Message);
                     return true;
@@ -188,15 +190,15 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
         private static object DeserializeServiceExceptionData(Stream buffer)
         {
-            if (buffer == null || buffer.Length == 0)
+            if ((buffer == null) || (buffer.Length == 0))
             {
                 return null;
             }
 
 
-            using (XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader(buffer, XmlDictionaryReaderQuotas.Max))
+            using (var reader = XmlDictionaryReader.CreateBinaryReader(buffer, XmlDictionaryReaderQuotas.Max))
             {
-                return serviceExceptionDataSerializer.ReadObject(reader);
+                return ServiceExceptionDataSerializer.ReadObject(reader);
             }
         }
 
@@ -209,9 +211,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
             using (var stream = new MemoryStream())
             {
-                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
+                using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
                 {
-                    serviceExceptionDataSerializer.WriteObject(writer, msg);
+                    ServiceExceptionDataSerializer.WriteObject(writer, msg);
                     writer.Flush();
                     return stream.ToArray();
                 }

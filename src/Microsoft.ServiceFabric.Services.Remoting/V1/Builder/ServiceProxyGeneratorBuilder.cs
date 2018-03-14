@@ -24,11 +24,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             IDictionary<InterfaceDescription, MethodBodyTypesBuildResult> methodBodyTypesResultsMap,
             Type proxyActivatorType)
         {
-            Dictionary<int, IEnumerable<Type>> requestBodyTypes = methodBodyTypesResultsMap.ToDictionary(
+            var requestBodyTypes = methodBodyTypesResultsMap.ToDictionary(
                 item => item.Key.Id,
                 item => item.Value.GetRequestBodyTypes());
 
-            Dictionary<int, IEnumerable<Type>> responseBodyTypes = methodBodyTypesResultsMap.ToDictionary(
+            var responseBodyTypes = methodBodyTypesResultsMap.ToDictionary(
                 item => item.Key.Id,
                 item => item.Value.GetResponseBodyTypes());
 

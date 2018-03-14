@@ -33,8 +33,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public Task SubscribeAsync(ActorId actorId, int eventInterfaceId, IActorEventSubscriberProxy subscriber)
         {
-            Type eventType;
-            if (!this.eventIdToEventTypeMap.TryGetValue(new InterfaceId(eventInterfaceId, eventInterfaceId), out eventType))
+            if (!this.eventIdToEventTypeMap.TryGetValue(new InterfaceId(eventInterfaceId, eventInterfaceId), out var eventType))
             {
                 throw new ArgumentException(
                     string.Format(
@@ -44,7 +43,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                         actorId));
             }
 
-            ActorEventProxy eventProxy = this.GetActorEventProxy(actorId, eventType);
+            var eventProxy = this.GetActorEventProxy(actorId, eventType);
             eventProxy.AddSubscriber(subscriber);
 
             return TaskDone.Done;
@@ -52,15 +51,15 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public ActorEventProxy GetActorEventProxy(ActorId actorId, Type eventType)
         {
-            ConcurrentDictionary<Type, ActorEventProxy> eventProxyMap = this.actorIdToEventProxyMap.GetOrAdd(
+            var eventProxyMap = this.actorIdToEventProxyMap.GetOrAdd(
                 actorId,
                 new ConcurrentDictionary<Type, ActorEventProxy>());
 
-            ActorEventProxy eventProxy = eventProxyMap.GetOrAdd(
+            var eventProxy = eventProxyMap.GetOrAdd(
                 eventType,
                 t =>
                 {
-                    ActorEventProxyGenerator eventProxyGenerator = ActorCodeBuilder.GetOrCreateEventProxyGenerator(t);
+                    var eventProxyGenerator = ActorCodeBuilder.GetOrCreateEventProxyGenerator(t);
                     return eventProxyGenerator.CreateActorEventProxy();
                 });
             return eventProxy;
@@ -68,14 +67,11 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public Task UnsubscribeAsync(ActorId actorId, int eventInterfaceId, Guid subscriberId)
         {
-            Type eventType;
-            if (this.eventIdToEventTypeMap.TryGetValue(new InterfaceId(eventInterfaceId, eventInterfaceId), out eventType))
+            if (this.eventIdToEventTypeMap.TryGetValue(new InterfaceId(eventInterfaceId, eventInterfaceId), out var eventType))
             {
-                ConcurrentDictionary<Type, ActorEventProxy> eventProxyMap;
-                if (this.actorIdToEventProxyMap.TryGetValue(actorId, out eventProxyMap))
+                if (this.actorIdToEventProxyMap.TryGetValue(actorId, out var eventProxyMap))
                 {
-                    ActorEventProxy eventProxy;
-                    if (eventProxyMap.TryGetValue(eventType, out eventProxy))
+                    if (eventProxyMap.TryGetValue(eventType, out var eventProxy))
                     {
                         eventProxy.RemoveSubscriber(subscriberId);
                     }
@@ -88,8 +84,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public Task ClearAllSubscriptions(ActorId actorId)
         {
-            ConcurrentDictionary<Type, ActorEventProxy> eventProxyMap;
-            this.actorIdToEventProxyMap.TryRemove(actorId, out eventProxyMap);
+            this.actorIdToEventProxyMap.TryRemove(actorId, out var eventProxyMap);
 
             return TaskDone.Done;
         }

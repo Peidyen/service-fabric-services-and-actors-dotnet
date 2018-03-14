@@ -23,12 +23,12 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
 
         static CodeBuilderUtils()
         {
-            Type dcAttrType = typeof(DataContractAttribute);
+            var dcAttrType = typeof(DataContractAttribute);
             DcAttrCtorInfo = dcAttrType.GetConstructor(Type.EmptyTypes);
             DcAttrNamePropInfo = dcAttrType.GetProperty("Name");
             DcAttrNamespacePropInfo = dcAttrType.GetProperty("Namespace");
 
-            Type dmAttrType = typeof(DataMemberAttribute);
+            var dmAttrType = typeof(DataMemberAttribute);
             DmAttrCtorInfo = dmAttrType.GetConstructor(Type.EmptyTypes);
             DmAttrIsRequiredPropInfo = dmAttrType.GetProperty("IsRequired");
         }
@@ -99,10 +99,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             Type baseType,
             IEnumerable<Type> interfaces)
         {
-            TypeBuilder typeBuilder = CreateClassBuilder(moduleBuilder, ns, className, baseType);
+            var typeBuilder = CreateClassBuilder(moduleBuilder, ns, className, baseType);
             if (interfaces != null)
             {
-                foreach (Type interfaceType in interfaces)
+                foreach (var interfaceType in interfaces)
                 {
                     typeBuilder.AddInterfaceImplementation(interfaceType);
                 }
@@ -158,10 +158,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             TypeBuilder typeBuilder,
             MethodInfo interfaceMethod)
         {
-            ParameterInfo[] parameters = interfaceMethod.GetParameters();
-            Type[] parameterTypes = parameters.Select(pi => pi.ParameterType).ToArray();
+            var parameters = interfaceMethod.GetParameters();
+            var parameterTypes = parameters.Select(pi => pi.ParameterType).ToArray();
 
-            MethodBuilder methodBuilder = typeBuilder.DefineMethod(
+            var methodBuilder = typeBuilder.DefineMethod(
                 string.Concat(interfaceMethod.DeclaringType.Name, ".", interfaceMethod.Name),
                 MethodAttributes.Private |
                 MethodAttributes.HideBySig |
@@ -184,7 +184,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             string dcNamespace = null,
             string dcName = null)
         {
-            TypeBuilder typeBuilder = CreateClassBuilder(moduleBuilder, ns, typeName, Type.EmptyTypes);
+            var typeBuilder = CreateClassBuilder(moduleBuilder, ns, typeName, Type.EmptyTypes);
             AddDataContractAttribute(typeBuilder, dcNamespace, dcName);
             return typeBuilder;
         }
@@ -192,7 +192,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
 
         public static void AddDataMemberField(TypeBuilder dcTypeBuilder, Type fieldType, string fieldName)
         {
-            FieldBuilder fieldBuilder = CreateFieldBuilder(dcTypeBuilder, fieldType, fieldName);
+            var fieldBuilder = CreateFieldBuilder(dcTypeBuilder, fieldType, fieldName);
             fieldBuilder.SetCustomAttribute(CreateCustomDataMemberAttributeBuilder());
         }
 

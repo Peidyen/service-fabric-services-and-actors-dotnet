@@ -39,10 +39,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Runtime
             where TStatefulService : StatefulServiceBase, IService
 
         {
-            ServiceTypeInformation serviceTypeInformation = ServiceTypeInformation.Get(serviceImplementation.GetType());
-            IEnumerable<Type> interfaceTypes = serviceTypeInformation.InterfaceTypes;
+            var serviceTypeInformation = ServiceTypeInformation.Get(serviceImplementation.GetType());
+            var interfaceTypes = serviceTypeInformation.InterfaceTypes;
             var impl = (IService) serviceImplementation;
-            ServiceRemotingProviderAttribute provider = ServiceRemotingProviderAttribute.GetProvider(interfaceTypes);
+            var provider = ServiceRemotingProviderAttribute.GetProvider(interfaceTypes);
 #if !DotNetCoreClr
             if (provider.RemotingListener.Equals(RemotingListener.V2Listener))
             {
@@ -109,10 +109,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Runtime
             where TStatelessService : StatelessService, IService
 
         {
-            ServiceTypeInformation serviceTypeInformation = ServiceTypeInformation.Get(serviceImplementation.GetType());
-            IEnumerable<Type> interfaceTypes = serviceTypeInformation.InterfaceTypes;
+            var serviceTypeInformation = ServiceTypeInformation.Get(serviceImplementation.GetType());
+            var interfaceTypes = serviceTypeInformation.InterfaceTypes;
             var impl = (IService) serviceImplementation;
-            ServiceRemotingProviderAttribute provider = ServiceRemotingProviderAttribute.GetProvider(interfaceTypes);
+            var provider = ServiceRemotingProviderAttribute.GetProvider(interfaceTypes);
 #if !DotNetCoreClr
             if (provider.RemotingListener.Equals(RemotingListener.V2Listener))
             {
@@ -162,10 +162,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Runtime
             ServiceContext serviceContext,
             object serviceImplementation)
         {
-            ServiceTypeInformation serviceTypeInformation = ServiceTypeInformation.Get(serviceImplementation.GetType());
-            IEnumerable<Type> interfaceTypes = serviceTypeInformation.InterfaceTypes;
+            var serviceTypeInformation = ServiceTypeInformation.Get(serviceImplementation.GetType());
+            var interfaceTypes = serviceTypeInformation.InterfaceTypes;
 
-            ServiceRemotingProviderAttribute provider = ServiceRemotingProviderAttribute.GetProvider(interfaceTypes);
+            var provider = ServiceRemotingProviderAttribute.GetProvider(interfaceTypes);
             if (provider.RemotingListener.Equals(RemotingListener.V2Listener))
             {
                 throw new NotSupportedException(

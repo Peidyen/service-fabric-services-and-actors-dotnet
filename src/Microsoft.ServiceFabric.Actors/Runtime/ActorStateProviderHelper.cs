@@ -59,9 +59,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             var retryCount = 0;
             var useLinearBackoff = false;
-            string lastExceptionTag = string.Empty;
-            long roleChangeTracker = this.owner.RoleChangeTracker;
-            Guid operationId = Guid.NewGuid();
+            var lastExceptionTag = string.Empty;
+            var roleChangeTracker = this.owner.RoleChangeTracker;
+            var operationId = Guid.NewGuid();
             var timeoutHelper = new TimeoutHelper(this.owner.OperationTimeout);
 
             while (true)
@@ -84,7 +84,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
                     useLinearBackoff = false;
 
-                    TResult res = await func.Invoke();
+                    var res = await func.Invoke();
 
                     if (retryCount > 0)
                     {
@@ -176,7 +176,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
                 retryCount++;
 
-                TimeSpan effectiveRetryDelay = useLinearBackoff
+                var effectiveRetryDelay = useLinearBackoff
                     ? TimeSpan.FromTicks(retryCount * this.owner.TransientErrorRetryDelay.Ticks)
                     : this.owner.TransientErrorRetryDelay;
 
@@ -201,17 +201,17 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             Func<T, string> getStorageKeyFunc,
             CancellationToken cancellationToken)
         {
-            long previousActorCount = continuationToken == null ? 0 : long.Parse((string) continuationToken.Marker);
+            var previousActorCount = continuationToken == null ? 0 : long.Parse((string) continuationToken.Marker);
 
             long currentActorCount = 0;
             var actorIdList = new List<ActorId>();
             var actorQueryResult = new PagedResult<ActorId>();
 
             // KVS enumerates its entries in alphabetical order.
-            IEnumerator<T> enumerator = getEnumeratorFunc();
+            var enumerator = getEnumeratorFunc();
 
             // Move the enumerator to point to first entry
-            bool enumHasMoreEntries = enumerator.MoveNext();
+            var enumHasMoreEntries = enumerator.MoveNext();
 
             if (!enumHasMoreEntries)
             {
@@ -238,8 +238,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                string storageKey = getStorageKeyFunc(enumerator.Current);
-                ActorId actorId = GetActorIdFromPresenceStorageKey(storageKey);
+                var storageKey = getStorageKeyFunc(enumerator.Current);
+                var actorId = GetActorIdFromPresenceStorageKey(storageKey);
 
                 if (actorId != null)
                 {
@@ -285,19 +285,19 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
             try
             {
-                string configurationPackageName = ActorNameFormat.GetConfigPackageName();
-                string stateProviderOverrideSectionName = ActorNameFormat.GetActorStateProviderOverrideSectionName();
-                string attributeTypeKey = ActorNameFormat.GetActorStateProviderOverrideKeyName();
+                var configurationPackageName = ActorNameFormat.GetConfigPackageName();
+                var stateProviderOverrideSectionName = ActorNameFormat.GetActorStateProviderOverrideSectionName();
+                var attributeTypeKey = ActorNameFormat.GetActorStateProviderOverrideKeyName();
 
                 // Load the ActorStateProviderAttribute Type from the Configuration settings
-                CodePackageActivationContext context = FabricRuntime.GetActivationContext();
-                ConfigurationPackage config = context.GetConfigurationPackageObject(configurationPackageName);
+                var context = FabricRuntime.GetActivationContext();
+                var config = context.GetConfigurationPackageObject(configurationPackageName);
 
                 if (config.Settings.Sections != null &&
                     config.Settings.Sections.Contains(stateProviderOverrideSectionName))
                 {
-                    ConfigurationSection section = config.Settings.Sections[stateProviderOverrideSectionName];
-                    string stateProviderType = section.Parameters[attributeTypeKey].Value;
+                    var section = config.Settings.Sections[stateProviderOverrideSectionName];
+                    var stateProviderType = section.Parameters[attributeTypeKey].Value;
 
                     ActorTrace.Source.WriteInfo(
                         "ActorStateProviderHelper",
@@ -323,7 +323,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         /// <returns></returns>
         internal static ReplicatorSettings GetActorReplicatorSettings(CodePackageActivationContext codePackage, Type actorImplType)
         {
-            ReplicatorSettings settings = ReplicatorSettings.LoadFrom(
+            var settings = ReplicatorSettings.LoadFrom(
                 codePackage,
                 ActorNameFormat.GetConfigPackageName(actorImplType),
                 ActorNameFormat.GetFabricServiceReplicatorConfigSectionName(actorImplType));
@@ -333,8 +333,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 ActorNameFormat.GetConfigPackageName(actorImplType),
                 ActorNameFormat.GetFabricServiceReplicatorSecurityConfigSectionName(actorImplType));
 
-            NodeContext nodeContext = FabricRuntime.GetNodeContext();
-            EndpointResourceDescription endpoint = codePackage.GetEndpoint(ActorNameFormat.GetFabricServiceReplicatorEndpointName(actorImplType));
+            var nodeContext = FabricRuntime.GetNodeContext();
+            var endpoint = codePackage.GetEndpoint(ActorNameFormat.GetFabricServiceReplicatorEndpointName(actorImplType));
 
             settings.ReplicatorAddress = string.Format(
                 CultureInfo.InvariantCulture,
@@ -390,7 +390,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             //
             // See CreateActorPresenceStorageKey for how it is generated.
 
-            string storageKey = presenceStorageKey.Substring(ActorPresenceStorageKeyPrefix.Length + 1);
+            var storageKey = presenceStorageKey.Substring(ActorPresenceStorageKeyPrefix.Length + 1);
             return ActorId.TryGetActorIdFromStorageKey(storageKey);
         }
 
@@ -436,7 +436,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             }
 
             // Get state provider override from settings if specified, used by tests to override state providers.
-            IActorStateProvider stateProviderOverride = GetActorStateProviderOverride();
+            var stateProviderOverride = GetActorStateProviderOverride();
 
             if (stateProviderOverride != null)
             {
@@ -454,7 +454,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             section = null;
 
-            ConfigurationPackage config = activationContext.GetConfigurationPackageObject(configPackageName);
+            var config = activationContext.GetConfigurationPackageObject(configPackageName);
 
             if (config.Settings.Sections == null || !config.Settings.Sections.Contains(sectionName))
             {
@@ -471,7 +471,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             if (section.Parameters.Contains(parameterName) &&
                 !string.IsNullOrWhiteSpace(section.Parameters[parameterName].Value))
             {
-                double timeInSeconds = double.Parse(section.Parameters[parameterName].Value);
+                var timeInSeconds = double.Parse(section.Parameters[parameterName].Value);
                 return TimeSpan.FromSeconds(timeInSeconds);
             }
 

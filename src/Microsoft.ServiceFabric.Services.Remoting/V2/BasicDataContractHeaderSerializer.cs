@@ -1,6 +1,6 @@
 // ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2
@@ -53,11 +53,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
             using (var stream = new MemoryStream())
             {
-                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
+                using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
                 {
                     this.requestHeaderSerializer.WriteObject(writer, serviceRemotingRequestMessageHeader);
                     writer.Flush();
-                    byte[] buffer = stream.ToArray();
+                    var buffer = stream.ToArray();
                     return new OutgoingMessageHeader(new ArraySegment<byte>(buffer));
                 }
             }
@@ -65,13 +65,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
         public IServiceRemotingRequestMessageHeader DeserializeRequestHeaders(IMessageHeader messageHeader)
         {
-            if (messageHeader == null || messageHeader.GetReceivedBuffer() == null ||
-                messageHeader.GetReceivedBuffer().Length == 0)
+            if ((messageHeader == null) || (messageHeader.GetReceivedBuffer() == null) ||
+                (messageHeader.GetReceivedBuffer().Length == 0))
             {
                 return null;
             }
 
-            using (XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader(
+            using (var reader = XmlDictionaryReader.CreateBinaryReader(
                 messageHeader.GetReceivedBuffer(),
                 XmlDictionaryReaderQuotas.Max))
             {
@@ -89,11 +89,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
             using (var stream = new MemoryStream())
             {
-                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
+                using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
                 {
                     this.responseHeaderSerializer.WriteObject(writer, serviceRemotingResponseMessageHeader);
                     writer.Flush();
-                    byte[] buffer = stream.ToArray();
+                    var buffer = stream.ToArray();
                     return new OutgoingMessageHeader(new ArraySegment<byte>(buffer));
                 }
             }
@@ -101,13 +101,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
         public IServiceRemotingResponseMessageHeader DeserializeResponseHeaders(IMessageHeader messageHeader)
         {
-            if (messageHeader == null || messageHeader.GetReceivedBuffer() == null ||
-                messageHeader.GetReceivedBuffer().Length == 0)
+            if ((messageHeader == null) || (messageHeader.GetReceivedBuffer() == null) ||
+                (messageHeader.GetReceivedBuffer().Length == 0))
             {
                 return null;
             }
 
-            using (XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader(
+            using (var reader = XmlDictionaryReader.CreateBinaryReader(
                 messageHeader.GetReceivedBuffer(),
                 XmlDictionaryReaderQuotas.Max))
             {

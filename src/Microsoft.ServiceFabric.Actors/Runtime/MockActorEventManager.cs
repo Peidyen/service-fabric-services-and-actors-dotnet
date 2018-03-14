@@ -35,15 +35,15 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public ActorEventProxy GetActorEventProxy(ActorId actorId, Type eventType)
         {
-            ConcurrentDictionary<Type, ActorEventProxy> eventProxyMap = this.actorIdToEventProxyMap.GetOrAdd(
+            var eventProxyMap = this.actorIdToEventProxyMap.GetOrAdd(
                 actorId,
                 new ConcurrentDictionary<Type, ActorEventProxy>());
 
-            ActorEventProxy eventProxy = eventProxyMap.GetOrAdd(
+            var eventProxy = eventProxyMap.GetOrAdd(
                 eventType,
                 t =>
                 {
-                    ActorEventProxyGenerator eventProxyGenerator = ActorCodeBuilder.GetOrCreateEventProxyGenerator(t);
+                    var eventProxyGenerator = ActorCodeBuilder.GetOrCreateEventProxyGenerator(t);
                     return eventProxyGenerator.CreateActorEventProxy();
                 });
             return eventProxy;
@@ -56,8 +56,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public Task ClearAllSubscriptions(ActorId actorId)
         {
-            ConcurrentDictionary<Type, ActorEventProxy> eventProxyMap;
-            this.actorIdToEventProxyMap.TryRemove(actorId, out eventProxyMap);
+            this.actorIdToEventProxyMap.TryRemove(actorId, out var eventProxyMap);
 
             return TaskDone.Done;
         }

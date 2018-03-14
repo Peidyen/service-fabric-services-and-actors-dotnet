@@ -188,8 +188,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Runtime
             return Task.Run(
                 async () =>
                 {
-                    string listenUri = await this.nativeListener.OpenAsync(cancellationToken);
-                    string publishUri = listenUri.Replace(this.listenAddress, this.publishAddress);
+                    var listenUri = await this.nativeListener.OpenAsync(cancellationToken);
+                    var publishUri = listenUri.Replace(this.listenAddress, this.publishAddress);
 
                     AppTrace.TraceSource.WriteInfo(
                         "FabricTransportServiceRemotingListener.OpenAsync",
@@ -252,8 +252,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Runtime
                 this.nativeListener = null;
             }
 
-            var disposableItem = this.messageHandler as IDisposable;
-            if (null != disposableItem)
+            if (this.messageHandler is IDisposable disposableItem)
             {
                 disposableItem.Dispose();
             }

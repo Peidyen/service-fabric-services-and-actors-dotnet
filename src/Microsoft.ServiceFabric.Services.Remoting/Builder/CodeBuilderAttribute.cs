@@ -26,7 +26,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
         internal static bool IsDebuggingEnabled(Type type = null)
         {
             var enableDebugging = false;
-            Assembly entryAssembly = Assembly.GetEntryAssembly();
+            var entryAssembly = Assembly.GetEntryAssembly();
 
             if (entryAssembly != null)
             {

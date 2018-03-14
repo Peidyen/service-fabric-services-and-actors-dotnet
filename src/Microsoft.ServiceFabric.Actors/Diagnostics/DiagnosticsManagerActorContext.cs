@@ -63,7 +63,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
         internal Stopwatch PopActorMethodStopwatch()
         {
-            Stopwatch stopwatch = this.stopwatchStack.Pop();
+            var stopwatch = this.stopwatchStack.Pop();
 
             // If we are below the target count for preallocated stopwatches then
             // maintain a reference to the stopwatch that we just popped. We'll

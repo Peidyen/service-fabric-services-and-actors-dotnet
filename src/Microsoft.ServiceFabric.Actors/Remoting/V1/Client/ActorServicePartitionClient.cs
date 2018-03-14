@@ -63,7 +63,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
                 MethodId = ActorEventSubscription.SubscribeMethodId
             };
 
-            ServiceRemotingMessageHeaders serviceMessageHeaders = headers.ToServiceMessageHeaders();
+            var serviceMessageHeaders = headers.ToServiceMessageHeaders();
             serviceMessageHeaders.InterfaceId = ActorEventSubscription.InterfaceId;
             serviceMessageHeaders.MethodId = ActorEventSubscription.SubscribeMethodId;
 
@@ -76,7 +76,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
                 }
             };
 
-            byte[] msgBodyBytes = SerializationUtility.Serialize(ActorEventSubscription.Serializer, msgBody);
+            var msgBodyBytes = SerializationUtility.Serialize(ActorEventSubscription.Serializer, msgBody);
 
             return this.InvokeWithRetryAsync(
                 client => client.RequestResponseAsync(serviceMessageHeaders, msgBodyBytes),
@@ -92,7 +92,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
                 MethodId = ActorEventSubscription.UnSubscribeMethodId
             };
 
-            ServiceRemotingMessageHeaders serviceMessageHeaders = headers.ToServiceMessageHeaders();
+            var serviceMessageHeaders = headers.ToServiceMessageHeaders();
             serviceMessageHeaders.InterfaceId = ActorEventSubscription.InterfaceId;
             serviceMessageHeaders.MethodId = ActorEventSubscription.UnSubscribeMethodId;
 
@@ -105,7 +105,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
                 }
             };
 
-            byte[] msgBodyBytes = SerializationUtility.Serialize(ActorEventSubscription.Serializer, msgBody);
+            var msgBodyBytes = SerializationUtility.Serialize(ActorEventSubscription.Serializer, msgBody);
 
             return this.InvokeWithRetryAsync(
                 client => client.RequestResponseAsync(serviceMessageHeaders, msgBodyBytes),
@@ -116,7 +116,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
             ActorMessageHeaders headers, byte[] requestMsgBody,
             CancellationToken cancellationToken)
         {
-            ServiceRemotingMessageHeaders serviceMessageHeaders = headers.ToServiceMessageHeaders();
+            var serviceMessageHeaders = headers.ToServiceMessageHeaders();
             serviceMessageHeaders.InterfaceId = ActorMessageDispatch.InterfaceId;
 
             return this.InvokeAsync(

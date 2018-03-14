@@ -71,10 +71,10 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             actorServiceFactory.ThrowIfNull("actorServiceFactory");
 
-            Type actorType = typeof(TActor);
-            Type actorServiceType = actorServiceFactory.GetMethodInfo().ReturnType;
-            ActorTypeInformation actorTypeInformation = ActorTypeInformation.Get(actorType);
-            string serviceTypeName = ActorNameFormat.GetFabricServiceTypeName(actorTypeInformation.ImplementationType);
+            var actorType = typeof(TActor);
+            var actorServiceType = actorServiceFactory.GetMethodInfo().ReturnType;
+            var actorTypeInformation = ActorTypeInformation.Get(actorType);
+            var serviceTypeName = ActorNameFormat.GetFabricServiceTypeName(actorTypeInformation.ImplementationType);
 
             try
             {

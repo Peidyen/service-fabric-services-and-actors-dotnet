@@ -19,17 +19,16 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Runtime
         {
             this.map = new Dictionary<int, ActorMethodDispatcherBase>();
 
-            foreach (Type actorInterfaceType in actorTypeInformation.InterfaceTypes)
+            foreach (var actorInterfaceType in actorTypeInformation.InterfaceTypes)
             {
-                ActorMethodDispatcherBase methodDispatcher = ActorCodeBuilder.GetOrCreateMethodDispatcher(actorInterfaceType);
+                var methodDispatcher = ActorCodeBuilder.GetOrCreateMethodDispatcher(actorInterfaceType);
                 this.map.Add(methodDispatcher.InterfaceId, methodDispatcher);
             }
         }
 
         public ActorMethodDispatcherBase GetDispatcher(int interfaceId, int methodId)
         {
-            ActorMethodDispatcherBase methodDispatcher;
-            if (!this.map.TryGetValue(interfaceId, out methodDispatcher))
+            if (!this.map.TryGetValue(interfaceId, out var methodDispatcher))
             {
                 throw new KeyNotFoundException(
                     string.Format(

@@ -23,7 +23,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             var result = new List<Type>();
             if (this.MethodBodyTypesMap != null)
             {
-                foreach (KeyValuePair<string, MethodBodyTypes> item in this.MethodBodyTypesMap)
+                foreach (var item in this.MethodBodyTypesMap)
                 {
                     if (item.Value.RequestBodyType != null)
                     {
@@ -40,7 +40,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             var result = new List<Type>();
             if (this.MethodBodyTypesMap != null)
             {
-                foreach (KeyValuePair<string, MethodBodyTypes> item in this.MethodBodyTypesMap)
+                foreach (var item in this.MethodBodyTypesMap)
                 {
                     if (item.Value.ResponseBodyType != null)
                     {

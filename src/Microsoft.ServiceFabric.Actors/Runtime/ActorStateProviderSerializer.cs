@@ -23,13 +23,13 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         internal byte[] Serialize<T>(Type stateType, T state)
         {
-            DataContractSerializer serializer = this.actorStateSerializerCache.GetOrAdd(
+            var serializer = this.actorStateSerializerCache.GetOrAdd(
                 stateType,
                 CreateDataContractSerializer);
 
             using (var stream = new MemoryStream())
             {
-                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
+                using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
                 {
                     serializer.WriteObject(writer, state);
                     writer.Flush();
@@ -45,13 +45,13 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 return default(T);
             }
 
-            DataContractSerializer serializer = this.actorStateSerializerCache.GetOrAdd(
+            var serializer = this.actorStateSerializerCache.GetOrAdd(
                 typeof(T),
                 CreateDataContractSerializer);
 
             using (var stream = new MemoryStream(buffer))
             {
-                using (XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
+                using (var reader = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
                 {
                     return (T) serializer.ReadObject(reader);
                 }

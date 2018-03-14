@@ -179,7 +179,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             var types = new List<Type> {this.ActorTypeInformation.ImplementationType};
             types.AddRange(this.ActorTypeInformation.InterfaceTypes);
 
-            ActorRemotingProviderAttribute provider = ActorRemotingProviderAttribute.GetProvider(types);
+            var provider = ActorRemotingProviderAttribute.GetProvider(types);
 
 #if !DotNetCoreClr
             if (provider.RemotingListener.Equals(RemotingListener.V2Listener))

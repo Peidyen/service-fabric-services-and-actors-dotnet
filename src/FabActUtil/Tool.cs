@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------
+// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
@@ -19,7 +19,7 @@ namespace FabActUtil
         public static void Run(ToolArguments arguments)
         {
             // create tool context
-            var context = new ToolContext {Arguments = arguments};
+            var context = new ToolContext { Arguments = arguments };
 
             // process the arguments
             ProcessArguments(context);
@@ -116,8 +116,8 @@ namespace FabActUtil
 
         private static void LoadActors(ToolContext context)
         {
-            Assembly inputAssembly = context.InputAssembly;
-            IList<ActorTypeInformation> actorTypes = context.ActorTypes;
+            var inputAssembly = context.InputAssembly;
+            var actorTypes = context.ActorTypes;
             IList<string> actorFilters = null;
 
             if (context.Arguments.Actors != null && context.Arguments.Actors.Length > 0)
@@ -144,14 +144,14 @@ namespace FabActUtil
             IList<ActorTypeInformation> actorTypes)
         {
             var actorTypeInfoTable = new Dictionary<Type, ActorTypeInformation>();
-            foreach (Type t in inputAssembly.GetTypes())
+            foreach (var t in inputAssembly.GetTypes())
             {
                 if (!t.IsActor())
                 {
                     continue;
                 }
 
-                ActorTypeInformation actorTypeInformation = ActorTypeInformation.Get(t);
+                var actorTypeInformation = ActorTypeInformation.Get(t);
                 if (actorTypeInformation.IsAbstract)
                 {
                     continue;
@@ -176,7 +176,7 @@ namespace FabActUtil
         private static void CheckForDuplicateFabricServiceName(
             IDictionary<Type, ActorTypeInformation> actorTypeInfoTable, ActorTypeInformation actorTypeInformation)
         {
-            foreach (Type actorTypeInterface in actorTypeInformation.InterfaceTypes)
+            foreach (var actorTypeInterface in actorTypeInformation.InterfaceTypes)
             {
                 if (actorTypeInfoTable.ContainsKey(actorTypeInterface))
                 {
@@ -243,7 +243,7 @@ namespace FabActUtil
 
         private static string GetToolPath()
         {
-            string codeBase = Assembly.GetEntryAssembly().CodeBase;
+            var codeBase = Assembly.GetEntryAssembly().CodeBase;
             var uri = new UriBuilder(codeBase);
             return Uri.UnescapeDataString(uri.Path);
         }

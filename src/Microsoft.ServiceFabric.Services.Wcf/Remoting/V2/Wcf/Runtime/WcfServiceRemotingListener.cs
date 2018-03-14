@@ -232,8 +232,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Runtime
 
         private void DisposeIfNeeded()
         {
-            var disposableItem = this.messageHandler as IDisposable;
-            if (null != disposableItem)
+            if (this.messageHandler is IDisposable disposableItem)
             {
                 disposableItem.Dispose();
             }
@@ -310,19 +309,19 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Runtime
                 IMessageHeader outgoingMessageHeader = null;
                 try
                 {
-                    IServiceRemotingMessageHeaderSerializer headerSerializer = this.serializersManager.GetHeaderSerializer();
-                    IServiceRemotingRequestMessageHeader deSerializedHeader =
+                    var headerSerializer = this.serializersManager.GetHeaderSerializer();
+                    var deSerializedHeader =
                         headerSerializer.DeserializeRequestHeaders(
                             new IncomingMessageHeader(new SegmentedReadMemoryStream(messageHeaders)));
 
-                    IServiceRemotingRequestMessageBodySerializer msgBodySerializer =
+                    var msgBodySerializer =
                         this.serializersManager.GetRequestBodySerializer(deSerializedHeader.InterfaceId);
-                    IServiceRemotingRequestMessageBody deserializedMsg =
+                    var deserializedMsg =
                         msgBodySerializer.Deserialize(
                             new IncomingMessageBody(new SegmentedReadMemoryStream(requestBody)));
 
                     var msg = new ServiceRemotingRequestMessage(deSerializedHeader, deserializedMsg);
-                    IServiceRemotingResponseMessage retval = await
+                    var retval = await
                         this.messageHandler.HandleRequestResponseAsync(
                             this.requestContext,
                             msg);
@@ -334,7 +333,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Runtime
 
                     outgoingMessageHeader = headerSerializer.SerializeResponseHeader(retval.GetHeader());
 
-                    IServiceRemotingResponseMessageBodySerializer responseSerializer =
+                    var responseSerializer =
                         this.serializersManager.GetResponseBodySerializer(deSerializedHeader.InterfaceId);
 
                     outgoingMessageBody = responseSerializer.Serialize(retval.GetBody());

@@ -75,7 +75,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         internal void ArmTimer(TimeSpan newDueTime)
         {
-            Timer snap = this.timer;
+            var snap = this.timer;
             if (snap != null)
             {
                 try

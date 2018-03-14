@@ -30,7 +30,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Description
 
         internal static MethodArgumentDescription Create(string remotedInterfaceKindName, MethodInfo methodInfo, ParameterInfo parameter)
         {
-            Type remotedInterfaceType = methodInfo.DeclaringType;
+            var remotedInterfaceType = methodInfo.DeclaringType;
             EnsureNotOutRefOptional(remotedInterfaceKindName, remotedInterfaceType, methodInfo, parameter);
             EnsureNotVariableLength(remotedInterfaceKindName, remotedInterfaceType, methodInfo, parameter);
 

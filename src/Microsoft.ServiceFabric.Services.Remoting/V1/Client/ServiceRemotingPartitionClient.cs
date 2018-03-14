@@ -66,11 +66,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Client
 
             using (cancellationToken.Register(() => tcs.TrySetResult(false)))
             {
-                Task<byte[]> innerTask = this.InvokeWithRetryAsync(
+                var innerTask = this.InvokeWithRetryAsync(
                     client => client.RequestResponseAsync(headers, requestMsgBody),
                     cancellationToken);
 
-                Task completedTask = await Task.WhenAny(innerTask, tcs.Task);
+                var completedTask = await Task.WhenAny(innerTask, tcs.Task);
 
                 if (completedTask != innerTask)
                 {
@@ -101,7 +101,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Client
                         //
                         var remoteCancellationTaskCts = new CancellationTokenSource();
 
-                        Task<byte[]> remoteCancellationTask = this.InvokeWithRetryAsync(
+                        var remoteCancellationTask = this.InvokeWithRetryAsync(
                             client => client.RequestResponseAsync(headers, requestMsgBody),
                             remoteCancellationTaskCts.Token);
 
@@ -113,7 +113,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Client
                         // task or actual request task to finish.
                         //
 
-                        Task<byte[]> finishedTask = await Task.WhenAny(innerTask, remoteCancellationTask);
+                        var finishedTask = await Task.WhenAny(innerTask, remoteCancellationTask);
 
                         if (finishedTask != innerTask)
                         {

@@ -17,7 +17,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         internal static byte[] Serialize(ReminderCompletedData reminderCompletedData)
         {
-            int dataSizeInBytes = ComputeSizeInBytes(reminderCompletedData);
+            var dataSizeInBytes = ComputeSizeInBytes(reminderCompletedData);
 
             using (var stream = new MemoryStream(dataSizeInBytes))
             {
@@ -53,7 +53,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             {
                 using (var reader = new BinaryReader(stream, DataEncoding))
                 {
-                    ushort dataVersion = reader.ReadUInt16();
+                    var dataVersion = reader.ReadUInt16();
                     ReleaseAssert.AssertIfNot(dataVersion >= DataVersionOne, "Invalid data version: {0}", dataVersion);
 
                     if (reader.ReadByte() == BinaryReaderWriterExtensions.NullPrefixByte)
@@ -68,7 +68,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private static int ComputeSizeInBytes(ReminderCompletedData reminderCompletedData)
         {
-            int size = sizeof(ushort); // Data version
+            var size = sizeof(ushort); // Data version
             size += sizeof(byte); // Null value indicator prefix
 
             if (reminderCompletedData != null)

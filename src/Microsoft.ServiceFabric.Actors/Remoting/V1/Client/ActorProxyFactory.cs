@@ -66,8 +66,8 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
             ActorId actorId,
             string listenerName = null) where TActorInterface : IActor
         {
-            Type actorInterfaceType = typeof(TActorInterface);
-            ActorProxyGeneratorWith proxyGenerator = ActorCodeBuilder.GetOrCreateProxyGenerator(actorInterfaceType);
+            var actorInterfaceType = typeof(TActorInterface);
+            var proxyGenerator = ActorCodeBuilder.GetOrCreateProxyGenerator(actorInterfaceType);
             var actorServicePartitionClient = new ActorServicePartitionClient(
                 this.GetOrCreateServiceRemotingClientFactory(actorInterfaceType),
                 serviceUri,
@@ -120,8 +120,8 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
                 applicationName = ActorNameFormat.GetCurrentFabricApplicationName();
             }
 
-            Type actorInterfaceType = typeof(TActorInterface);
-            Uri serviceUri = ActorNameFormat.GetFabricServiceUri(actorInterfaceType, applicationName, serviceName);
+            var actorInterfaceType = typeof(TActorInterface);
+            var serviceUri = ActorNameFormat.GetFabricServiceUri(actorInterfaceType, applicationName, serviceName);
             return this.CreateActorProxy<TActorInterface>(serviceUri, actorId, listenerName);
         }
 
@@ -171,8 +171,8 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
             long partitionKey,
             string listenerName = null) where TServiceInterface : IService
         {
-            Type serviceInterfaceType = typeof(TServiceInterface);
-            ServiceProxyGeneratorWith proxyGenerator = ServiceCodeBuilder.GetOrCreateProxyGenerator(serviceInterfaceType);
+            var serviceInterfaceType = typeof(TServiceInterface);
+            var proxyGenerator = ServiceCodeBuilder.GetOrCreateProxyGenerator(serviceInterfaceType);
             var serviceRemotingPartitionClient = new ServiceRemotingPartitionClient(
                 this.GetOrCreateServiceRemotingClientFactory(serviceInterfaceType),
                 serviceUri,
@@ -207,7 +207,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
             ActorId actorId,
             string listenerName = null)
         {
-            ActorProxyGeneratorWith proxyGenerator = ActorCodeBuilder.GetOrCreateProxyGenerator(actorInterfaceType);
+            var proxyGenerator = ActorCodeBuilder.GetOrCreateProxyGenerator(actorInterfaceType);
             var actorServicePartitionClient = new ActorServicePartitionClient(
                 this.GetOrCreateServiceRemotingClientFactory(actorInterfaceType),
                 serviceUri,
@@ -220,7 +220,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
 
         private IServiceRemotingClientFactory CreateServiceRemotingClientFactory(Type actorInterfaceType)
         {
-            IServiceRemotingClientFactory factory = this.CreateServiceRemotingClientFactory(ActorEventSubscriberManager.Singleton);
+            var factory = this.CreateServiceRemotingClientFactory(ActorEventSubscriberManager.Singleton);
             if (factory == null)
             {
                 throw new NotSupportedException("ClientFactory can't be null");

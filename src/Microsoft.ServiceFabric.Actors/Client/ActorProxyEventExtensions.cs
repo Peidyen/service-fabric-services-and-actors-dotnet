@@ -58,7 +58,7 @@ namespace Microsoft.ServiceFabric.Actors.Client
                 throw new ArgumentException(SR.ActorProxyOnlyMethod, "actorProxy");
             }
 
-            Type eventInterfaceType = GetEventInterface(typeof(TEvent));
+            var eventInterfaceType = GetEventInterface(typeof(TEvent));
             if (eventInterfaceType == null)
             {
                 throw new ArgumentException(SR.ErrorEventInterface);
@@ -87,7 +87,7 @@ namespace Microsoft.ServiceFabric.Actors.Client
                 throw new ArgumentException(SR.ActorProxyOnlyMethod, "actorProxy");
             }
 
-            Type eventInterfaceType = GetEventInterface(typeof(TEvent));
+            var eventInterfaceType = GetEventInterface(typeof(TEvent));
             if (eventInterfaceType == null)
             {
                 throw new ArgumentException(SR.ErrorEventInterface);

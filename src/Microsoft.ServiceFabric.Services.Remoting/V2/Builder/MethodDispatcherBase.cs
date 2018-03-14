@@ -40,7 +40,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Builder
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            Task<IServiceRemotingResponseMessageBody> dispatchTask = this.OnDispatchAsync(
+            var dispatchTask = this.OnDispatchAsync(
                 methodId,
                 objectImplementation,
                 requestBody,
@@ -90,7 +90,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Builder
         protected IServiceRemotingResponseMessageBody CreateResponseMessageBody(
             string interfaceName, string methodName, IServiceRemotingMessageBodyFactory remotingMessageBodyFactory, object response)
         {
-            IServiceRemotingResponseMessageBody msg = remotingMessageBodyFactory.CreateResponse(interfaceName, methodName);
+            var msg = remotingMessageBodyFactory.CreateResponse(interfaceName, methodName);
             msg.Set(response);
             return msg;
         }

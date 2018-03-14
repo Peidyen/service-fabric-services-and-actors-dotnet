@@ -103,8 +103,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             if (this.isRunning)
             {
-                TimeSpan elapsed = this.stopwatch.Elapsed;
-                TimeSpan delay = elapsed > this.snapshotInterval ? TimeSpan.Zero : this.snapshotInterval - elapsed;
+                var elapsed = this.stopwatch.Elapsed;
+                var delay = elapsed > this.snapshotInterval ? TimeSpan.Zero : this.snapshotInterval - elapsed;
                 this.timer.Change(delay, TimeSpan.FromMilliseconds(-1));
             }
             else
@@ -123,7 +123,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             using (this.rwLock.AcquireWriteLock())
             {
-                TimeSpan snapshot = this.GetCurrentLogicalTime_CallerHoldsLock();
+                var snapshot = this.GetCurrentLogicalTime_CallerHoldsLock();
                 this.lastSnapshot = snapshot;
                 this.stopwatch.Restart();
 

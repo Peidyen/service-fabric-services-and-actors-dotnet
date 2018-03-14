@@ -143,7 +143,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             TimeSpan period,
             bool saveState = true)
         {
-            ConcurrentDictionary<string, ActorReminder> reminderDictionary = this.remindersByActorId.GetOrAdd(
+            var reminderDictionary = this.remindersByActorId.GetOrAdd(
                 actorId,
                 k => new ConcurrentDictionary<string, ActorReminder>());
 
@@ -178,12 +178,10 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public IActorReminder GetReminder(string reminderName, ActorId actorId)
         {
-            ConcurrentDictionary<string, ActorReminder> actorReminders;
 
-            if (this.remindersByActorId.TryGetValue(actorId, out actorReminders))
+            if (this.remindersByActorId.TryGetValue(actorId, out var actorReminders))
             {
-                ActorReminder reminder;
-                if (actorReminders.TryGetValue(reminderName, out reminder))
+                if (actorReminders.TryGetValue(reminderName, out var reminder))
                 {
                     return reminder;
                 }
@@ -203,12 +201,10 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 await this.StateProvider.DeleteReminderAsync(actorId, reminderName);
             }
 
-            ConcurrentDictionary<string, ActorReminder> actorReminders;
 
-            if (this.remindersByActorId.TryGetValue(actorId, out actorReminders))
+            if (this.remindersByActorId.TryGetValue(actorId, out var actorReminders))
             {
-                ActorReminder reminder;
-                if (actorReminders.TryRemove(reminderName, out reminder))
+                if (actorReminders.TryRemove(reminderName, out var reminder))
                 {
                     reminder.Dispose();
                 }

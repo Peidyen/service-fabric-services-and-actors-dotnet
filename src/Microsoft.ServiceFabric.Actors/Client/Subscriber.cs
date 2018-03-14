@@ -31,7 +31,7 @@ namespace Microsoft.ServiceFabric.Actors.Client
 
         public override int GetHashCode()
         {
-            int hash = this.ActorId.GetHashCode();
+            var hash = this.ActorId.GetHashCode();
             hash = IdUtil.HashCombine(hash, this.EventId.GetHashCode());
             return IdUtil.HashCombine(hash, this.Instance.GetHashCode());
         }

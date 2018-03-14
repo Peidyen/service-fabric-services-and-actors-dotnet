@@ -21,8 +21,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting
 
         public static Type[] GetAllBaseInterfaces(this Type serviceType)
         {
-            var list = new List<Type>(serviceType.GetInterfaces());
-            list.Add(serviceType);
+            var list = new List<Type>(serviceType.GetInterfaces())
+            {
+                serviceType
+            };
             return list.ToArray();
         }
 
@@ -37,10 +39,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting
                 return type;
             }
 
-            foreach (Type t in list)
+            foreach (var t in list)
             {
                 // if parent interface did not inherit from IService (directly or indirectly), return that interface.
-                Type nonServiceParent = GetNonServiceParentInterface(t);
+                var nonServiceParent = GetNonServiceParentInterface(t);
                 if (nonServiceParent != null)
                 {
                     return nonServiceParent;

@@ -91,7 +91,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting
         {
             if (types != null)
             {
-                foreach (Type t in types)
+                foreach (var t in types)
                 {
                     var attribute = t.GetTypeInfo().Assembly.GetCustomAttribute<ActorRemotingProviderAttribute>();
                     if (attribute != null)
@@ -101,7 +101,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting
                 }
             }
 
-            Assembly assembly = Assembly.GetEntryAssembly();
+            var assembly = Assembly.GetEntryAssembly();
             if (assembly != null)
             {
                 var attribute = assembly.GetCustomAttribute<ActorRemotingProviderAttribute>();

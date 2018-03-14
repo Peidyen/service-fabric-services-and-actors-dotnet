@@ -44,8 +44,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             this.traceId = this.Manager.GetActorTraceId(actorId);
             this.ConcurrencyLock = new ActorConcurrencyLock(this, this.ActorService.Settings.ActorConcurrencySettings);
 
-            ActorGarbageCollectionSettings gcSettings = this.Manager.ActorService.Settings.ActorGarbageCollectionSettings;
-            long maxIdleTicks = gcSettings.IdleTimeoutInSeconds / gcSettings.ScanIntervalInSeconds;
+            var gcSettings = this.Manager.ActorService.Settings.ActorGarbageCollectionSettings;
+            var maxIdleTicks = gcSettings.IdleTimeoutInSeconds / gcSettings.ScanIntervalInSeconds;
             this.GcHandler = new IdleObjectGcHandle(maxIdleTicks);
         }
 
@@ -334,10 +334,10 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             this.Manager.TraceSource.WriteInfoWithId(TraceType, this.traceId, "Deactivating ...");
             if (this.timers != null)
             {
-                IActorTimer[] toDispose = this.timers.ToArray();
+                var toDispose = this.timers.ToArray();
                 this.timers.Clear();
 
-                foreach (IActorTimer t in toDispose)
+                foreach (var t in toDispose)
                 {
                     t.Dispose();
                 }

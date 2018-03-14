@@ -21,9 +21,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
                 .Should()
                 .BeNull("ActorReminderData is null");
 
-            foreach (ActorReminderData data in GetActorReminderList())
+            foreach (var data in GetActorReminderList())
             {
-                ActorReminderData deserializedData =
+                var deserializedData =
                     ActorReminderDataSerializer.Deserialize(ActorReminderDataSerializer.Serialize(data));
 
                 deserializedData.ActorId.Should().Be(data.ActorId);
@@ -54,7 +54,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
                 .BeNull("Null ReminderCompletedDataSerializer serialization");
 
             var data = new ReminderCompletedData(TimeSpan.MinValue, DateTime.MaxValue);
-            ReminderCompletedData deserializedData = ReminderCompletedDataSerializer.Deserialize(ReminderCompletedDataSerializer.Serialize(data));
+            var deserializedData = ReminderCompletedDataSerializer.Deserialize(ReminderCompletedDataSerializer.Serialize(data));
 
             deserializedData.LogicalTime.Should().Be(data.LogicalTime, "ReminderCompletedData.LogicalTime.");
             deserializedData.UtcTime.Should().Be(data.UtcTime, "ReminderCompletedData.UtcTime.");
@@ -69,7 +69,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
                 .BeNull("Null LogicalTimestampSerializer serialization");
 
             var data = new LogicalTimestamp(TimeSpan.MaxValue);
-            LogicalTimestamp deserializedData = LogicalTimestampSerializer.Deserialize(LogicalTimestampSerializer.Serialize(data));
+            var deserializedData = LogicalTimestampSerializer.Deserialize(LogicalTimestampSerializer.Serialize(data));
 
             deserializedData.Timestamp.Should().Be(data.Timestamp, "LogicalTimestamp.Timestamp serialization.");
         }
@@ -82,11 +82,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
 
             var actorReminderDataList = new List<ActorReminderData>();
 
-            foreach (ActorId actorId in actorIds)
+            foreach (var actorId in actorIds)
             {
-                foreach (string reminderName in reminderNames)
+                foreach (var reminderName in reminderNames)
                 {
-                    foreach (byte[] reminderState in reminderStates)
+                    foreach (var reminderState in reminderStates)
                     {
                         actorReminderDataList.Add(
                             new ActorReminderData(actorId, reminderName, TimeSpan.MaxValue, TimeSpan.MinValue, reminderState, TimeSpan.Zero));

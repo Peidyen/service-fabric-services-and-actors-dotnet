@@ -25,10 +25,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Client
 
         public void OneWayMessage(FabricTransportMessage message)
         {
-            IServiceRemotingMessageHeaderSerializer headerSerializer = this.manager.GetHeaderSerializer();
-            IServiceRemotingRequestMessageHeader deserializerHeaders =
+            var headerSerializer = this.manager.GetHeaderSerializer();
+            var deserializerHeaders =
                 headerSerializer.DeserializeRequestHeaders(new IncomingMessageHeader(message.GetHeader().GetRecievedStream()));
-            IServiceRemotingRequestMessageBodySerializer msgBodySerializer = this.manager.GetRequestBodySerializer(deserializerHeaders.InterfaceId);
+            var msgBodySerializer = this.manager.GetRequestBodySerializer(deserializerHeaders.InterfaceId);
             IServiceRemotingRequestMessageBody deserializedMsgBody;
             if (message.GetBody() != null)
             {

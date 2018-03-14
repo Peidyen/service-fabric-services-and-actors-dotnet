@@ -61,7 +61,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             serviceInterfaces.AddRange(interfaceType.GetServiceInterfaces());
 
             // create interface descriptions for all interfaces
-            IEnumerable<InterfaceDescription> servicenterfaceDescriptions = serviceInterfaces.Select<Type, InterfaceDescription>(
+            var servicenterfaceDescriptions = serviceInterfaces.Select<Type, InterfaceDescription>(
                 t => ServiceInterfaceDescription.Create(t));
 
             return this.proxyGeneratorBuilder.Build(interfaceType, servicenterfaceDescriptions);

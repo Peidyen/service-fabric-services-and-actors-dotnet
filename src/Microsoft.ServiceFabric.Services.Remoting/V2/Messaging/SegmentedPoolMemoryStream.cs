@@ -1,6 +1,6 @@
 // ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
@@ -81,7 +81,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 throw new ArgumentNullException("buffer");
             }
 
-            if (offset + count > buffer.Length)
+            if ((offset + count) > buffer.Length)
             {
                 throw new ArgumentException("buffer too small", "buffer");
             }
@@ -96,8 +96,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 throw new ArgumentException("count must be >= 0", "count");
             }
 
-
-            int i = this.currentBufferOffset + count;
+            var i = this.currentBufferOffset + count;
 
             if (i <= this.bufferSize)
             {
@@ -113,7 +112,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 return;
             }
 
-            int bytesLeft = count;
+            var bytesLeft = count;
 
             while (bytesLeft > 0)
             {
@@ -128,7 +127,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                     this.currentBufferOffset = 0;
                 }
 
-                int bytesToCopy = this.currentBufferOffset + bytesLeft <= this.bufferSize
+                var bytesToCopy = (this.currentBufferOffset + bytesLeft) <= this.bufferSize
                     ? bytesLeft
                     : this.bufferSize - this.currentBufferOffset;
 
@@ -150,7 +149,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
 
         public override void WriteByte(byte value)
         {
-            int i = this.currentBufferOffset + 1;
+            var i = this.currentBufferOffset + 1;
 
             if (i > this.bufferSize)
             {

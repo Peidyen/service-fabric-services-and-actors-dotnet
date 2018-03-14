@@ -112,14 +112,14 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Client
             TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null)
             where TServiceInterface : IService
         {
-            Type serviceInterfaceType = typeof(TServiceInterface);
+            var serviceInterfaceType = typeof(TServiceInterface);
 
 #if !DotNetCoreClr
 
             //Use provider to find the stack
             if (this.proxyFactoryV1 == null && this.proxyFactoryV2 == null)
             {
-                ServiceRemotingProviderAttribute provider = this.GetProviderAttribute(serviceInterfaceType);
+                var provider = this.GetProviderAttribute(serviceInterfaceType);
                 if (provider.RemotingClient.Equals(RemotingClient.V2Client))
                 {
                     //We are overriding listenerName since using provider we can have multiple listener configured(Compat Mode).
@@ -212,11 +212,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Client
             ServicePartitionKey partitionKey = null,
             TargetReplicaSelector targetReplicaSelector = TargetReplicaSelector.Default, string listenerName = null)
         {
-            Type serviceInterfaceType = typeof(TServiceInterface);
+            var serviceInterfaceType = typeof(TServiceInterface);
 
             if (this.proxyFactoryV2 == null)
             {
-                ServiceRemotingProviderAttribute provider = this.GetProviderAttribute(serviceInterfaceType);
+                var provider = this.GetProviderAttribute(serviceInterfaceType);
 
                 this.proxyFactoryV2 = new V2.Client.ServiceProxyFactory(provider.CreateServiceRemotingClientFactoryV2, this.retrySettings);
             }

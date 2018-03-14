@@ -197,7 +197,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport.Runtime
             string sectionName,
             string configPackageName = null)
         {
-            FabricTransportListenerSettings listenerSettings = FabricTransportListenerSettings.LoadFrom(sectionName, configPackageName);
+            var listenerSettings = FabricTransportListenerSettings.LoadFrom(sectionName, configPackageName);
             return new FabricTransportRemotingListenerSettings(listenerSettings);
         }
 
@@ -235,10 +235,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport.Runtime
             out FabricTransportRemotingListenerSettings remotingListenerSettings,
             string configPackageName = null)
         {
-            FabricTransportListenerSettings listenerSettings;
-            bool isSucceded = FabricTransportListenerSettings.TryLoadFrom(
+            var isSucceded = FabricTransportListenerSettings.TryLoadFrom(
                 sectionName,
-                out listenerSettings,
+                out var listenerSettings,
                 configPackageName);
             if (isSucceded)
             {
@@ -267,7 +266,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport.Runtime
         internal static FabricTransportRemotingListenerSettings GetDefault(
             string sectionName = FabricTransportSettings.DefaultSectionName)
         {
-            FabricTransportListenerSettings listenerinternalSettings = FabricTransportListenerSettings.GetDefault(sectionName);
+            var listenerinternalSettings = FabricTransportListenerSettings.GetDefault(sectionName);
 
             var settings = new FabricTransportRemotingListenerSettings(listenerinternalSettings);
 

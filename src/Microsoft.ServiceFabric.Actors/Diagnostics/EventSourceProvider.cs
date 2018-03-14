@@ -51,14 +51,12 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             this.actorMethodInfo = new Dictionary<long, ActorMethodInfo>();
 
-            foreach (Type actorInterfaceType in this.actorTypeInformation.InterfaceTypes)
+            foreach (var actorInterfaceType in this.actorTypeInformation.InterfaceTypes)
             {
-                int interfaceId;
-                MethodDescription[] actorInterfaceMethodDescriptions;
                 diagnosticsEventManager.ActorMethodFriendlyNameBuilder.GetActorInterfaceMethodDescriptions(
                     actorInterfaceType,
-                    out interfaceId,
-                    out actorInterfaceMethodDescriptions);
+                    out var interfaceId,
+                    out var actorInterfaceMethodDescriptions);
                 this.InitializeActorMethodInfo(actorInterfaceMethodDescriptions, interfaceId, this.actorMethodInfo);
             }
         }
@@ -67,16 +65,16 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             MethodDescription[] actorInterfaceMethodDescriptions, int interfaceId,
             Dictionary<long, ActorMethodInfo> actorMethodInfos)
         {
-            foreach (MethodDescription actorInterfaceMethodDescription in actorInterfaceMethodDescriptions)
+            foreach (var actorInterfaceMethodDescription in actorInterfaceMethodDescriptions)
             {
-                MethodInfo methodInfo = actorInterfaceMethodDescription.MethodInfo;
+                var methodInfo = actorInterfaceMethodDescription.MethodInfo;
                 var ami = new ActorMethodInfo
                 {
                     MethodName = string.Concat(methodInfo.DeclaringType.Name, ".", methodInfo.Name),
                     MethodSignature = actorInterfaceMethodDescription.MethodInfo.ToString()
                 };
 
-                long key =
+                var key =
                     DiagnosticsEventManager.GetInterfaceMethodKey(
                         (uint) interfaceId,
                         (uint) actorInterfaceMethodDescription.Id);
@@ -86,7 +84,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
         internal virtual ActorMethodInfo GetActorMethodInfo(long key, RemotingListener remotingListener)
         {
-            ActorMethodInfo methodInfo = this.actorMethodInfo[key];
+            var methodInfo = this.actorMethodInfo[key];
             return methodInfo;
         }
 
@@ -104,7 +102,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
         private void OnActorActivated(ActivationDiagnosticData activationData)
         {
-            ActorId actorId = activationData.ActorId;
+            var actorId = activationData.ActorId;
             this.writer.ActorActivated(
                 this.actorType,
                 actorId,
@@ -113,7 +111,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
         private void OnActorDeactivated(ActivationDiagnosticData activationData)
         {
-            ActorId actorId = activationData.ActorId;
+            var actorId = activationData.ActorId;
             this.writer.ActorDeactivated(
                 this.actorType,
                 actorId,
@@ -124,8 +122,8 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             if (this.writer.IsActorMethodStartEventEnabled())
             {
-                ActorId actorId = methodData.ActorId;
-                ActorMethodInfo methodInfo = this.GetActorMethodInfo(methodData.InterfaceMethodKey, methodData.RemotingListener);
+                var actorId = methodData.ActorId;
+                var methodInfo = this.GetActorMethodInfo(methodData.InterfaceMethodKey, methodData.RemotingListener);
                 this.writer.ActorMethodStart(
                     methodInfo.MethodName,
                     methodInfo.MethodSignature,
@@ -142,8 +140,8 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             {
                 if (this.writer.IsActorMethodStopEventEnabled())
                 {
-                    ActorId actorId = methodData.ActorId;
-                    ActorMethodInfo methodInfo = this.GetActorMethodInfo(methodData.InterfaceMethodKey, methodData.RemotingListener);
+                    var actorId = methodData.ActorId;
+                    var methodInfo = this.GetActorMethodInfo(methodData.InterfaceMethodKey, methodData.RemotingListener);
                     this.writer.ActorMethodStop(
                         methodData.MethodExecutionTime.Value.Ticks,
                         methodInfo.MethodName,
@@ -155,8 +153,8 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             }
             else
             {
-                ActorId actorId = methodData.ActorId;
-                ActorMethodInfo methodInfo = this.GetActorMethodInfo(methodData.InterfaceMethodKey, methodData.RemotingListener);
+                var actorId = methodData.ActorId;
+                var methodInfo = this.GetActorMethodInfo(methodData.InterfaceMethodKey, methodData.RemotingListener);
                 this.writer.ActorMethodThrewException(
                     methodData.Exception.ToString(),
                     methodData.MethodExecutionTime.Value.Ticks,
@@ -172,7 +170,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             if (this.writer.IsPendingMethodCallsEventEnabled())
             {
-                ActorId actorId = pendingMethodData.ActorId;
+                var actorId = pendingMethodData.ActorId;
                 this.writer.ActorMethodCallsWaitingForLock(
                     pendingMethodData.PendingActorMethodCalls,
                     this.actorType,
@@ -185,7 +183,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             if (this.writer.IsActorSaveStateStartEventEnabled())
             {
-                ActorId actorId = stateData.ActorId;
+                var actorId = stateData.ActorId;
                 this.writer.ActorSaveStateStart(
                     this.actorType,
                     actorId,
@@ -197,7 +195,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             if (this.writer.IsActorSaveStateStopEventEnabled())
             {
-                ActorId actorId = stateData.ActorId;
+                var actorId = stateData.ActorId;
                 this.writer.ActorSaveStateStop(
                     // ReSharper disable once PossibleInvalidOperationException
                     stateData.OperationTime.Value.Ticks,

@@ -103,7 +103,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             this.servicePartition = partition;
             this.userServiceReplica.Partition = partition;
 
-            IReplicator replicator = await this.stateProviderReplica.OpenAsync(openMode, partition, cancellationToken);
+            var replicator = await this.stateProviderReplica.OpenAsync(openMode, partition, cancellationToken);
 
             Exception userReplicaEx = null;
             try
@@ -259,7 +259,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
         /// </summary>
         private async Task ExecuteRunAsync(CancellationToken runAsyncCancellationToken)
         {
-            bool writeStatusGranted = await this.WaitForWriteStatusAsync(runAsyncCancellationToken);
+            var writeStatusGranted = await this.WaitForWriteStatusAsync(runAsyncCancellationToken);
 
             // 'writeStatusGranted' will be false only when:
             // 1) This replica is no longer primary.
@@ -492,18 +492,18 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             var endpointsCollection = new ServiceEndpointCollection();
             var listenerOpenedCount = 0;
 
-            foreach (ServiceReplicaListener entry in this.replicaListeners)
+            foreach (var entry in this.replicaListeners)
             {
                 if (replicaRole == ReplicaRole.Primary ||
                     replicaRole == ReplicaRole.ActiveSecondary && entry.ListenOnSecondary)
                 {
-                    ICommunicationListener communicationListener = entry.CreateCommunicationListener(this.serviceContext);
+                    var communicationListener = entry.CreateCommunicationListener(this.serviceContext);
                     this.AddCommunicationListener(communicationListener);
-                    string endpointAddress = await communicationListener.OpenAsync(cancellationToken);
+                    var endpointAddress = await communicationListener.OpenAsync(cancellationToken);
                     endpointsCollection.AddEndpoint(entry.Name, endpointAddress);
                     listenerOpenedCount++;
 
-                    string traceMsg = entry.Name.Equals(ServiceReplicaListener.DefaultName)
+                    var traceMsg = entry.Name.Equals(ServiceReplicaListener.DefaultName)
                         ? "Opened communication listener with default name."
                         : $"Opened {entry.Name} communication listener with name {entry.Name}.";
 
@@ -527,7 +527,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             {
                 try
                 {
-                    foreach (ICommunicationListener entry in this.Test_CommunicationListeners)
+                    foreach (var entry in this.Test_CommunicationListeners)
                     {
                         await entry.CloseAsync(cancellationToken);
                     }
@@ -562,7 +562,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             if (this.Test_CommunicationListeners != null)
             {
                 List<Exception> exceptions = null;
-                foreach (ICommunicationListener entry in this.Test_CommunicationListeners)
+                foreach (var entry in this.Test_CommunicationListeners)
                 {
                     try
                     {

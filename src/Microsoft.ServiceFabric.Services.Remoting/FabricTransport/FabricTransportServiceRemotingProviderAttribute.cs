@@ -87,7 +87,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport
         /// </returns>
         public override IServiceRemotingListener CreateServiceRemotingListenerV2(ServiceContext serviceContext, IService serviceImplementation)
         {
-            FabricTransportRemotingListenerSettings settings = FabricTransportRemotingListenerSettings.GetDefault();
+            var settings = FabricTransportRemotingListenerSettings.GetDefault();
             settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
             settings.OperationTimeout = this.GetAndValidateOperationTimeout(settings.OperationTimeout);
             settings.KeepAliveTimeout = this.GetKeepAliveTimeout(settings.KeepAliveTimeout);
@@ -112,7 +112,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport
         public override IServiceRemotingClientFactory CreateServiceRemotingClientFactoryV2(
             IServiceRemotingCallbackMessageHandler callbackMessageHandler)
         {
-            FabricTransportRemotingSettings settings = FabricTransportRemotingSettings.GetDefault();
+            var settings = FabricTransportRemotingSettings.GetDefault();
             settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
             settings.OperationTimeout = this.GetAndValidateOperationTimeout(settings.OperationTimeout);
             settings.KeepAliveTimeout = this.GetKeepAliveTimeout(settings.KeepAliveTimeout);
@@ -169,7 +169,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport
             ServiceContext serviceContext,
             IService serviceImplementation)
         {
-            FabricTransportRemotingListenerSettings settings = FabricTransportRemotingListenerSettings.GetDefault();
+            var settings = FabricTransportRemotingListenerSettings.GetDefault();
             settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
             settings.OperationTimeout = this.GetAndValidateOperationTimeout(settings.OperationTimeout);
             settings.KeepAliveTimeout = this.GetKeepAliveTimeout(settings.KeepAliveTimeout);
@@ -191,7 +191,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport
         public override V1.Client.IServiceRemotingClientFactory CreateServiceRemotingClientFactory(
             IServiceRemotingCallbackClient callbackClient)
         {
-            FabricTransportRemotingSettings settings = FabricTransportRemotingSettings.GetDefault();
+            var settings = FabricTransportRemotingSettings.GetDefault();
             settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
             settings.OperationTimeout = this.GetAndValidateOperationTimeout(settings.OperationTimeout);
             settings.KeepAliveTimeout = this.GetKeepAliveTimeout(settings.KeepAliveTimeout);

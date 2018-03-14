@@ -109,14 +109,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 return;
             }
 
-            byte[] bytes = encoding.GetBytes(str);
+            var bytes = encoding.GetBytes(str);
             writer.Write(bytes.Length);
             writer.Write(bytes);
         }
 
         public static string ReadString(this BinaryReader reader, Encoding encoding)
         {
-            int length = reader.ReadInt32();
+            var length = reader.ReadInt32();
             return length == NegativeLength ? null : encoding.GetString(reader.ReadBytes(length));
         }
 
@@ -134,7 +134,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public static byte[] ReadByteArray(this BinaryReader reader)
         {
-            int length = reader.ReadInt32();
+            var length = reader.ReadInt32();
             return length == NegativeLength ? null : reader.ReadBytes(length);
         }
 

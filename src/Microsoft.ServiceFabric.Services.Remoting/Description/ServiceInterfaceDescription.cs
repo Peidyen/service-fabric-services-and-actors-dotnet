@@ -47,7 +47,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Description
                     "serviceInterfaceType");
             }
 
-            Type nonActorParentInterface = serviceInterfaceType.GetNonServiceParentInterface();
+            var nonActorParentInterface = serviceInterfaceType.GetNonServiceParentInterface();
             if (nonActorParentInterface != null)
             {
                 if (nonActorParentInterface == serviceInterfaceType)

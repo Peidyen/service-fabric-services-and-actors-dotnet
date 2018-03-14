@@ -15,8 +15,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport
             OperationRetrySettings retrySettings,
             out ExceptionHandlingResult result)
         {
-            var fabricException = exceptionInformation.Exception as FabricException;
-            if (fabricException != null)
+            if (exceptionInformation.Exception is FabricException fabricException)
             {
                 return TryHandleFabricException(
                     fabricException,

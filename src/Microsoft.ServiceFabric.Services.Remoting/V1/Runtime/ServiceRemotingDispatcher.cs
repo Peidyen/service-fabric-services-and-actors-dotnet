@@ -47,12 +47,12 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Runtime
 
             if (service != null)
             {
-                ServiceTypeInformation serviceTypeInformation = ServiceTypeInformation.Get(service.GetType());
+                var serviceTypeInformation = ServiceTypeInformation.Get(service.GetType());
                 var interfaceDescriptions = new List<ServiceInterfaceDescription>();
 
-                foreach (Type interfaceType in serviceTypeInformation.InterfaceTypes)
+                foreach (var interfaceType in serviceTypeInformation.InterfaceTypes)
                 {
-                    ServiceMethodDispatcherBase methodDispatcher = ServiceCodeBuilder.GetOrCreateMethodDispatcher(interfaceType);
+                    var methodDispatcher = ServiceCodeBuilder.GetOrCreateMethodDispatcher(interfaceType);
                     this.methodDispatcherMap.Add(methodDispatcher.InterfaceId, methodDispatcher);
                     interfaceDescriptions.Add(ServiceInterfaceDescription.Create(interfaceType));
                 }
@@ -104,7 +104,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Runtime
                 this.servicePerformanceCounterProvider.serviceOutstandingRequestsCounterWriter.UpdateCounterValue(1);
             }
 
-            Stopwatch requestStopWatch = Stopwatch.StartNew();
+            var requestStopWatch = Stopwatch.StartNew();
             byte[] retval = null;
             try
             {
@@ -153,9 +153,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Runtime
 
         internal bool IsCancellationRequest(ServiceRemotingMessageHeaders messageHeaders)
         {
-            byte[] headerValue;
             if (messageHeaders.InvocationId != null &&
-                messageHeaders.TryGetHeaderValue(ServiceRemotingMessageHeaders.CancellationHeaderName, out headerValue))
+                messageHeaders.TryGetHeaderValue(ServiceRemotingMessageHeaders.CancellationHeaderName, out var headerValue))
             {
                 return true;
             }
@@ -167,8 +166,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Runtime
             ServiceRemotingMessageHeaders headers, byte[] requestBodyBytes,
             CancellationToken cancellationToken)
         {
-            ServiceMethodDispatcherBase methodDispatcher;
-            if (!this.methodDispatcherMap.TryGetValue(headers.InterfaceId, out methodDispatcher))
+            if (!this.methodDispatcherMap.TryGetValue(headers.InterfaceId, out var methodDispatcher))
             {
                 throw new NotImplementedException(
                     string.Format(
@@ -179,8 +177,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Runtime
             }
 
             Task<object> dispatchTask = null;
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            object requestBody = methodDispatcher.DeserializeRequestMessageBody(requestBodyBytes);
+            var stopwatch = Stopwatch.StartNew();
+            var requestBody = methodDispatcher.DeserializeRequestMessageBody(requestBodyBytes);
 
             if (this.servicePerformanceCounterProvider.serviceRequestDeserializationTimeCounterWriter != null)
             {
@@ -200,7 +198,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Runtime
             }
             catch (Exception e)
             {
-                ExceptionDispatchInfo info = ExceptionDispatchInfo.Capture(e);
+                var info = ExceptionDispatchInfo.Capture(e);
                 this.servicePerformanceCounterProvider.OnServiceMethodFinish(
                     headers.InterfaceId,
                     headers.MethodId,
@@ -219,7 +217,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Runtime
                     }
                     catch (Exception e)
                     {
-                        ExceptionDispatchInfo info = ExceptionDispatchInfo.Capture(e);
+                        var info = ExceptionDispatchInfo.Capture(e);
 
                         this.servicePerformanceCounterProvider.OnServiceMethodFinish(
                             headers.InterfaceId,
@@ -235,7 +233,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Runtime
                         stopwatch.Elapsed);
 
                     stopwatch.Restart();
-                    byte[] response = methodDispatcher.SerializeResponseMessageBody(responseBody);
+                    var response = methodDispatcher.SerializeResponseMessageBody(responseBody);
                     if (this.servicePerformanceCounterProvider.serviceResponseSerializationTimeCounterWriter != null)
                     {
                         this.servicePerformanceCounterProvider.serviceResponseSerializationTimeCounterWriter

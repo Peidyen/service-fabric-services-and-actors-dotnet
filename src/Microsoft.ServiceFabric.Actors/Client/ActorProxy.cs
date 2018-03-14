@@ -202,8 +202,8 @@ namespace Microsoft.ServiceFabric.Actors.Client
 
         internal async Task SubscribeAsyncV2(Type eventType, object subscriber, TimeSpan resubscriptionInterval)
         {
-            ActorId actorId = this.servicePartitionClientV2.ActorId;
-            SubscriptionInfo info = ActorEventSubscriberManager.Singleton.RegisterSubscriber(
+            var actorId = this.servicePartitionClientV2.ActorId;
+            var info = ActorEventSubscriberManager.Singleton.RegisterSubscriber(
                 actorId,
                 eventType,
                 subscriber);
@@ -237,13 +237,12 @@ namespace Microsoft.ServiceFabric.Actors.Client
 
         internal async Task UnsubscribeAsyncV2(Type eventType, object subscriber)
         {
-            ActorId actorId = this.servicePartitionClientV2.ActorId;
-            SubscriptionInfo info;
+            var actorId = this.servicePartitionClientV2.ActorId;
             if (ActorEventSubscriberManager.Singleton.TryUnregisterSubscriber(
                 actorId,
                 eventType,
                 subscriber,
-                out info))
+                out var info))
             {
                 await this.servicePartitionClientV2.UnsubscribeAsync(info.Subscriber.EventId, info.Id);
             }
@@ -253,7 +252,7 @@ namespace Microsoft.ServiceFabric.Actors.Client
         {
 #pragma warning disable 4014
             // ReSharper disable once UnusedVariable
-            Task ignore = Task.Run(
+            var ignore = Task.Run(
                 async () =>
 #pragma warning restore 4014
                 {
@@ -356,8 +355,8 @@ namespace Microsoft.ServiceFabric.Actors.Client
             }
 
 #if !DotNetCoreClr
-            ActorId actorId = this.servicePartitionClient.ActorId;
-            SubscriptionInfo info = Remoting.V1.Client.ActorEventSubscriberManager.Singleton.RegisterSubscriber(
+            var actorId = this.servicePartitionClient.ActorId;
+            var info = Remoting.V1.Client.ActorEventSubscriberManager.Singleton.RegisterSubscriber(
                 actorId,
                 eventType,
                 subscriber);
@@ -399,13 +398,12 @@ namespace Microsoft.ServiceFabric.Actors.Client
                 return;
             }
 #if !DotNetCoreClr
-            ActorId actorId = this.servicePartitionClient.ActorId;
-            SubscriptionInfo info;
+            var actorId = this.servicePartitionClient.ActorId;
             if (Remoting.V1.Client.ActorEventSubscriberManager.Singleton.TryUnregisterSubscriber(
                 actorId,
                 eventType,
                 subscriber,
-                out info))
+                out var info))
             {
                 await this.servicePartitionClient.UnsubscribeAsync(info.Subscriber.EventId, info.Id);
             }
@@ -418,7 +416,7 @@ namespace Microsoft.ServiceFabric.Actors.Client
         {
 #pragma warning disable 4014
             // ReSharper disable once UnusedVariable
-            Task ignore = Task.Run(
+            var ignore = Task.Run(
                 async () =>
 #pragma warning restore 4014
                 {

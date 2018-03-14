@@ -13,7 +13,7 @@ namespace Microsoft.ServiceFabric.Services.Common
     {
         internal static int ComputeId(MethodInfo methodInfo)
         {
-            int hash = methodInfo.Name.GetHashCode();
+            var hash = methodInfo.Name.GetHashCode();
 
             if (methodInfo.DeclaringType != null)
             {
@@ -30,7 +30,7 @@ namespace Microsoft.ServiceFabric.Services.Common
 
         internal static int ComputeId(Type type)
         {
-            int hash = type.Name.GetHashCode();
+            var hash = type.Name.GetHashCode();
             if (type.Namespace != null)
             {
                 hash = HashCombine(type.Namespace.GetHashCode(), hash);
@@ -41,7 +41,7 @@ namespace Microsoft.ServiceFabric.Services.Common
 
         internal static int ComputeIdWithCRC(Type type)
         {
-            string name = type.Name;
+            var name = type.Name;
 
             if (type.Namespace != null)
             {
@@ -53,7 +53,7 @@ namespace Microsoft.ServiceFabric.Services.Common
 
         internal static int ComputeIdWithCRC(MethodInfo methodInfo)
         {
-            string name = methodInfo.Name;
+            var name = methodInfo.Name;
 
             if (methodInfo.DeclaringType != null)
             {
@@ -75,7 +75,7 @@ namespace Microsoft.ServiceFabric.Services.Common
 
         internal static int ComputeId(string typeName, string typeNamespace)
         {
-            int hash = typeName.GetHashCode();
+            var hash = typeName.GetHashCode();
             if (typeNamespace != null)
             {
                 hash = HashCombine(typeNamespace.GetHashCode(), hash);

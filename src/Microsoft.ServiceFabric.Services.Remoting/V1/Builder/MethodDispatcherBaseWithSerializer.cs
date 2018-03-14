@@ -37,7 +37,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            Task<object> dispatchTask = this.OnDispatchAsync(
+            var dispatchTask = this.OnDispatchAsync(
                 methodId,
                 objectImplementation,
                 requestBody == null ? null : this.GetRequestMessageBodyValue(requestBody),
@@ -46,7 +46,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Builder
             return dispatchTask.ContinueWith(
                 t =>
                 {
-                    object retval = t.GetAwaiter().GetResult();
+                    var retval = t.GetAwaiter().GetResult();
                     return retval == null ? null : this.CreateResponseMessageBody(retval);
                 },
                 TaskContinuationOptions.ExecuteSynchronously);

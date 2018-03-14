@@ -27,7 +27,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Runtime
         {
             if (this.callback == null)
             {
-                FabricTransportCallbackClient nativeCallback = this.requestContext.GetCallbackClient();
+                var nativeCallback = this.requestContext.GetCallbackClient();
                 this.callback = new FabricTransportServiceRemotingCallback(nativeCallback);
             }
 

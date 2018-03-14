@@ -97,7 +97,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests
             action.ShouldThrow<ReminderNotFoundException>("reminder doesn't exist.");
 
             await this.RegisterReminderAsync("MockReminder", null, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2));
-            IActorReminder reminder = this.GetReminder("MockReminder");
+            var reminder = this.GetReminder("MockReminder");
             reminder.Name.Should().Be("MockReminder", " Reminder was registered with this name");
             reminder.State.Should().BeNull("Reminder was registered will null state");
             reminder.DueTime.Should().Be(TimeSpan.FromSeconds(2), "Reminder was registered with this due time");
@@ -111,7 +111,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests
 
         public void VerifyTimerMockability()
         {
-            IActorTimer actorTimer = TestMocksRepository.GetMockActorTimer();
+            var actorTimer = TestMocksRepository.GetMockActorTimer();
             Action action = () => this.UnregisterTimer(actorTimer);
             action.ShouldNotThrow("unregistering a timer that doesn't exist shouldn't throw.");
 
@@ -139,10 +139,10 @@ namespace Microsoft.ServiceFabric.Actors.Tests
         [Fact]
         public void VerifyActorMockability()
         {
-            ActorId mockActorId = ActorId.CreateRandom();
+            var mockActorId = ActorId.CreateRandom();
 
             ConsoleLogHelper.LogInfo("Creating Mock Actor Service...");
-            ActorService mockActorService = TestMocksRepository.GetActorService<MockActor>();
+            var mockActorService = TestMocksRepository.GetActorService<MockActor>();
 
             ConsoleLogHelper.LogInfo("Creating Mock Actor...");
             var mockActor = new MockActor(mockActorService, mockActorId);

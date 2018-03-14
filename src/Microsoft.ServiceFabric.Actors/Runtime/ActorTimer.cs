@@ -115,7 +115,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         private void ArmTimer(TimeSpan timeSpan)
         {
-            Timer t = this.timer;
+            var t = this.timer;
             if (t != null)
             {
                 try

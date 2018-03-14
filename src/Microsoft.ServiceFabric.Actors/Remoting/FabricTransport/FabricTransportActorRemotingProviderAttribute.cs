@@ -82,7 +82,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.FabricTransport
         /// </returns>
         public override IServiceRemotingListener CreateServiceRemotingListenerV2(ActorService actorService)
         {
-            FabricTransportRemotingListenerSettings listenerSettings = GetActorListenerSettings(actorService);
+            var listenerSettings = GetActorListenerSettings(actorService);
             listenerSettings.MaxMessageSize = this.GetAndValidateMaxMessageSize(listenerSettings.MaxMessageSize);
             listenerSettings.OperationTimeout = this.GetandValidateOperationTimeout(listenerSettings.OperationTimeout);
             listenerSettings.KeepAliveTimeout = this.GetandValidateKeepAliveTimeout(listenerSettings.KeepAliveTimeout);
@@ -93,7 +93,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.FabricTransport
         public override IServiceRemotingClientFactory CreateServiceRemotingClientFactoryV2(
             IServiceRemotingCallbackMessageHandler callbackMessageHandler)
         {
-            FabricTransportRemotingSettings settings = FabricTransportRemotingSettings.GetDefault();
+            var settings = FabricTransportRemotingSettings.GetDefault();
             settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
             settings.OperationTimeout = this.GetandValidateOperationTimeout(settings.OperationTimeout);
             settings.KeepAliveTimeout = this.GetandValidateKeepAliveTimeout(settings.KeepAliveTimeout);
@@ -103,10 +103,9 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.FabricTransport
 
         internal static FabricTransportRemotingListenerSettings GetActorListenerSettings(ActorService actorService)
         {
-            string sectionName = ActorNameFormat.GetFabricServiceTransportSettingsSectionName(
+            var sectionName = ActorNameFormat.GetFabricServiceTransportSettingsSectionName(
                 actorService.ActorTypeInformation.ImplementationType);
-            FabricTransportRemotingListenerSettings listenerSettings;
-            bool isSucceded = FabricTransportRemotingListenerSettings.TryLoadFrom(sectionName, out listenerSettings);
+            var isSucceded = FabricTransportRemotingListenerSettings.TryLoadFrom(sectionName, out var listenerSettings);
             if (!isSucceded)
             {
                 listenerSettings = FabricTransportRemotingListenerSettings.GetDefault();
@@ -156,7 +155,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.FabricTransport
         /// </returns>
         public override IServiceRemotingListener CreateServiceRemotingListener(ActorService actorService)
         {
-            FabricTransportRemotingListenerSettings listenerSettings = GetActorListenerSettings(actorService);
+            var listenerSettings = GetActorListenerSettings(actorService);
             listenerSettings.MaxMessageSize = this.GetAndValidateMaxMessageSize(listenerSettings.MaxMessageSize);
             listenerSettings.OperationTimeout = this.GetandValidateOperationTimeout(listenerSettings.OperationTimeout);
             listenerSettings.KeepAliveTimeout = this.GetandValidateKeepAliveTimeout(listenerSettings.KeepAliveTimeout);
@@ -178,7 +177,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.FabricTransport
         public override Services.Remoting.V1.Client.IServiceRemotingClientFactory CreateServiceRemotingClientFactory(
             IServiceRemotingCallbackClient callbackClient)
         {
-            FabricTransportRemotingSettings settings = FabricTransportRemotingSettings.GetDefault();
+            var settings = FabricTransportRemotingSettings.GetDefault();
             settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
             settings.OperationTimeout = this.GetandValidateOperationTimeout(settings.OperationTimeout);
             settings.KeepAliveTimeout = this.GetandValidateKeepAliveTimeout(settings.KeepAliveTimeout);

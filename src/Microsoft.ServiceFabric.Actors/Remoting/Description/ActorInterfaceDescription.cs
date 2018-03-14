@@ -45,7 +45,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.Description
                     "actorInterfaceType");
             }
 
-            Type nonActorParentInterface = actorInterfaceType.GetNonActorParentType();
+            var nonActorParentInterface = actorInterfaceType.GetNonActorParentType();
             if (nonActorParentInterface != null)
             {
                 if (nonActorParentInterface == actorInterfaceType)

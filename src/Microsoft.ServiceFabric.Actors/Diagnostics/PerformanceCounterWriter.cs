@@ -79,7 +79,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
         internal void UpdateCounterValue(PendingActorMethodDiagnosticData pendingMethodData)
         {
-            long delta = pendingMethodData.PendingActorMethodCallsDelta;
+            var delta = pendingMethodData.PendingActorMethodCallsDelta;
             if (delta != 0)
             {
                 this.Counter.IncrementBy(delta);

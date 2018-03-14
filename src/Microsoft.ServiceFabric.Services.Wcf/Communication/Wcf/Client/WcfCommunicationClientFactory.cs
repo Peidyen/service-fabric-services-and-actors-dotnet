@@ -94,7 +94,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Client
             CancellationToken cancellationToken)
         {
             var endpointAddress = new EndpointAddress(endpoint);
-            TServiceContract channel = this.callbackObject != null
+            var channel = this.callbackObject != null
                 ? DuplexChannelFactory<TServiceContract>.CreateChannel(
                     this.callbackObject,
                     this.clientBinding,
@@ -105,7 +105,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Client
             Exception connectionTimeoutException = null;
             try
             {
-                Task openTask = Task.Factory.FromAsync(
+                var openTask = Task.Factory.FromAsync(
                     clientChannel.BeginOpen(this.clientBinding.OpenTimeout, null, null),
                     clientChannel.EndOpen);
                 if (await Task.WhenAny(openTask, Task.Delay(this.clientBinding.OpenTimeout, cancellationToken)) == openTask)
@@ -163,7 +163,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Client
         /// <returns>true if the client is valid, false otherwise</returns>
         protected override bool ValidateClient(string endpoint, WcfCommunicationClient<TServiceContract> client)
         {
-            IClientChannel clientChannel = client.ClientChannel;
+            var clientChannel = client.ClientChannel;
             return clientChannel.State == CommunicationState.Opened &&
                    clientChannel.RemoteAddress.Uri.Equals(new Uri(endpoint));
         }

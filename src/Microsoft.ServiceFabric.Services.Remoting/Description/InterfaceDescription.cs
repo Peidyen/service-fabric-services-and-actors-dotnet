@@ -73,7 +73,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Description
         )
         {
             EnsureValidMethods(remotedInterfaceKindName, remotedInterfaceType, methodReturnCheck);
-            MethodInfo[] methods = remotedInterfaceType.GetMethods();
+            var methods = remotedInterfaceType.GetMethods();
             var methodDescriptions = new MethodDescription[methods.Length];
             for (var i = 0; i < methods.Length; i++)
             {
@@ -89,7 +89,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Description
             MethodReturnCheck methodReturnCheck)
         {
             var methodNameSet = new HashSet<string>();
-            foreach (MethodInfo m in remotedInterfaceType.GetMethods())
+            foreach (var m in remotedInterfaceType.GetMethods())
             {
                 EnsureNotOverloaded(remotedInterfaceKindName, remotedInterfaceType, m, methodNameSet);
                 EnsureNotGeneric(remotedInterfaceKindName, remotedInterfaceType, m);

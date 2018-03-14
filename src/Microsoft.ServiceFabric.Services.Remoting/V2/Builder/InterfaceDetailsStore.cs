@@ -29,8 +29,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Builder
 
         public bool TryGetKnownTypes(string interfaceName, out InterfaceDetails interfaceDetails)
         {
-            int interfaceId;
-            if (!this.interfaceIdMapping.TryGetValue(interfaceName, out interfaceId))
+            if (!this.interfaceIdMapping.TryGetValue(interfaceName, out var interfaceId))
             {
                 ServiceTrace.Source.WriteInfo(TraceType, "InterfaceName {0} not found ", interfaceName);
                 interfaceDetails = null;
@@ -42,7 +41,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Builder
 
         public void UpdateKnownTypesDetails(IEnumerable<InterfaceDescription> interfaceDescriptions)
         {
-            foreach (InterfaceDescription interfaceDescription in interfaceDescriptions)
+            foreach (var interfaceDescription in interfaceDescriptions)
             {
                 this.UpdateKnownTypeDetail(interfaceDescription);
             }
@@ -52,11 +51,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Builder
         {
             var responseKnownTypes = new List<Type>();
             var requestKnownType = new List<Type>();
-            foreach (MethodDescription entry in interfaceDescription.Methods)
+            foreach (var entry in interfaceDescription.Methods)
             {
                 if (TypeUtility.IsTaskType(entry.ReturnType) && entry.ReturnType.GetTypeInfo().IsGenericType)
                 {
-                    Type returnType = entry.MethodInfo.ReturnType.GetGenericArguments()[0];
+                    var returnType = entry.MethodInfo.ReturnType.GetGenericArguments()[0];
                     if (!responseKnownTypes.Contains(returnType))
                     {
                         responseKnownTypes.Add(returnType);

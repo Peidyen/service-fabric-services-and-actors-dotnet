@@ -29,7 +29,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
             this.WcfClient = wcfClient;
         }
 
-        public WcfCommunicationClient<IServiceRemotingContract> WcfClient { get; }
+        public WcfCommunicationClient<IServiceRemotingContract> WcfClient 
+		{ 
+			get; 
+		}
 
         /// <summary>
         ///     Gets or Sets the Resolved service partition which was used when this client was created.
@@ -74,13 +77,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
             try
             {
                 //Find the Serializer
-                int interfaceId = requestMessage.GetHeader().InterfaceId;
+                var interfaceId = requestMessage.GetHeader().InterfaceId;
                 serializedHeader = this.serializersManager.GetHeaderSerializer()
                     .SerializeRequestHeader(requestMessage.GetHeader());
-                IServiceRemotingRequestMessageBodySerializer msgBodySeriaizer = this.serializersManager.GetRequestBodySerializer(interfaceId);
+                var msgBodySeriaizer = this.serializersManager.GetRequestBodySerializer(interfaceId);
                 serializedMsgBody = msgBodySeriaizer.Serialize(requestMessage.GetBody());
 
-                ResponseMessage responseMessage = await this.WcfClient.Channel.RequestResponseAsync(
+                var responseMessage = await this.WcfClient.Channel.RequestResponseAsync(
                         serializedHeader.GetSendBuffer(),
                         serializedMsgBody == null ? new List<ArraySegment<byte>>() : serializedMsgBody.GetSendBuffers())
                     .ContinueWith(
@@ -89,26 +92,26 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
 
                 // the code above (TaskScheduler.Default) for dispatches the responses on different thread
                 // so that if the user code blocks, we do not stop the response receive pump in WCF
-                IncomingMessageHeader incomingHeader = responseMessage != null && responseMessage.MessageHeaders != null
+                var incomingHeader = responseMessage != null && responseMessage.MessageHeaders != null
                     ? new IncomingMessageHeader(
                         new SegmentedReadMemoryStream(responseMessage.MessageHeaders))
                     : null;
 
                 ////DeSerialize Response Header
-                IServiceRemotingResponseMessageHeader header =
+                var header =
                     this.serializersManager.GetHeaderSerializer()
                         .DeserializeResponseHeaders(
                             incomingHeader);
 
                 ////DeSerialize Response Body
 
-                IServiceRemotingResponseMessageBodySerializer responseSerializer = this.serializersManager.GetResponseBodySerializer(interfaceId);
+                var responseSerializer = this.serializersManager.GetResponseBodySerializer(interfaceId);
 
-                IncomingMessageBody incomingMsgBody = responseMessage != null && responseMessage.ResponseBody != null
+                var incomingMsgBody = responseMessage != null && responseMessage.ResponseBody != null
                     ? new IncomingMessageBody(new SegmentedReadMemoryStream(responseMessage.ResponseBody))
                     : null;
 
-                IServiceRemotingResponseMessageBody msgBody =
+                var msgBody =
                     responseSerializer.Deserialize(incomingMsgBody);
                 //Create Response Message
                 return new ServiceRemotingResponseMessage(
@@ -117,10 +120,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
             }
             catch (FaultException<RemoteException> faultException)
             {
-                Exception remoteException;
                 if (RemoteException.ToException(
                     new SegmentedReadMemoryStream(faultException.Detail.Data),
-                    out remoteException))
+                    out var remoteException))
                 {
                     throw new AggregateException(remoteException);
                 }

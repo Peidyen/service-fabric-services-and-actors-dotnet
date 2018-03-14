@@ -21,7 +21,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
 
         protected static IReadOnlyDictionary<int, string> GetMethodNameMap(InterfaceDescription interfaceDescription)
         {
-            Dictionary<int, string> methodNameMap = interfaceDescription.Methods.ToDictionary(
+            var methodNameMap = interfaceDescription.Methods.ToDictionary(
                 methodDescription => methodDescription.Id,
                 methodDescription => methodDescription.Name);
 

@@ -29,7 +29,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             {
                 MethodBodyTypesMap = new Dictionary<string, MethodBodyTypes>()
             };
-            foreach (MethodDescription method in interfaceDescription.Methods)
+            foreach (var method in interfaceDescription.Methods)
             {
                 result.MethodBodyTypesMap.Add(
                     method.Name,
@@ -70,13 +70,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             CodeBuilderContext context,
             MethodDescription methodDescription)
         {
-            TypeBuilder requestBodyTypeBuilder = CodeBuilderUtils.CreateDataContractTypeBuilder(
+            var requestBodyTypeBuilder = CodeBuilderUtils.CreateDataContractTypeBuilder(
                 context.ModuleBuilder,
                 context.AssemblyNamespace,
                 codeBuilderNames.GetRequestBodyTypeName(methodDescription.Name),
                 codeBuilderNames.GetDataContractNamespace());
 
-            foreach (MethodArgumentDescription argument in methodDescription.Arguments)
+            foreach (var argument in methodDescription.Arguments)
             {
                 CodeBuilderUtils.AddDataMemberField(
                     requestBodyTypeBuilder,
@@ -92,14 +92,14 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Builder
             CodeBuilderContext context,
             MethodDescription methodDescription)
         {
-            TypeBuilder responseBodyTypeBuilder = CodeBuilderUtils.CreateDataContractTypeBuilder(
+            var responseBodyTypeBuilder = CodeBuilderUtils.CreateDataContractTypeBuilder(
                 context.ModuleBuilder,
                 context.AssemblyNamespace,
                 codeBuilderNames.GetResponseBodyTypeName(methodDescription.Name),
                 codeBuilderNames.GetDataContractNamespace());
 
 
-            Type returnDataType = methodDescription.ReturnType.GetGenericArguments()[0];
+            var returnDataType = methodDescription.ReturnType.GetGenericArguments()[0];
             CodeBuilderUtils.AddDataMemberField(
                 responseBodyTypeBuilder,
                 returnDataType,

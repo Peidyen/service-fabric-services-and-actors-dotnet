@@ -33,7 +33,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Diagnostic
 
 
         private static readonly Dictionary<Tuple<string, string>, FabricPerformanceCounterType> CounterTypes = new Dictionary
-            <Tuple<string, string>, FabricPerformanceCounterType>
+            <Tuple<string, string>, FabricPerformanceCounterType>()
             {
                 {
                     Tuple.Create(ServiceCategoryName, ServiceRequestProcessingTimeMillisecCounterName),
@@ -63,13 +63,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Diagnostic
                 {
                     Tuple.Create(ServiceCategoryName, ServiceOutstandingRequestsCounterName),
                     FabricPerformanceCounterType.NumberOfItems64
-                }
+                },
             };
 
         private static readonly
             Dictionary<FabricPerformanceCounterSetDefinition, IEnumerable<FabricPerformanceCounterDefinition>>
             CounterSets = new Dictionary
-                <FabricPerformanceCounterSetDefinition, IEnumerable<FabricPerformanceCounterDefinition>>
+                <FabricPerformanceCounterSetDefinition, IEnumerable<FabricPerformanceCounterDefinition>>()
                 {
                     {
                         new FabricPerformanceCounterSetDefinition(
@@ -130,7 +130,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Diagnostic
                                 ServiceOutstandingRequestsCounterName,
                                 "Number of requests being processed",
                                 GetType(ServiceCategoryName, ServiceOutstandingRequestsCounterName),
-                                "NumberOfOutstandingRequests")
+                                "NumberOfOutstandingRequests"),
                         }
                     }
                 };

@@ -41,8 +41,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2
 
         internal override InterfaceDetails GetInterfaceDetails(int interfaceId)
         {
-            InterfaceDetails interfaceDetails;
-            if (ActorCodeBuilder.TryGetKnownTypes(interfaceId, out interfaceDetails))
+            if (ActorCodeBuilder.TryGetKnownTypes(interfaceId, out var interfaceDetails))
             {
                 return interfaceDetails;
             }

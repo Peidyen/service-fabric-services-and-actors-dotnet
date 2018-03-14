@@ -26,14 +26,14 @@ namespace Microsoft.ServiceFabric.Actors.Generator
 
         internal static void AddParameterValuesToLocalFiveNodeParamFile(Arguments arguments)
         {
-            string appParamFileContents = Utility.LoadContents(arguments.AppParamFilePath).Trim();
+            var appParamFileContents = Utility.LoadContents(arguments.AppParamFilePath).Trim();
             var appInstanceDefinition = XmlSerializationUtility.Deserialize<AppInstanceDefinitionType>(appParamFileContents);
 
-            IEnumerable<AppInstanceDefinitionTypeParameter> newAppParams =
+            var newAppParams =
                 arguments.ActorTypes.Select(
                     actorTypeInfo =>
                     {
-                        string serviceName = ActorNameFormat.GetFabricServiceName(actorTypeInfo.InterfaceTypes.First(), actorTypeInfo.ServiceName);
+                        var serviceName = ActorNameFormat.GetFabricServiceName(actorTypeInfo.InterfaceTypes.First(), actorTypeInfo.ServiceName);
 
                         return new AppInstanceDefinitionTypeParameter
                         {
@@ -45,20 +45,20 @@ namespace Microsoft.ServiceFabric.Actors.Generator
             // Create new parameters for Actor Types and merge it with existing Parameters.
             appInstanceDefinition.Parameters = MergeAppParams(appInstanceDefinition.Parameters, newAppParams);
 
-            string newContent = XmlSerializationUtility.InsertXmlComments(appParamFileContents, appInstanceDefinition);
+            var newContent = XmlSerializationUtility.InsertXmlComments(appParamFileContents, appInstanceDefinition);
             Utility.WriteIfNeeded(arguments.AppParamFilePath, appParamFileContents, newContent);
         }
 
         internal static void AddParameterValuesToLocalOneNodeParamFile(Arguments arguments)
         {
-            string appParamFileContents = Utility.LoadContents(arguments.AppParamFilePath).Trim();
+            var appParamFileContents = Utility.LoadContents(arguments.AppParamFilePath).Trim();
             var appInstanceDefinition = XmlSerializationUtility.Deserialize<AppInstanceDefinitionType>(appParamFileContents);
             var newAppParams = new List<AppInstanceDefinitionTypeParameter>();
 
             // Create new parameters for Actor Types and merge it with existing Parameters.
-            foreach (ActorTypeInformation actorTypeInfo in arguments.ActorTypes)
+            foreach (var actorTypeInfo in arguments.ActorTypes)
             {
-                string serviceName = ActorNameFormat.GetFabricServiceName(actorTypeInfo.InterfaceTypes.First(), actorTypeInfo.ServiceName);
+                var serviceName = ActorNameFormat.GetFabricServiceName(actorTypeInfo.InterfaceTypes.First(), actorTypeInfo.ServiceName);
 
                 newAppParams.Add(
                     new AppInstanceDefinitionTypeParameter
@@ -83,7 +83,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
 
             appInstanceDefinition.Parameters = MergeAppParams(appInstanceDefinition.Parameters, newAppParams);
 
-            string newContent = XmlSerializationUtility.InsertXmlComments(appParamFileContents, appInstanceDefinition);
+            var newContent = XmlSerializationUtility.InsertXmlComments(appParamFileContents, appInstanceDefinition);
             Utility.WriteIfNeeded(arguments.AppParamFilePath, appParamFileContents, newContent);
         }
 
@@ -98,8 +98,8 @@ namespace Microsoft.ServiceFabric.Actors.Generator
             }
 
             // Only add the Parameter if it doesnt exist already.
-            IEnumerable<string> existingParamNames = existingItems.Select(x => x.Name);
-            List<AppInstanceDefinitionTypeParameter> updatedItemsList = existingItems.ToList();
+            var existingParamNames = existingItems.Select(x => x.Name);
+            var updatedItemsList = existingItems.ToList();
             updatedItemsList.AddRange(newItems.Where(newParam => !existingParamNames.Contains(newParam.Name)));
 
             return updatedItemsList.ToArray();

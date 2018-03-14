@@ -19,7 +19,7 @@ namespace Microsoft.ServiceFabric.Actors
         public static ActorId GetActorId<TIActor>(this TIActor actor)
             where TIActor : IActor
         {
-            ActorReference r = ActorReference.Get(actor);
+            var r = ActorReference.Get(actor);
             return r.ActorId;
         }
 

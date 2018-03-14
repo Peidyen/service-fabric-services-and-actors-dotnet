@@ -27,7 +27,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
 
             using (var memoryStream = new MemoryStream())
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(memoryStream, GetXmlWriterSettings()))
+                using (var xmlWriter = XmlWriter.Create(memoryStream, GetXmlWriterSettings()))
                 {
                     serializer.Serialize(xmlWriter, value);
                 }
@@ -50,7 +50,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
                 var settings = new XmlReaderSettings();
                 settings.XmlResolver = null;
 
-                using (XmlReader xmlReader = XmlReader.Create(stringReader, settings))
+                using (var xmlReader = XmlReader.Create(stringReader, settings))
                 {
                     return (T) serializer.Deserialize(xmlReader);
                 }
@@ -73,7 +73,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
         /// </summary>
         public static string InsertXmlComments<T>(string existingContent, T value) where T : class
         {
-            string contentWithoutComments = Serialize(value);
+            var contentWithoutComments = Serialize(value);
 
             try
             {
@@ -91,8 +91,8 @@ namespace Microsoft.ServiceFabric.Actors.Generator
         /// </summary>
         private static string InsertXmlComments(string contentWithComments, string contentWithoutComments)
         {
-            IEnumerable<XComment> commentNodes = XDocument.Parse(contentWithComments).DescendantNodes().OfType<XComment>();
-            XDocument xdoc = XDocument.Parse(contentWithoutComments);
+            var commentNodes = XDocument.Parse(contentWithComments).DescendantNodes().OfType<XComment>();
+            var xdoc = XDocument.Parse(contentWithoutComments);
 
             // if there are no comments to insert, just return the contentsWithoutComments
             if (!commentNodes.Any())
@@ -100,7 +100,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
                 return contentWithoutComments;
             }
 
-            foreach (XComment commentNode in commentNodes)
+            foreach (var commentNode in commentNodes)
             {
                 var newComment = new XComment(commentNode.Value);
 
@@ -122,11 +122,11 @@ namespace Microsoft.ServiceFabric.Actors.Generator
                 else
                 {
                     // If Parent node of comment is not found in new xml, then dont add this comment.
-                    XElement parent = xdoc.Descendants(commentNode.Parent.Name).FirstOrDefault();
+                    var parent = xdoc.Descendants(commentNode.Parent.Name).FirstOrDefault();
                     if (parent != null)
                     {
-                        bool hadPrevious = commentNode.ElementsBeforeSelf().Any();
-                        bool hadNext = commentNode.ElementsAfterSelf().Any();
+                        var hadPrevious = commentNode.ElementsBeforeSelf().Any();
+                        var hadNext = commentNode.ElementsAfterSelf().Any();
 
                         if (!hadNext)
                         {
@@ -146,12 +146,12 @@ namespace Microsoft.ServiceFabric.Actors.Generator
                             // If PreviousNode of comment is in new Xml, add newComment after PreviousNode
                             // If PreviousNode is not in new xml and NextNode is in newXml, add newComment before NextNode.
                             // If both PreviousNode and NextNode is not in new xml skip it.
-                            XElement previousInOriginal = commentNode.ElementsBeforeSelf().Last();
-                            XElement nextInOriginal = commentNode.ElementsAfterSelf().First();
+                            var previousInOriginal = commentNode.ElementsBeforeSelf().Last();
+                            var nextInOriginal = commentNode.ElementsAfterSelf().First();
 
                             // Find matching Previous and Next siblings in new xml. Siblings must match in attributes as well.
-                            XElement previous = FindNodeInXDocument(xdoc, previousInOriginal);
-                            XElement next = FindNodeInXDocument(xdoc, nextInOriginal);
+                            var previous = FindNodeInXDocument(xdoc, previousInOriginal);
+                            var next = FindNodeInXDocument(xdoc, nextInOriginal);
 
                             if (previous != null)
                             {
@@ -170,7 +170,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
             var stringBuilder = new StringBuilder();
             using (var memoryStream = new MemoryStream())
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(memoryStream, GetXmlWriterSettings()))
+                using (var xmlWriter = XmlWriter.Create(memoryStream, GetXmlWriterSettings()))
                 {
                     xdoc.Save(xmlWriter);
                     xmlWriter.Flush();
@@ -191,9 +191,9 @@ namespace Microsoft.ServiceFabric.Actors.Generator
                         return false;
                     }
 
-                    foreach (XAttribute attribOriginal in nodeToFind.Attributes())
+                    foreach (var attribOriginal in nodeToFind.Attributes())
                     {
-                        XAttribute attrib = node.Attribute(attribOriginal.Name);
+                        var attrib = node.Attribute(attribOriginal.Name);
 
                         if (attrib == null)
                         {

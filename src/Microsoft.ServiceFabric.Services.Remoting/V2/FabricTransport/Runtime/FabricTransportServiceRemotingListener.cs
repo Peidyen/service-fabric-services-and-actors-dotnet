@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
@@ -97,7 +97,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
             this.listenAddress = serviceContext.ListenAddress;
             this.publishAddress = serviceContext.PublishAddress;
 
-            FabricTransportRemotingListenerSettings remotingSettings = remotingListenerSettings != null
+            var remotingSettings = remotingListenerSettings != null
                 ? remotingListenerSettings
                 : FabricTransportRemotingListenerSettings.GetDefault();
 
@@ -123,22 +123,21 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
 
 
         /// <summary>
-        ///     This method causes the communication listener to be opened. Once the Open
-        ///     completes, the communication listener becomes usable - accepts and sends messages.
+        /// This method causes the communication listener to be opened. Once the Open
+        /// completes, the communication listener becomes usable - accepts and sends messages.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>
-        ///     A <see cref="System.Threading.Tasks.Task">Task</see> that represents outstanding operation. The result of the Task
-        ///     is
-        ///     the endpoint string.
+        /// A <see cref="System.Threading.Tasks.Task">Task</see> that represents outstanding operation. The result of the Task is
+        /// the endpoint string.
         /// </returns>
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
             return Task.Run(
                 async () =>
                 {
-                    string listenUri = await this.fabricTransportlistener.OpenAsync(cancellationToken);
-                    string publishUri = listenUri.Replace(this.listenAddress, this.publishAddress);
+                    var listenUri = await this.fabricTransportlistener.OpenAsync(cancellationToken);
+                    var publishUri = listenUri.Replace(this.listenAddress, this.publishAddress);
 
                     AppTrace.TraceSource.WriteInfo(
                         "FabricTransportServiceRemotingListenerV2.OpenAsync",
@@ -152,13 +151,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
         }
 
         /// <summary>
-        ///     This method causes the communication listener to close. Close is a terminal state and
-        ///     this method allows the communication listener to transition to this state in a
-        ///     graceful manner.
+        /// This method causes the communication listener to close. Close is a terminal state and 
+        /// this method allows the communication listener to transition to this state in a
+        /// graceful manner.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>
-        ///     A <see cref="System.Threading.Tasks.Task">Task</see> that represents outstanding operation.
+        /// A <see cref="System.Threading.Tasks.Task">Task</see> that represents outstanding operation.
         /// </returns>
         public async Task CloseAsync(CancellationToken cancellationToken)
         {
@@ -168,9 +167,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
         }
 
         /// <summary>
-        ///     This method causes the communication listener to close. Close is a terminal state and
-        ///     this method causes the transition to close ungracefully. Any outstanding operations
-        ///     (including close) should be canceled when this method is called.
+        /// This method causes the communication listener to close. Close is a terminal state and
+        /// this method causes the transition to close ungracefully. Any outstanding operations
+        /// (including close) should be canceled when this method is called.
         /// </summary>
         public void Abort()
         {

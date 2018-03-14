@@ -27,7 +27,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
 
         public ActorService CreateActorService(StatefulServiceContext context)
         {
-            ActorService serviceReplica = this.actorServiceFactory.Invoke(context, this.actorTypeInformation);
+            var serviceReplica = this.actorServiceFactory.Invoke(context, this.actorTypeInformation);
 
             // Initialize here so that service can set function in constructor.
             serviceReplica.StateProvider.Initialize(this.actorTypeInformation);

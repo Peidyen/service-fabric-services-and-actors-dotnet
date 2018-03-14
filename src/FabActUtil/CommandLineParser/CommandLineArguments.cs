@@ -174,11 +174,11 @@ namespace FabActUtil.CommandLineParser
             this.arguments = new ArrayList();
             this.argumentMap = new Hashtable();
 
-            foreach (FieldInfo field in argumentSpecification.GetFields())
+            foreach (var field in argumentSpecification.GetFields())
             {
                 if (!field.IsStatic && !field.IsInitOnly && !field.IsLiteral)
                 {
-                    CommandLineArgumentAttribute attribute = GetAttribute(field);
+                    var attribute = GetAttribute(field);
                     if (attribute is DefaultCommandLineArgumentAttribute)
                     {
                         Debug.Assert(this.defaultArgument == null);
@@ -226,7 +226,7 @@ namespace FabActUtil.CommandLineParser
             {
                 var builder = new StringBuilder();
 
-                int oldLength = builder.Length;
+                var oldLength = builder.Length;
 
                 if (this.defaultArgument != null)
                 {
@@ -252,7 +252,7 @@ namespace FabActUtil.CommandLineParser
         /// <returns> true if no parse errors were encountered. </returns>
         public bool Parse(string[] args, object destination)
         {
-            bool hadError = this.ParseArgumentList(args, destination);
+            var hadError = this.ParseArgumentList(args, destination);
 
             // check for missing required arguments
             foreach (Argument arg in this.arguments)
@@ -270,10 +270,10 @@ namespace FabActUtil.CommandLineParser
 
         private static CommandLineArgumentAttribute GetAttribute(FieldInfo field)
         {
-            object[] attributes = field.GetCustomAttributes(typeof(CommandLineArgumentAttribute), false);
+            var attributes = field.GetCustomAttributes(typeof(CommandLineArgumentAttribute), false);
             if (attributes.Length == 1)
             {
-                return (CommandLineArgumentAttribute) attributes[0];
+                return (CommandLineArgumentAttribute)attributes[0];
             }
 
             Debug.Assert(attributes.Length == 0);
@@ -296,7 +296,7 @@ namespace FabActUtil.CommandLineParser
             var hadError = false;
             if (args != null)
             {
-                foreach (string argument in args)
+                foreach (var argument in args)
                 {
                     if (argument.Length > 0)
                     {
@@ -304,8 +304,8 @@ namespace FabActUtil.CommandLineParser
                         {
                             case '-':
                             case '/':
-                                int endIndex = argument.IndexOfAny(new[] {':', '+', '-'}, 1);
-                                string option = argument.Substring(1, endIndex == -1 ? argument.Length - 1 : endIndex - 1);
+                                var endIndex = argument.IndexOfAny(new[] { ':', '+', '-' }, 1);
+                                var option = argument.Substring(1, endIndex == -1 ? argument.Length - 1 : endIndex - 1);
                                 string optionArgument;
                                 if (endIndex == -1)
                                 {
@@ -320,7 +320,7 @@ namespace FabActUtil.CommandLineParser
                                     optionArgument = argument.Substring(option.Length + 1);
                                 }
 
-                                var arg = (Argument) this.argumentMap[option];
+                                var arg = (Argument)this.argumentMap[option];
                                 if (arg == null)
                                 {
                                     this.ReportUnrecognizedArgument(argument);
@@ -369,7 +369,7 @@ namespace FabActUtil.CommandLineParser
             }
 
             builder.Append(arg.LongName);
-            Type valueType = arg.ValueType;
+            var valueType = arg.ValueType;
             if (valueType == typeof(int))
             {
                 if (isDefault)
@@ -428,7 +428,7 @@ namespace FabActUtil.CommandLineParser
                 }
 
                 var first = true;
-                foreach (FieldInfo field in valueType.GetFields())
+                foreach (var field in valueType.GetFields())
                 {
                     if (field.IsStatic)
                     {
@@ -581,7 +581,7 @@ namespace FabActUtil.CommandLineParser
                 }
             }
 
-            parameters = (string[]) argArray.ToArray(typeof(string));
+            parameters = (string[])argArray.ToArray(typeof(string));
             return hadError;
         }
 
@@ -744,8 +744,7 @@ namespace FabActUtil.CommandLineParser
 
                 this.SeenValue = true;
 
-                object newValue;
-                if (!this.ParseValue(this.ValueType, value, out newValue))
+                if (!this.ParseValue(this.ValueType, value, out var newValue))
                 {
                     return false;
                 }

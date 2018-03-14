@@ -76,7 +76,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             this.actorTypeInformation = actorTypeInformation;
 
             // Create counter writers for partition-wide counters
-            string actorCounterInstanceName = string.Concat(
+            var actorCounterInstanceName = string.Concat(
                 this.partitionId.ToString("D"),
                 "_",
                 this.counterInstanceDifferentiator);
@@ -114,7 +114,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
             if (null != this.actorMethodCounterInstanceData)
             {
-                foreach (CounterInstanceData counterInstanceData in this.actorMethodCounterInstanceData.Values)
+                foreach (var counterInstanceData in this.actorMethodCounterInstanceData.Values)
                 {
                     if (null != counterInstanceData.CounterWriters)
                     {
@@ -131,12 +131,12 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         internal static void InitializeAvailableCounterTypes()
         {
             var actorPerformanceCounters = new ActorPerformanceCounters();
-            Dictionary<FabricPerformanceCounterSetDefinition, IEnumerable<FabricPerformanceCounterDefinition>> requestedCounterSets =
+            var requestedCounterSets =
                 actorPerformanceCounters.GetCounterSets();
 
             AvaiableFabricCounterSet = new Dictionary<string, FabricPerformanceCounterSet>();
 
-            foreach (FabricPerformanceCounterSetDefinition category in requestedCounterSets.Keys)
+            foreach (var category in requestedCounterSets.Keys)
             {
                 FabricPerformanceCounterSet counterSet;
                 try
@@ -180,14 +180,12 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             this.actorMethodCounterInstanceData = new Dictionary<long, CounterInstanceData>();
             var methodInfoList = new List<KeyValuePair<long, MethodInfo>>();
-            foreach (Type actorInterfaceType in this.actorTypeInformation.InterfaceTypes)
+            foreach (var actorInterfaceType in this.actorTypeInformation.InterfaceTypes)
             {
-                int interfaceId;
-                MethodDescription[] actorInterfaceMethodDescriptions;
                 diagnosticsEventManager.ActorMethodFriendlyNameBuilder.GetActorInterfaceMethodDescriptions(
                     actorInterfaceType,
-                    out interfaceId,
-                    out actorInterfaceMethodDescriptions);
+                    out var interfaceId,
+                    out var actorInterfaceMethodDescriptions);
                 methodInfoList.AddRange(this.GetMethodInfo(actorInterfaceMethodDescriptions, interfaceId));
             }
 
@@ -213,12 +211,11 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
 
             // Compute the counter instance names for all the actor methods
-            IEnumerable<KeyValuePair<long, string>> counterInstanceNames = percCounterInstanceNameBuilder.GetMethodCounterInstanceNames(methodInfoList);
-            FabricPerformanceCounterSet actorMethodCounterSet;
+            var counterInstanceNames = percCounterInstanceNameBuilder.GetMethodCounterInstanceNames(methodInfoList);
 
             if (!AvaiableFabricCounterSet.TryGetValue(
                 ActorPerformanceCounters.ActorMethodCategoryName,
-                out actorMethodCounterSet))
+                out var actorMethodCounterSet))
             {
                 ActorTrace.Source.WriteWarning(
                     TraceType,
@@ -227,7 +224,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
                 return null;
             }
 
-            foreach (KeyValuePair<long, string> kvp in counterInstanceNames)
+            foreach (var kvp in counterInstanceNames)
             {
                 var data = new CounterInstanceData {InstanceName = kvp.Value};
                 data.CounterWriters = this.CreateCounterWriters(data, actorMethodCounterSet);
@@ -244,7 +241,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             var methodInfoList = new List<KeyValuePair<long, MethodInfo>>();
 
-            foreach (MethodDescription actorInterfaceMethodDescription in actorInterfaceMethodDescriptions)
+            foreach (var actorInterfaceMethodDescription in actorInterfaceMethodDescriptions)
             {
                 var kvp = new KeyValuePair<long, MethodInfo>(
                     DiagnosticsEventManager.GetInterfaceMethodKey(
@@ -341,7 +338,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             string actorCounterInstanceName, Type writerType,
             Func<T> writerCreationCallback)
         {
-            T result = default(T);
+            var result = default(T);
             Exception ex = null;
             try
             {
@@ -367,7 +364,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
                     "Created performance counter category {0} with following counters.",
                     counterSet.CounterSetDefinition.Name));
             sb.AppendLine();
-            foreach (FabricPerformanceCounterDefinition counter in activeCounters)
+            foreach (var counter in activeCounters)
             {
                 sb.Append(string.Format("CounterName : {0}", counter.Name));
                 sb.AppendLine();
@@ -378,9 +375,9 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
         private void OnActorMethodFinish(ActorMethodDiagnosticData methodData)
         {
-            long interfaceMethodKey = methodData.InterfaceMethodKey;
+            var interfaceMethodKey = methodData.InterfaceMethodKey;
 
-            MethodSpecificCounterWriters counterWriters = this.GetMethodSpecificCounterWriters(interfaceMethodKey, methodData.RemotingListener);
+            var counterWriters = this.GetMethodSpecificCounterWriters(interfaceMethodKey, methodData.RemotingListener);
 
 
             // Call the counter writers to update the counter values
@@ -405,7 +402,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             FabricPerformanceCounterSetInstance instance,
             Func<FabricPerformanceCounterSetInstance, T> counterWriterCreationCallback)
         {
-            T retVal = default(T);
+            var retVal = default(T);
             try
             {
                 retVal = counterWriterCreationCallback(instance);
@@ -547,7 +544,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
             // We have not yet created the objects that write the counter values. So build
             // up the list of counter writers now.
-            string instanceName = counterInstanceData.InstanceName;
+            var instanceName = counterInstanceData.InstanceName;
             var tempCounterWriters = new MethodSpecificCounterWriters();
 
             try
@@ -593,7 +590,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
                     tempCounterWriters.ActorMethodExceptionFrequencyCounterWriter,
                     tempCounterWriters.ActorMethodExecTimeCounterWriter
                 };
-                foreach (object newlyCreatedCounterWriter in newlyCreatedCounterWriters)
+                foreach (var newlyCreatedCounterWriter in newlyCreatedCounterWriters)
                 {
                     if (null != newlyCreatedCounterWriter)
                     {

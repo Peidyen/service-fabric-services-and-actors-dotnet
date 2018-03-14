@@ -36,21 +36,18 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
 
         public void OneWayMessage(ServiceRemotingMessageHeaders serviceMessageHeaders, byte[] requestBody)
         {
-            ActorMessageHeaders actorHeaders;
-            if (!ActorMessageHeaders.TryFromServiceMessageHeaders(serviceMessageHeaders, out actorHeaders))
+            if (!ActorMessageHeaders.TryFromServiceMessageHeaders(serviceMessageHeaders, out var actorHeaders))
             {
                 return;
             }
 
-            ActorMethodDispatcherBase eventDispatcher;
             if (this.eventIdToDispatchersMap == null ||
-                !this.eventIdToDispatchersMap.TryGetValue(actorHeaders.InterfaceId, out eventDispatcher))
+                !this.eventIdToDispatchersMap.TryGetValue(actorHeaders.InterfaceId, out var eventDispatcher))
             {
                 return;
             }
 
-            SubscriptionInfo info;
-            if (!this.subscriptionIdToInfoMap.TryGetValue(actorHeaders.ActorId.GetGuidId(), out info))
+            if (!this.subscriptionIdToInfoMap.TryGetValue(actorHeaders.ActorId.GetGuidId(), out var info))
             {
                 return;
             }
@@ -62,7 +59,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
 
             try
             {
-                object eventMsgBody = eventDispatcher.DeserializeRequestMessageBody(requestBody);
+                var eventMsgBody = eventDispatcher.DeserializeRequestMessageBody(requestBody);
                 eventDispatcher.Dispatch(info.Subscriber.Instance, actorHeaders.MethodId, eventMsgBody);
             }
             catch
@@ -75,7 +72,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
         {
             if (eventDispatchers != null)
             {
-                foreach (ActorMethodDispatcherBase dispatcher in eventDispatchers)
+                foreach (var dispatcher in eventDispatchers)
                 {
                     this.eventIdToDispatchersMap.GetOrAdd(
                         dispatcher.InterfaceId,
@@ -86,10 +83,10 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
 
         public SubscriptionInfo RegisterSubscriber(ActorId actorId, Type eventInterfaceType, object instance)
         {
-            int eventId = this.GetAndEnsureEventId(eventInterfaceType);
+            var eventId = this.GetAndEnsureEventId(eventInterfaceType);
 
             var key = new Subscriber(actorId, eventId, instance);
-            SubscriptionInfo info = this.eventKeyToInfoMap.GetOrAdd(key, k => new SubscriptionInfo(k));
+            var info = this.eventKeyToInfoMap.GetOrAdd(key, k => new SubscriptionInfo(k));
             this.subscriptionIdToInfoMap.GetOrAdd(info.Id, i => info);
 
             return info;
@@ -97,15 +94,14 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
 
         public bool TryUnregisterSubscriber(ActorId actorId, Type eventInterfaceType, object instance, out SubscriptionInfo info)
         {
-            int eventId = this.GetAndEnsureEventId(eventInterfaceType);
+            var eventId = this.GetAndEnsureEventId(eventInterfaceType);
 
             var key = new Subscriber(actorId, eventId, instance);
             if (this.eventKeyToInfoMap.TryRemove(key, out info))
             {
                 info.IsActive = false;
 
-                SubscriptionInfo info2;
-                this.subscriptionIdToInfoMap.TryRemove(info.Id, out info2);
+                this.subscriptionIdToInfoMap.TryRemove(info.Id, out var info2);
                 return true;
             }
 
@@ -116,7 +112,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1.Client
         {
             if (this.eventIdToDispatchersMap != null)
             {
-                int eventId = IdUtil.ComputeId(eventInterfaceType);
+                var eventId = IdUtil.ComputeId(eventInterfaceType);
                 if (this.eventIdToDispatchersMap.ContainsKey(eventId))
                 {
                     return eventId;

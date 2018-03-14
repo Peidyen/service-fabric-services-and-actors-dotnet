@@ -106,7 +106,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.Client
             OperationRetrySettings retrySettings,
             out ExceptionHandlingResult result)
         {
-            Exception e = exceptionInformation.Exception;
+            var e = exceptionInformation.Exception;
 
             if (e is ActorConcurrencyLockTimeoutException)
             {

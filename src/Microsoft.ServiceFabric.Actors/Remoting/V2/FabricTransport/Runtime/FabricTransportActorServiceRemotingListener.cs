@@ -110,7 +110,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.FabricTransport.Runtime
 
         private static ServiceContext GetContext(ActorService actorService)
         {
-            actorService.ThrowIfNull("actorService");
+            Requires.ThrowIfNull(actorService, "actorService");
             return actorService.Context;
         }
 
@@ -122,14 +122,12 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.FabricTransport.Runtime
                 listenerSettings = FabricTransportActorRemotingProviderAttribute.GetActorListenerSettings(actorService);
             }
 
-            if (listenerSettings.EndpointResourceName.Equals(
-                FabricTransportRemotingListenerSettings
-                    .DefaultEndpointResourceName))
+            if (listenerSettings.EndpointResourceName.Equals(FabricTransportRemotingListenerSettings
+                .DefaultEndpointResourceName))
             {
                 listenerSettings.EndpointResourceName = ActorNameFormat.GetFabricServiceV2EndpointName(
                     actorService.ActorTypeInformation.ImplementationType);
             }
-
             return listenerSettings;
         }
     }

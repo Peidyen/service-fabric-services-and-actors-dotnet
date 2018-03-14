@@ -399,7 +399,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
             {
                 try
                 {
-                    CodePackageActivationContext context = FabricRuntime.GetActivationContext();
+                    var context = FabricRuntime.GetActivationContext();
                     ApplicationName = context.ApplicationName;
                 }
                 catch (InvalidOperationException)
@@ -423,7 +423,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
 
         private static string GetName(string actorInterfaceTypeName)
         {
-            string actorName = actorInterfaceTypeName;
+            var actorName = actorInterfaceTypeName;
             if (!actorName.EndsWith("Actor", StringComparison.InvariantCultureIgnoreCase))
             {
                 actorName = string.Format(CultureInfo.InvariantCulture, "{0}Actor", actorName);
@@ -459,7 +459,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
 
         private static string GetActorImplName(string actorImplTypeName)
         {
-            string actorImplName = actorImplTypeName;
+            var actorImplName = actorImplTypeName;
             if (!actorImplName.EndsWith("Actor", StringComparison.InvariantCultureIgnoreCase))
             {
                 actorImplName = string.Format(CultureInfo.InvariantCulture, "{0}Actor", actorImplName);
@@ -470,7 +470,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
 
         private static string GetActorServiceName(Type actorImplementationType)
         {
-            ActorServiceAttribute actorServiceAttr = ActorServiceAttribute.Get(actorImplementationType);
+            var actorServiceAttr = ActorServiceAttribute.Get(actorImplementationType);
             if (actorServiceAttr != null && !string.IsNullOrEmpty(actorServiceAttr.Name))
             {
                 return actorServiceAttr.Name;

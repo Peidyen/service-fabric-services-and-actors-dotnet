@@ -42,14 +42,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 actorInterfaces.Add(type);
             }
 
-            foreach (Type ai in actorInterfaces)
+            foreach (var ai in actorInterfaces)
             {
-                IEnumerable<Type> eventPublishers = ai.GetInterfaces().Where(
+                var eventPublishers = ai.GetInterfaces().Where(
                     t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IActorEventPublisher<>));
 
-                foreach (Type ep in eventPublishers)
+                foreach (var ep in eventPublishers)
                 {
-                    Type ei = ep.GetGenericArguments()[0];
+                    var ei = ep.GetGenericArguments()[0];
                     if (!eventInterfaces.Contains(ei))
                     {
                         eventInterfaces.Add(ei);
@@ -80,7 +80,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         /// <returns>true, if the <see cref="System.Type.BaseType" /> of actorType is an <see cref="Actor" />; otherwise, false.</returns>
         public static bool IsActor(this Type actorType)
         {
-            Type actorBaseType = actorType.GetTypeInfo().BaseType;
+            var actorBaseType = actorType.GetTypeInfo().BaseType;
 
             while (actorBaseType != null)
             {
@@ -123,9 +123,9 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             list.RemoveAll(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IActorEventPublisher<>));
             list.RemoveAll(t => t == typeof(IActorEventPublisher));
 
-            foreach (Type t in list)
+            foreach (var t in list)
             {
-                Type nonActorParent = GetNonActorParentType(t);
+                var nonActorParent = GetNonActorParentType(t);
                 if (nonActorParent != null)
                 {
                     return nonActorParent;

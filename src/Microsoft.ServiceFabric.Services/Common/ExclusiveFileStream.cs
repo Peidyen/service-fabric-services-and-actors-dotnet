@@ -40,7 +40,7 @@ namespace Microsoft.ServiceFabric.Services.Common
                 numAttempts++;
                 try
                 {
-                    FileStream fileStream = File.Open(
+                    var fileStream = File.Open(
                         path,
                         fileMode,
                         fileAccess,

@@ -44,7 +44,7 @@ namespace Microsoft.ServiceFabric.Services
 
         internal static string GetName(string serviceInterfaceTypeName)
         {
-            string serviceName = serviceInterfaceTypeName;
+            var serviceName = serviceInterfaceTypeName;
             if (!serviceName.EndsWith("Service", StringComparison.InvariantCultureIgnoreCase))
             {
                 serviceName = string.Format(CultureInfo.InvariantCulture, "{0}Service", serviceName);

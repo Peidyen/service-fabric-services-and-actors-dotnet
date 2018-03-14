@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
@@ -11,7 +11,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
     using System.Linq;
 
     /// <summary>
-    ///     Represents the outgoing message body to be sent over the wire.
+    /// Represents the outgoing message body to be sent over the wire.
     /// </summary>
     public sealed class OutgoingMessageBody : IMessageBody
     {
@@ -20,7 +20,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         private bool isDisposed;
 
         /// <summary>
-        ///     Creates OutgoingMessageBody with list of pooled Buffers
+        /// Creates OutgoingMessageBody with list of pooled Buffers
         /// </summary>
         /// <param name="outgoingPooledBodyBuffers"></param>
         public OutgoingMessageBody(IEnumerable<IPooledBuffer> outgoingPooledBodyBuffers)
@@ -34,7 +34,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         }
 
         /// <summary>
-        ///     Creates OutgoingMessageBody with list of segments.
+        /// Creates OutgoingMessageBody with list of segments.
         /// </summary>
         public OutgoingMessageBody(IEnumerable<ArraySegment<byte>> outgoingBodyBuffers)
         {
@@ -43,7 +43,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         }
 
         /// <summary>
-        ///     Returns the Buffers to be sent over the wire.
+        /// Returns the Buffers to be sent over the wire.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<ArraySegment<byte>> GetSendBuffers()
@@ -52,7 +52,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         }
 
         /// <summary>
-        ///     This method is not implemented.
+        /// This method is not implemented.
         /// </summary>
         /// <returns></returns>
         public Stream GetReceivedBuffer()
@@ -61,7 +61,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
         }
 
         /// <summary>
-        ///     Release the pooled Buffers if it has any.
+        /// Release the pooled Buffers if it has any.
         /// </summary>
         public void Dispose()
         {
@@ -70,7 +70,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Messaging
                 this.isDisposed = true;
                 if (this.pooledBodyBuffers != null)
                 {
-                    foreach (IPooledBuffer pooledBuffer in this.pooledBodyBuffers)
+                    foreach (var pooledBuffer in this.pooledBodyBuffers)
                     {
                         pooledBuffer.Release();
                     }

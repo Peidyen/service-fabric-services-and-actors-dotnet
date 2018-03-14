@@ -72,8 +72,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Wcf.Client
             }
             catch (FaultException<RemoteExceptionInformation> faultException)
             {
-                Exception remoteException;
-                if (RemoteExceptionInformation.ToException(faultException.Detail, out remoteException))
+                if (RemoteExceptionInformation.ToException(faultException.Detail, out var remoteException))
                 {
                     throw new AggregateException(remoteException);
                 }

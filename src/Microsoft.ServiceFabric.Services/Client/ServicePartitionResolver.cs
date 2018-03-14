@@ -321,7 +321,7 @@ namespace Microsoft.ServiceFabric.Services.Client
             TimeSpan maxRetryBackoffInterval,
             CancellationToken cancellationToken)
         {
-            Uri serviceName = previousRsp.ServiceName;
+            var serviceName = previousRsp.ServiceName;
             switch (previousRsp.Info.Kind)
             {
                 case ServicePartitionKind.Singleton:
@@ -340,7 +340,7 @@ namespace Microsoft.ServiceFabric.Services.Client
                 }
                 case ServicePartitionKind.Named:
                 {
-                    string partitionName = ((NamedPartitionInformation) previousRsp.Info).Name;
+                    var partitionName = ((NamedPartitionInformation) previousRsp.Info).Name;
                     return this.ResolveHelperAsync(
                         (client, prevRsp, timeout, cancellation) => ResolveNamedPartitionAsync(
                             client,
@@ -356,7 +356,7 @@ namespace Microsoft.ServiceFabric.Services.Client
                 }
                 case ServicePartitionKind.Int64Range:
                 {
-                    long partitionKey = ((Int64RangePartitionInformation) previousRsp.Info).LowKey;
+                    var partitionKey = ((Int64RangePartitionInformation) previousRsp.Info).LowKey;
                     return this.ResolveHelperAsync(
                         (client, prevRsp, timeout, cancellation) => ResolveInt64PartitionAsync(
                             client,
@@ -608,7 +608,7 @@ namespace Microsoft.ServiceFabric.Services.Client
                     throw new OperationCanceledException();
                 }
 
-                FabricClient client = this.GetClient();
+                var client = this.GetClient();
                 ResolvedServicePartition rsp = null;
 
                 // resolve and get the rsp

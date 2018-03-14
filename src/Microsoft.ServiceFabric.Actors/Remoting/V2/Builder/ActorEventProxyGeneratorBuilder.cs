@@ -37,22 +37,22 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
             Type proxyInterfaceType,
             IEnumerable<InterfaceDescription> interfaceDescriptions)
         {
-            ProxyGeneratorBuildResult result = base.Build(proxyInterfaceType, interfaceDescriptions);
+            var result = base.Build(proxyInterfaceType, interfaceDescriptions);
 
 #if !DotNetCoreClr
             // This code is to support V1 stack serialization logic
 
 
-            Dictionary<InterfaceDescription, MethodBodyTypesBuildResult> methodBodyTypesResultsMap = interfaceDescriptions.ToDictionary(
+            var methodBodyTypesResultsMap = interfaceDescriptions.ToDictionary(
                 d => d,
                 d => this.CodeBuilder.GetOrBuildMethodBodyTypes(d.InterfaceType));
 
 
-            Dictionary<int, IEnumerable<Type>> requestBodyTypes = methodBodyTypesResultsMap.ToDictionary(
+            var requestBodyTypes = methodBodyTypesResultsMap.ToDictionary(
                 item => item.Key.V1Id,
                 item => item.Value.GetRequestBodyTypes());
 
-            Dictionary<int, IEnumerable<Type>> responseBodyTypes = methodBodyTypesResultsMap.ToDictionary(
+            var responseBodyTypes = methodBodyTypesResultsMap.ToDictionary(
                 item => item.Key.V1Id,
                 item => item.Value.GetResponseBodyTypes());
 
@@ -81,30 +81,30 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
             IEnumerable<InterfaceDescription> interfaceDescriptions)
         {
             // ensure that method data types are built for each of the remote interfaces
-            Dictionary<InterfaceDescription, MethodBodyTypesBuildResult> methodBodyTypesResultsMap = interfaceDescriptions.ToDictionary(
+            var methodBodyTypesResultsMap = interfaceDescriptions.ToDictionary(
                 d => d,
                 d => this.CodeBuilder.GetOrBuildMethodBodyTypes(d.InterfaceType));
 
 
-            foreach (KeyValuePair<InterfaceDescription, MethodBodyTypesBuildResult> item in methodBodyTypesResultsMap)
+            foreach (var item in methodBodyTypesResultsMap)
             {
-                InterfaceDescription interfaceDescription = item.Key;
-                IDictionary<string, MethodBodyTypes> methodBodyTypesMap = item.Value.MethodBodyTypesMap;
+                var interfaceDescription = item.Key;
+                var methodBodyTypesMap = item.Value.MethodBodyTypesMap;
 
-                foreach (MethodDescription methodDescription in interfaceDescription.Methods)
+                foreach (var methodDescription in interfaceDescription.Methods)
                 {
-                    MethodBodyTypes methodBodyTypes = methodBodyTypesMap[methodDescription.Name];
+                    var methodBodyTypes = methodBodyTypesMap[methodDescription.Name];
 
 
                     if (TypeUtility.IsVoidType(methodDescription.ReturnType))
                     {
-                        MethodInfo interfaceMethod = methodDescription.MethodInfo;
+                        var interfaceMethod = methodDescription.MethodInfo;
 
-                        MethodBuilder methodBuilder = CodeBuilderUtils.CreateExplitInterfaceMethodBuilder(
+                        var methodBuilder = CodeBuilderUtils.CreateExplitInterfaceMethodBuilder(
                             classBuilder,
                             interfaceMethod);
 
-                        ILGenerator ilGen = methodBuilder.GetILGenerator();
+                        var ilGen = methodBuilder.GetILGenerator();
 
                         this.AddVoidMethodImplementation2(
                             ilGen,
@@ -132,15 +132,15 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Builder
             MethodDescription methodDescription,
             MethodBodyTypes methodBodyTypes)
         {
-            MethodInfo interfaceMethod = methodDescription.MethodInfo;
-            ParameterInfo[] parameters = interfaceMethod.GetParameters();
+            var interfaceMethod = methodDescription.MethodInfo;
+            var parameters = interfaceMethod.GetParameters();
 
             LocalBuilder requestBody = null;
             if (methodBodyTypes.RequestBodyType != null)
             {
                 // create requestBody and assign the values to its field from the arguments
                 requestBody = ilGen.DeclareLocal(methodBodyTypes.RequestBodyType);
-                ConstructorInfo requestBodyCtor = methodBodyTypes.RequestBodyType.GetConstructor(Type.EmptyTypes);
+                var requestBodyCtor = methodBodyTypes.RequestBodyType.GetConstructor(Type.EmptyTypes);
 
                 if (requestBodyCtor != null)
                 {

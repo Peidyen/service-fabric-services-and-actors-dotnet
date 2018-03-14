@@ -39,7 +39,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf
 
                 var stringWriter = new StringWriter();
 
-                using (XmlWriter textStream = XmlWriter.Create(stringWriter))
+                using (var textStream = XmlWriter.Create(stringWriter))
                 {
                     serializer.WriteObject(textStream, exception);
                     textStream.Flush();
@@ -66,8 +66,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf
                 var exceptionData = new ServiceExceptionData(
                     exception.GetType().FullName,
                     exceptionStringBuilder.ToString());
-                string result;
-                if (TrySerializeExceptionData(exceptionData, out result))
+                if (TrySerializeExceptionData(exceptionData, out var result))
                 {
                     return result;
                 }
@@ -90,7 +89,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf
                     DtdProcessing = DtdProcessing.Prohibit,
                     XmlResolver = null
                 };
-                using (XmlReader textStream = XmlReader.Create(stringReader, settings))
+                using (var textStream = XmlReader.Create(stringReader, settings))
                 {
                     return (Exception) serializer.ReadObject(textStream);
                 }
@@ -98,8 +97,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf
             catch (Exception ex)
             {
                 // add the message as service exception
-                ServiceExceptionData exceptionData;
-                if (TryDeserializeExceptionData(exceptionString, out exceptionData))
+                if (TryDeserializeExceptionData(exceptionString, out var exceptionData))
                 {
                     return new ServiceException(exceptionData.Type, exceptionData.Message);
                 }
@@ -114,7 +112,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf
             {
                 var stringWriter = new StringWriter();
 
-                using (XmlWriter textStream = XmlWriter.Create(stringWriter))
+                using (var textStream = XmlWriter.Create(stringWriter))
                 {
                     serializer.WriteObject(textStream, serviceExceptionData);
                     textStream.Flush();
@@ -144,7 +142,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf
                     DtdProcessing = DtdProcessing.Prohibit,
                     XmlResolver = null
                 };
-                using (XmlReader textStream = XmlReader.Create(stringReader, settings))
+                using (var textStream = XmlReader.Create(stringReader, settings))
                 {
                     result = (ServiceExceptionData) serializer.ReadObject(textStream);
                     return true;

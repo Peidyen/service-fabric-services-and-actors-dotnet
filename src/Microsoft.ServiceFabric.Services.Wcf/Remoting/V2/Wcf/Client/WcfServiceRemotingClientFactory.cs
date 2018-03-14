@@ -164,7 +164,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            WcfCommunicationClient<IServiceRemotingContract> wcfClient = await this.wcfFactory.GetClientAsync(
+            var wcfClient = await this.wcfFactory.GetClientAsync(
                 serviceUri,
                 partitionKey,
                 targetReplicaSelector,
@@ -209,7 +209,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            WcfCommunicationClient<IServiceRemotingContract> wcfClient = await this.wcfFactory.GetClientAsync(
+            var wcfClient = await this.wcfFactory.GetClientAsync(
                 previousRsp,
                 targetReplicaSelector,
                 listenerName,
@@ -297,12 +297,12 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
             object sender,
             CommunicationClientEventArgs<WcfCommunicationClient<IServiceRemotingContract>> communicationClientEventArgs)
         {
-            EventHandler<CommunicationClientEventArgs<IServiceRemotingClient>> handlers = this.ClientDisconnected;
+            var handlers = this.ClientDisconnected;
             if (handlers != null)
             {
                 handlers(
                     this,
-                    new CommunicationClientEventArgs<IServiceRemotingClient>
+                    new CommunicationClientEventArgs<IServiceRemotingClient>()
                     {
                         Client = new WcfServiceRemotingClient(communicationClientEventArgs.Client, this.serializersManager)
                     });
@@ -313,12 +313,12 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
             object sender,
             CommunicationClientEventArgs<WcfCommunicationClient<IServiceRemotingContract>> communicationClientEventArgs)
         {
-            EventHandler<CommunicationClientEventArgs<IServiceRemotingClient>> handlers = this.ClientConnected;
+            var handlers = this.ClientConnected;
             if (handlers != null)
             {
                 handlers(
                     this,
-                    new CommunicationClientEventArgs<IServiceRemotingClient>
+                    new CommunicationClientEventArgs<IServiceRemotingClient>()
                     {
                         Client = new WcfServiceRemotingClient(communicationClientEventArgs.Client, this.serializersManager)
                     });
@@ -347,15 +347,21 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
             {
                 return new NoOpCallbackReceiver();
             }
-
-            return new CallbackReceiver(
-                callbackClient,
-                this.serializersManager);
+            else
+            {
+                return new CallbackReceiver(callbackClient,
+                    this.serializersManager);
+            }
         }
 
         [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple)]
         private class NoOpCallbackReceiver : IServiceRemotingCallbackContract
         {
+            public NoOpCallbackReceiver()
+            {
+            }
+
+
             public void SendOneWay(ArraySegment<byte> messageHeaders, IEnumerable<ArraySegment<byte>> requestBody)
             {
             }
@@ -379,13 +385,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Client
 
             public void SendOneWay(ArraySegment<byte> messageHeaders, IEnumerable<ArraySegment<byte>> requestBody)
             {
-                IServiceRemotingMessageHeaderSerializer headerSerializer = this.serializersManager.GetHeaderSerializer();
-                IServiceRemotingRequestMessageHeader deserializerHeaders =
-                    headerSerializer.DeserializeRequestHeaders(new IncomingMessageHeader(new SegmentedReadMemoryStream(messageHeaders)));
-                IServiceRemotingRequestMessageBodySerializer msgBodySerializer =
-                    this.serializersManager.GetRequestBodySerializer(deserializerHeaders.InterfaceId);
-                IServiceRemotingRequestMessageBody deserializedMsgBody =
-                    msgBodySerializer.Deserialize(new IncomingMessageBody(new SegmentedReadMemoryStream(requestBody)));
+                var headerSerializer = this.serializersManager.GetHeaderSerializer();
+                var deserializerHeaders = headerSerializer.DeserializeRequestHeaders(new IncomingMessageHeader(new SegmentedReadMemoryStream(messageHeaders)));
+                var msgBodySerializer = this.serializersManager.GetRequestBodySerializer(deserializerHeaders.InterfaceId);
+                var deserializedMsgBody = msgBodySerializer.Deserialize(new IncomingMessageBody(new SegmentedReadMemoryStream(requestBody)));
                 var msg = new ServiceRemotingRequestMessage(deserializerHeaders, deserializedMsgBody);
                 Task.Run(() => this.callbackHandler.HandleOneWayMessage(msg));
             }

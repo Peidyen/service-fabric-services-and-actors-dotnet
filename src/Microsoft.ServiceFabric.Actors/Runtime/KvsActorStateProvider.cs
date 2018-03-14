@@ -50,14 +50,14 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         private LocalStoreSettings GetLocalStoreSettings()
         {
             // check if user provided the settings
-            LocalStoreSettings settings = this.userDefinedLocalStoreSettings;
+            var settings = this.userDefinedLocalStoreSettings;
 
             if (settings == null)
             {
                 // try load from configuration                
-                string configPackageName = ActorNameFormat.GetConfigPackageName(this.ActorTypeInformation.ImplementationType);
-                string localEseStoreConfigSectionName = ActorNameFormat.GetLocalEseStoreConfigSectionName(this.ActorTypeInformation.ImplementationType);
-                ConfigurationPackage configPackageObj = this.InitParams.CodePackageActivationContext.GetConfigurationPackageObject(configPackageName);
+                var configPackageName = ActorNameFormat.GetConfigPackageName(this.ActorTypeInformation.ImplementationType);
+                var localEseStoreConfigSectionName = ActorNameFormat.GetLocalEseStoreConfigSectionName(this.ActorTypeInformation.ImplementationType);
+                var configPackageObj = this.InitParams.CodePackageActivationContext.GetConfigurationPackageObject(configPackageName);
 
                 if (configPackageObj.Settings.Sections.Contains(localEseStoreConfigSectionName))
                 {
@@ -78,8 +78,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 };
             }
 
-            var eseLocalStoreSettings = settings as LocalEseStoreSettings;
-            if (eseLocalStoreSettings != null)
+            if (settings is LocalEseStoreSettings eseLocalStoreSettings)
             {
                 if (string.IsNullOrEmpty(eseLocalStoreSettings.DbFolderPath))
                 {

@@ -25,13 +25,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Runtime
 
         public Task<byte[]> RequestResponseAsync(ServiceRemotingMessageHeaders messageHeaders, byte[] requestBody)
         {
-            byte[] header = ServiceRemotingMessageHeaders.Serialize(this.serializer, messageHeaders);
+            var header = ServiceRemotingMessageHeaders.Serialize(this.serializer, messageHeaders);
             return this.transportCallbackClient.RequestResponseAsync(header, requestBody);
         }
 
         public void OneWayMessage(ServiceRemotingMessageHeaders messageHeaders, byte[] requestBody)
         {
-            byte[] header = ServiceRemotingMessageHeaders.Serialize(this.serializer, messageHeaders);
+            var header = ServiceRemotingMessageHeaders.Serialize(this.serializer, messageHeaders);
 
             this.transportCallbackClient.OneWayMessage(header, requestBody);
         }

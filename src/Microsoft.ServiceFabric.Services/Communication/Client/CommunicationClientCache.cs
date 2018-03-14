@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------
+// ------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
@@ -51,7 +51,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             string listenerName,
             ResolvedServicePartition rsp)
         {
-            PartitionClientCache partitionClientCache = this.clientCache.GetOrAdd(
+            var partitionClientCache = this.clientCache.GetOrAdd(
                 partitionId,
                 new PartitionClientCache(partitionId, this.traceId));
 
@@ -64,7 +64,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             string listenerName,
             out CommunicationClientCacheEntry<TCommunicationClient> cacheEntry)
         {
-            PartitionClientCache partitionClientCache = this.clientCache.GetOrAdd(
+            var partitionClientCache = this.clientCache.GetOrAdd(
                 partitionId,
                 new PartitionClientCache(partitionId, this.traceId));
 
@@ -86,11 +86,9 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
         {
             var totalItemsInCache = 0;
             var totalItemsCleaned = 0;
-            foreach (KeyValuePair<Guid, PartitionClientCache> item in this.clientCache)
+            foreach (var item in this.clientCache)
             {
-                var itemsCleanedPerEntry = 0;
-                var totalItemsPerEntry = 0;
-                item.Value.CleanupCacheEntries(out totalItemsPerEntry, out itemsCleanedPerEntry);
+                item.Value.CleanupCacheEntries(out var totalItemsPerEntry, out var itemsCleanedPerEntry);
                 if (itemsCleanedPerEntry > 0)
                 {
                     ServiceTrace.Source.WriteNoise(
@@ -178,7 +176,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
             {
                 totalNumberOfItems = 0;
                 numberOfEntriesCleaned = 0;
-                foreach (KeyValuePair<PartitionClientCacheKey, CommunicationClientCacheEntry<TCommunicationClient>> entry in this.cache)
+                foreach (var entry in this.cache)
                 {
                     ++totalNumberOfItems;
                     if (!entry.Value.Semaphore.Wait(this.cacheEntryLockWaitTimeForCleanup))
@@ -200,8 +198,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Client
 
                         entry.Value.IsInCache = false;
 
-                        CommunicationClientCacheEntry<TCommunicationClient> removedValue;
-                        this.cache.TryRemove(entry.Key, out removedValue);
+                        this.cache.TryRemove(entry.Key, out var removedValue);
                         ++numberOfEntriesCleaned;
                     }
 

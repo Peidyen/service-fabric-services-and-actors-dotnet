@@ -30,9 +30,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.Wcf.Runtime
             IMessageHeader outgoingMessageHeader = null;
             try
             {
-                IServiceRemotingMessageHeaderSerializer headerSerialzier = this.serializersManager.GetHeaderSerializer();
+                var headerSerialzier = this.serializersManager.GetHeaderSerializer();
                 outgoingMessageHeader = headerSerialzier.SerializeRequestHeader(requestMessage.GetHeader());
-                IServiceRemotingRequestMessageBodySerializer requestSerializer =
+                var requestSerializer =
                     this.serializersManager.GetRequestBodySerializer(requestMessage.GetHeader().InterfaceId);
                 outgoingMessageBody = requestSerializer.Serialize(requestMessage.GetBody());
                 this.callbackChannel.SendOneWay(

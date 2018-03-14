@@ -68,7 +68,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Runtime
         /// <returns>ServiceTypeInformation</returns>
         public static ServiceTypeInformation Get(Type serviceType)
         {
-            Type[] serviceInterfaces = serviceType.GetServiceInterfaces();
+            var serviceInterfaces = serviceType.GetServiceInterfaces();
             if (serviceInterfaces.Length == 0 && !serviceType.GetTypeInfo().IsAbstract)
             {
                 throw new ArgumentException(

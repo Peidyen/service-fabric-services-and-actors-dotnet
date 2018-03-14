@@ -43,8 +43,8 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
         {
             var attribute = new StatePersistenceAttribute(StatePersistence.None);
 
-            object[] attributes = actorType.GetTypeInfo().GetCustomAttributes(typeof(StatePersistenceAttribute), false);
-            IEnumerator enumerator = attributes.GetEnumerator();
+            var attributes = actorType.GetTypeInfo().GetCustomAttributes(typeof(StatePersistenceAttribute), false);
+            var enumerator = attributes.GetEnumerator();
             if (enumerator.MoveNext())
             {
                 attribute.StatePersistence = ((StatePersistenceAttribute) enumerator.Current).StatePersistence;

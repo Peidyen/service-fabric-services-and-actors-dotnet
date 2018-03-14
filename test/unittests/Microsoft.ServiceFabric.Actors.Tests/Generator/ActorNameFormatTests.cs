@@ -18,7 +18,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Generator
             var serviceName = "ObjectActorService";
 
             // Act
-            string result = ActorNameFormat.GetFabricServiceName(typeof(object));
+            var result = ActorNameFormat.GetFabricServiceName(typeof(object));
 
             // Assert
             result.Should().Be(serviceName);
@@ -31,7 +31,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Generator
             var serviceName = "serviceName";
 
             // Act
-            string result = ActorNameFormat.GetFabricServiceName(typeof(object), serviceName);
+            var result = ActorNameFormat.GetFabricServiceName(typeof(object), serviceName);
 
             // Assert
             result.Should().Be(serviceName);

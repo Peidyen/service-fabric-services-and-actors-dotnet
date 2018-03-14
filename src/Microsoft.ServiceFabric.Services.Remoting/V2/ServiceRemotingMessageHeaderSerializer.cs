@@ -1,6 +1,6 @@
 // ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2
@@ -17,14 +17,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
         public ServiceRemotingMessageHeaderSerializer(
             IBufferPoolManager bufferPoolManager)
-            : this(
-                bufferPoolManager,
-                new DataContractSerializer(
+            : this(bufferPoolManager,
+                 new DataContractSerializer(
                     typeof(IServiceRemotingRequestMessageHeader),
-                    new DataContractSerializerSettings
+                    new DataContractSerializerSettings()
                     {
                         MaxItemsInObjectGraph = int.MaxValue,
-                        KnownTypes = new[] {typeof(ServiceRemotingRequestMessageHeader)}
+                        KnownTypes = new[] { typeof(ServiceRemotingRequestMessageHeader) }
                     }))
         {
         }
@@ -39,16 +38,18 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
             this.requestHeaderSerializer = headerRequestSerializer;
             this.responseHeaderSerializer = new DataContractSerializer(
                 typeof(IServiceRemotingResponseMessageHeader),
-                new DataContractSerializerSettings
+                new DataContractSerializerSettings()
                 {
                     MaxItemsInObjectGraph = int.MaxValue,
-                    KnownTypes = new[] {typeof(ServiceRemotingResponseMessageHeader)}
+                    KnownTypes = new[] { typeof(ServiceRemotingResponseMessageHeader) }
                 });
+
         }
 
 
         public IMessageHeader SerializeRequestHeader(IServiceRemotingRequestMessageHeader serviceRemotingRequestMessageHeader)
         {
+
             if (serviceRemotingRequestMessageHeader == null)
             {
                 return null;
@@ -57,7 +58,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
             using (var stream = new SegmentedPoolMemoryStream(this.bufferPoolManager))
             {
-                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
+                using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
                 {
                     this.requestHeaderSerializer.WriteObject(writer, serviceRemotingRequestMessageHeader);
                     writer.Flush();
@@ -68,17 +69,17 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
         public IServiceRemotingRequestMessageHeader DeserializeRequestHeaders(IMessageHeader messageHeader)
         {
-            if (messageHeader == null || messageHeader.GetReceivedBuffer() == null ||
-                messageHeader.GetReceivedBuffer().Length == 0)
+            if ((messageHeader == null) || (messageHeader.GetReceivedBuffer() == null) ||
+                (messageHeader.GetReceivedBuffer().Length == 0))
             {
                 return null;
             }
 
-            using (XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader(
+            using (var reader = XmlDictionaryReader.CreateBinaryReader(
                 messageHeader.GetReceivedBuffer(),
                 XmlDictionaryReaderQuotas.Max))
             {
-                return (IServiceRemotingRequestMessageHeader) this.requestHeaderSerializer.ReadObject(reader);
+                return (IServiceRemotingRequestMessageHeader)this.requestHeaderSerializer.ReadObject(reader);
             }
         }
 
@@ -92,7 +93,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
             using (var stream = new SegmentedPoolMemoryStream(this.bufferPoolManager))
             {
-                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
+                using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
                 {
                     this.responseHeaderSerializer.WriteObject(writer, serviceRemotingResponseMessageHeader);
                     writer.Flush();
@@ -103,17 +104,17 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
         public IServiceRemotingResponseMessageHeader DeserializeResponseHeaders(IMessageHeader messageHeader)
         {
-            if (messageHeader == null || messageHeader.GetReceivedBuffer() == null ||
-                messageHeader.GetReceivedBuffer().Length == 0)
+            if ((messageHeader == null) || (messageHeader.GetReceivedBuffer() == null) ||
+                (messageHeader.GetReceivedBuffer().Length == 0))
             {
                 return null;
             }
 
-            using (XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader(
+            using (var reader = XmlDictionaryReader.CreateBinaryReader(
                 messageHeader.GetReceivedBuffer(),
                 XmlDictionaryReaderQuotas.Max))
             {
-                return (IServiceRemotingResponseMessageHeader) this.responseHeaderSerializer.ReadObject(reader);
+                return (IServiceRemotingResponseMessageHeader)this.responseHeaderSerializer.ReadObject(reader);
             }
         }
     }

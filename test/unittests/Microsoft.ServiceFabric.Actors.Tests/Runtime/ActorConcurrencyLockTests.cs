@@ -66,7 +66,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
         public void VerifyReentrants()
         {
             var a = new DummyActor();
-            ActorConcurrencyLock guard = this.CreateAndInitializeReentrancyGuard(a, ActorReentrancyMode.LogicalCallContext);
+            var guard = this.CreateAndInitializeReentrancyGuard(a, ActorReentrancyMode.LogicalCallContext);
 
             var tasks = new Task[1];
             for (var i = 0; i < 1; ++i)
@@ -83,10 +83,10 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
         public void VerifyDirtyCallbacks()
         {
             var actor = new DummyActor();
-            ActorConcurrencyLock guard = this.CreateAndInitializeReentrancyGuard(actor, ActorReentrancyMode.LogicalCallContext);
+            var guard = this.CreateAndInitializeReentrancyGuard(actor, ActorReentrancyMode.LogicalCallContext);
             actor.IsDirty = true;
-            string callContext = Guid.NewGuid().ToString();
-            Task result = guard.Acquire(callContext, @base => ReplacementHandler(actor), CancellationToken.None);
+            var callContext = Guid.NewGuid().ToString();
+            var result = guard.Acquire(callContext, @base => ReplacementHandler(actor), CancellationToken.None);
             try
             {
                 result.Wait();
@@ -104,8 +104,8 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
         public void VerifyInvalidContextRelease()
         {
             var actor = new DummyActor();
-            ActorConcurrencyLock guard = this.CreateAndInitializeReentrancyGuard(actor, ActorReentrancyMode.LogicalCallContext);
-            string context = Guid.NewGuid().ToString();
+            var guard = this.CreateAndInitializeReentrancyGuard(actor, ActorReentrancyMode.LogicalCallContext);
+            var context = Guid.NewGuid().ToString();
             guard.Acquire(context, null, CancellationToken.None).Wait();
             guard.Test_CurrentContext.Should().Be(context);
             guard.Test_CurrentCount.Should().Be(1);
@@ -122,8 +122,8 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
         public void ReentrancyDisallowedTest()
         {
             var actor = new DummyActor();
-            ActorConcurrencyLock guard = this.CreateAndInitializeReentrancyGuard(actor, ActorReentrancyMode.Disallowed);
-            string context = Guid.NewGuid().ToString();
+            var guard = this.CreateAndInitializeReentrancyGuard(actor, ActorReentrancyMode.Disallowed);
+            var context = Guid.NewGuid().ToString();
             guard.Acquire(context, null, CancellationToken.None).Wait();
             guard.Test_CurrentContext.Should().Be(context);
             guard.Test_CurrentCount.Should().Be(1);
@@ -138,13 +138,13 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime
 
         private static void RunTest(ActorConcurrencyLock guard)
         {
-            string test = Guid.NewGuid().ToString();
+            var test = Guid.NewGuid().ToString();
             guard.Acquire(test, null, CancellationToken.None).Wait();
             guard.Test_CurrentCount.Should().Be(1);
             _currentContext = test;
             for (var i = 0; i < 10; i++)
             {
-                string testContext = test + ":" + Guid.NewGuid();
+                var testContext = test + ":" + Guid.NewGuid();
                 guard.Acquire(testContext, null, CancellationToken.None).Wait();
                 testContext.Should().StartWith(_currentContext, "Call context Prefix Matching ");
                 guard.ReleaseContext(testContext).Wait();

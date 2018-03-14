@@ -71,8 +71,8 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             long sequenceNumber = 0;
             var stateTable = new ActorStateTable();
 
-            int targetReplicationCount = 1 * 1000;
-            Dictionary<VolatileActorStateProvider.ActorStateType, int> statesPerReplication = GetStatesPerReplication(10);
+            var targetReplicationCount = 1 * 1000;
+            var statesPerReplication = GetStatesPerReplication(10);
 
             VerifyStateTableSnapshot(stateTable, statesPerReplication, long.MaxValue, 0, 0, 0);
 
@@ -86,7 +86,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     ix.ToString(),
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -104,7 +104,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             stopwatch.Restart();
 
-            ActorStateTable.ActorStateEnumerator snapshot = stateTable.GetShallowCopiesEnumerator(long.MaxValue);
+            var snapshot = stateTable.GetShallowCopiesEnumerator(long.MaxValue);
 
             stopwatch.Stop();
 
@@ -150,11 +150,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestCase("# Testcase 1: In order prepare, commit, prepare, commit ...");
 
-            foreach (string keyPrefix in new[] {"a", "b", "c"})
+            foreach (var keyPrefix in new[] {"a", "b", "c"})
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -188,13 +188,13 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             var keyPrefixList = new[] {"d", "e", "f"};
             var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            long commitSequenceNumber = sequenceNumber;
+            var commitSequenceNumber = sequenceNumber;
 
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -214,7 +214,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                     sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
             }
 
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++commitSequenceNumber;
 
@@ -236,12 +236,12 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             keyPrefixList = new[] {"g", "h", "i"};
             replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            long preCommitSequenceNumber = sequenceNumber;
-            foreach (string keyPrefix in keyPrefixList)
+            var preCommitSequenceNumber = sequenceNumber;
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -261,7 +261,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                     sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
             }
 
-            long commitSequenceNumber1 = sequenceNumber;
+            var commitSequenceNumber1 = sequenceNumber;
             Task.Factory.StartNew(() => { TestCommitUpdate(stateTable, commitSequenceNumber1); });
             Thread.Sleep(500);
             VerifyReads(
@@ -274,7 +274,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 sequenceNumber,
                 sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
 
-            long commitSequenceNumber2 = commitSequenceNumber1 - 1;
+            var commitSequenceNumber2 = commitSequenceNumber1 - 1;
             Task.Factory.StartNew(() => { TestCommitUpdate(stateTable, commitSequenceNumber2); });
             Thread.Sleep(500);
             VerifyReads(
@@ -287,11 +287,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 sequenceNumber,
                 sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
 
-            long commitSequenceNumber3 = commitSequenceNumber2 - 1;
+            var commitSequenceNumber3 = commitSequenceNumber2 - 1;
             TestCommitUpdate(stateTable, commitSequenceNumber3);
             Thread.Sleep(500);
 
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 VerifyReads(
                     stateTable,
@@ -326,11 +326,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             TestCase("# Testcase 1: Commmitted values only");
 
             var committedKeyPrefixList = new[] {"apple", "orange", "banana"};
-            foreach (string keyPrefix in committedKeyPrefixList)
+            foreach (var keyPrefix in committedKeyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -370,11 +370,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             TestCase("# Testcase 2: Commmitted + uncommitted values");
 
             var uncommittedKeyPrefixList = new[] {"grape", "pear", "kiwi"};
-            foreach (string keyPrefix in uncommittedKeyPrefixList)
+            foreach (var keyPrefix in uncommittedKeyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -423,11 +423,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             TestCase("# Testcase 1: Singleton apply");
 
             var keyPrefixList = new[] {"f", "fo", "foo"};
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -454,16 +454,16 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 new[] {"a", "ab", "abc"}
             };
 
-            foreach (string[] keyPrefixBatch in keyPrefixBatchList)
+            foreach (var keyPrefixBatch in keyPrefixBatchList)
             {
                 var replicationUnitBatch = new List<ReplicationUnit>();
                 var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-                foreach (string keyPrefix in keyPrefixBatch)
+                foreach (var keyPrefix in keyPrefixBatch)
                 {
                     ++sequenceNumber;
 
-                    ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                    var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                         sequenceNumber,
                         keyPrefix,
                         statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -475,7 +475,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 TestApplyBatch(stateTable, replicationUnitBatch);
 
-                foreach (string keyPrefix in keyPrefixBatch)
+                foreach (var keyPrefix in keyPrefixBatch)
                 {
                     VerifyReads(
                         stateTable,
@@ -509,11 +509,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             VerifyStateTableSnapshot(stateTable, statesPerReplication, long.MaxValue, 0, 0, 0);
 
             var keyPrefixList = new[] {"a-apply", "b-apply", "c-apply"};
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -532,14 +532,14 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                     sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
             }
 
-            long commitSequenceNumber = sequenceNumber;
+            var commitSequenceNumber = sequenceNumber;
             var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -560,7 +560,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                     sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
             }
 
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++commitSequenceNumber;
 
@@ -597,11 +597,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             VerifyStateTableSnapshot(stateTable, statesPerReplication, long.MaxValue, 0, 0, 0);
 
             var keyPrefixList = new[] {"a-commit", "b-commit", "c-commit"};
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -630,14 +630,14 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                     sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
             }
 
-            long commitSequenceNumber = sequenceNumber;
+            var commitSequenceNumber = sequenceNumber;
             var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -657,7 +657,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                     sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
             }
 
-            foreach (string keyPrefix in keyPrefixList)
+            foreach (var keyPrefix in keyPrefixList)
             {
                 ++commitSequenceNumber;
 
@@ -696,11 +696,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             var committedKeyPrefixList = new[] {"w", "x", "y", "z"};
             var replicationUnitDict = new Dictionary<string, ReplicationUnit>();
 
-            foreach (string commitedkeyPrefix in committedKeyPrefixList)
+            foreach (var commitedkeyPrefix in committedKeyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     commitedkeyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -721,11 +721,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             }
 
             var updatedKeyPrefixList = new[] {"w", "y"};
-            foreach (string updatedkeyPrefix in updatedKeyPrefixList)
+            foreach (var updatedkeyPrefix in updatedKeyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     updatedkeyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -746,11 +746,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             }
 
             var uncommittedKeyPrefixList = new[] {"a", "b", "c"};
-            foreach (string uncommittedkeyPrefix in uncommittedKeyPrefixList)
+            foreach (var uncommittedkeyPrefix in uncommittedKeyPrefixList)
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     uncommittedkeyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -770,12 +770,12 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                     sequenceNumber * statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
             }
 
-            ActorStateTable.ActorStateEnumerator committedSnapshot = stateTable.GetShallowCopiesEnumerator(committedKeyPrefixList.Length);
-            ActorStateTable.ActorStateEnumerator knownSnapshot = stateTable.GetShallowCopiesEnumerator(long.MaxValue);
+            var committedSnapshot = stateTable.GetShallowCopiesEnumerator(committedKeyPrefixList.Length);
+            var knownSnapshot = stateTable.GetShallowCopiesEnumerator(long.MaxValue);
 
-            int updateSequenceNumber = committedKeyPrefixList.Length;
+            var updateSequenceNumber = committedKeyPrefixList.Length;
 
-            foreach (string key in updatedKeyPrefixList)
+            foreach (var key in updatedKeyPrefixList)
             {
                 ++updateSequenceNumber;
                 TestCommitUpdate(stateTable, updateSequenceNumber);
@@ -783,7 +783,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestCommitUpdate(stateTable, ++updateSequenceNumber);
 
-            int expectedCount = (committedKeyPrefixList.Length +
+            var expectedCount = (committedKeyPrefixList.Length +
                                  uncommittedKeyPrefixList.Length) *
                                 statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor];
 
@@ -849,7 +849,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var keyPrefix = "a";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -889,9 +889,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 ++sequenceNumber;
 
                 var key = "L";
-                TimeSpan timestamp = TimeSpan.FromSeconds(sequenceNumber);
+                var timestamp = TimeSpan.FromSeconds(sequenceNumber);
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
+                var replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.LogicalTimestamp],
@@ -933,7 +933,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 var key = "rem";
                 var reminderName = "Rem-Name1";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateReminder(
+                var replicationUnit = ReplicationUnit.CreateForUpdateReminder(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder],
@@ -971,14 +971,14 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestCase("# Testcase 2: Duplicate keys per type ...");
 
-            long expectedCount = sequenceNumber;
+            var expectedCount = sequenceNumber;
 
             {
                 ++sequenceNumber;
 
                 var keyPrefix = "a";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -1017,10 +1017,10 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 ++sequenceNumber;
 
                 var key = "L";
-                TimeSpan oldTimestamp = TimeSpan.FromSeconds(sequenceNumber - expectedCount);
-                TimeSpan timestamp = TimeSpan.FromSeconds(sequenceNumber);
+                var oldTimestamp = TimeSpan.FromSeconds(sequenceNumber - expectedCount);
+                var timestamp = TimeSpan.FromSeconds(sequenceNumber);
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
+                var replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.LogicalTimestamp],
@@ -1062,7 +1062,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 var oldReminderName = "Rem-Name1";
                 var reminderName = "Rem-Name2";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateReminder(
+                var replicationUnit = ReplicationUnit.CreateForUpdateReminder(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder],
@@ -1104,9 +1104,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             {
                 ++sequenceNumber;
 
-                string keyPrefix = duplicateKey;
+                var keyPrefix = duplicateKey;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -1145,10 +1145,10 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             {
                 ++sequenceNumber;
 
-                string key = duplicateKey;
-                TimeSpan timestamp = TimeSpan.FromSeconds(sequenceNumber);
+                var key = duplicateKey;
+                var timestamp = TimeSpan.FromSeconds(sequenceNumber);
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
+                var replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.LogicalTimestamp],
@@ -1187,10 +1187,10 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             {
                 ++sequenceNumber;
 
-                string key = duplicateKey;
+                var key = duplicateKey;
                 var reminderName = "Rem-Name3";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateReminder(
+                var replicationUnit = ReplicationUnit.CreateForUpdateReminder(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder],
@@ -1230,13 +1230,13 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             var baseCountPerType = 2;
 
-            int baseCountActorType = baseCountPerType;
-            foreach (string keyPrefix in new[] {"x", "y"})
+            var baseCountActorType = baseCountPerType;
+            foreach (var keyPrefix in new[] {"x", "y"})
             {
                 ++sequenceNumber;
                 ++baseCountActorType;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -1284,9 +1284,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
                 ++sequenceNumber;
 
                 var key = "MyTimestamp";
-                TimeSpan timestamp = TimeSpan.FromSeconds(sequenceNumber);
+                var timestamp = TimeSpan.FromSeconds(sequenceNumber);
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
+                var replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.LogicalTimestamp],
@@ -1371,7 +1371,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var keyPrefix = "x";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -1482,11 +1482,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestCase("# Testcase 2: Multiple create/delete ...");
 
-            foreach (string keyPrefix in new[] {"a", "b", "c"})
+            foreach (var keyPrefix in new[] {"a", "b", "c"})
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -1523,11 +1523,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             }
 
             var firstIteration = true;
-            foreach (string keyPrefix in new[] {"a", "b", "c"})
+            foreach (var keyPrefix in new[] {"a", "b", "c"})
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForDeleteActor(
+                var replicationUnit = ReplicationUnit.CreateForDeleteActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
@@ -1573,11 +1573,11 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestCase("# Testcase 3: Interleaved create/delete ...");
 
-            foreach (string keyPrefix in new[] {"d", "e", "f"})
+            foreach (var keyPrefix in new[] {"d", "e", "f"})
             {
                 ++sequenceNumber;
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -1656,7 +1656,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var keyPrefix = "NotFound";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForDeleteActor(
+                var replicationUnit = ReplicationUnit.CreateForDeleteActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
@@ -1695,7 +1695,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var keyPrefix = "Exists";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateActor(
+                var replicationUnit = ReplicationUnit.CreateForUpdateActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor],
@@ -1738,7 +1738,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var keyPrefix = "NotFound";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForDeleteActor(
+                var replicationUnit = ReplicationUnit.CreateForDeleteActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);
@@ -1785,7 +1785,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
             TestCase("# Testcase 5: Delete same key different types ...");
 
-            TimeSpan timestamp = TimeSpan.FromSeconds(42);
+            var timestamp = TimeSpan.FromSeconds(42);
             var reminderName = "Reminder-Exists";
 
             {
@@ -1793,7 +1793,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var key = "Exists";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
+                var replicationUnit = ReplicationUnit.CreateForUpdateTimeStamp(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.LogicalTimestamp],
@@ -1836,7 +1836,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var key = "Exists";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForUpdateReminder(
+                var replicationUnit = ReplicationUnit.CreateForUpdateReminder(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder],
@@ -1879,7 +1879,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var keyPrefix = "Exists";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForDeleteTimeStamp(
+                var replicationUnit = ReplicationUnit.CreateForDeleteTimeStamp(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.LogicalTimestamp]);
@@ -1921,7 +1921,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var key = "Exists";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForDeleteReminder(
+                var replicationUnit = ReplicationUnit.CreateForDeleteReminder(
                     sequenceNumber,
                     key,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Reminder]);
@@ -1963,7 +1963,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
 
                 var keyPrefix = "Exists";
 
-                ReplicationUnit replicationUnit = ReplicationUnit.CreateForDeleteActor(
+                var replicationUnit = ReplicationUnit.CreateForDeleteActor(
                     sequenceNumber,
                     keyPrefix,
                     statesPerReplication[VolatileActorStateProvider.ActorStateType.Actor]);

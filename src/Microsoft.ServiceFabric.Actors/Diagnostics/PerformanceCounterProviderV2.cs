@@ -43,7 +43,7 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
         {
             if (null != this.actorMethodCounterInstanceDataV2)
             {
-                foreach (CounterInstanceData counterInstanceData in this.actorMethodCounterInstanceDataV2.Values)
+                foreach (var counterInstanceData in this.actorMethodCounterInstanceDataV2.Values)
                 {
                     if (null != counterInstanceData.CounterWriters)
                     {
@@ -67,14 +67,12 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
             this.actorMethodCounterInstanceDataV2 = new Dictionary<long, CounterInstanceData>();
 
             var methodInfoListV2 = new List<KeyValuePair<long, MethodInfo>>();
-            foreach (Type actorInterfaceType in this.actorTypeInformation.InterfaceTypes)
+            foreach (var actorInterfaceType in this.actorTypeInformation.InterfaceTypes)
             {
-                int interfaceIdV2;
-                MethodDescription[] actorInterfaceMethodDescriptions;
                 diagnosticsEventManager.ActorMethodFriendlyNameBuilder.GetActorInterfaceMethodDescriptionsV2(
                     actorInterfaceType,
-                    out interfaceIdV2,
-                    out actorInterfaceMethodDescriptions);
+                    out var interfaceIdV2,
+                    out var actorInterfaceMethodDescriptions);
                 methodInfoListV2.AddRange(this.GetMethodInfo(actorInterfaceMethodDescriptions, interfaceIdV2));
             }
 

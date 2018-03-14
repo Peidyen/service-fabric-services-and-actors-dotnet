@@ -52,7 +52,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Runtime
                     "FabricTransportCommunicationHandler",
                     "Exception While dispatching {0}",
                     e);
-                RemoteExceptionInformation remoteExceptionInformation = RemoteExceptionInformation.FromException(e);
+                var remoteExceptionInformation = RemoteExceptionInformation.FromException(e);
                 replybody = remoteExceptionInformation.Data;
                 return new FabricTransportReplyMessage(true, replybody);
             }
@@ -61,7 +61,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.FabricTransport.Runtime
 
         public void HandleOneWay(FabricTransportRequestContext requestContext, byte[] headers, byte[] requestBody)
         {
-            ServiceRemotingMessageHeaders messageHeaders = ServiceRemotingMessageHeaders.Deserialize(this.serializer, headers);
+            var messageHeaders = ServiceRemotingMessageHeaders.Deserialize(this.serializer, headers);
             var context = new FabricTransportServiceRemotingRequestContext(requestContext);
             this.messageHandler.HandleOneWay(context, messageHeaders, requestBody);
         }

@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
@@ -30,12 +30,12 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime
 
         public void SendOneWay(IServiceRemotingRequestMessage requestMessage)
         {
-            IServiceRemotingMessageHeaderSerializer headerSerialzier = this.serializersManager.GetHeaderSerializer();
-            IMessageHeader serialzedHeader = headerSerialzier.SerializeRequestHeader(requestMessage.GetHeader());
-            IServiceRemotingRequestMessageBodySerializer requestSerializer =
+            var headerSerialzier = this.serializersManager.GetHeaderSerializer();
+            var serialzedHeader = headerSerialzier.SerializeRequestHeader(requestMessage.GetHeader());
+            var requestSerializer =
                 this.serializersManager.GetRequestBodySerializer(requestMessage.GetHeader().InterfaceId);
-            IMessageBody serializedMsgBody = requestSerializer.Serialize(requestMessage.GetBody());
-            FabricTransportRequestBody fabricTransportRequestBody = serializedMsgBody != null
+            var serializedMsgBody = requestSerializer.Serialize(requestMessage.GetBody());
+            var fabricTransportRequestBody = serializedMsgBody != null
                 ? new FabricTransportRequestBody(
                     serializedMsgBody.GetSendBuffers(),
                     serializedMsgBody.Dispose)

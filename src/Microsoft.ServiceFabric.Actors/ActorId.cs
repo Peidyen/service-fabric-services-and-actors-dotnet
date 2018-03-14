@@ -205,7 +205,7 @@ namespace Microsoft.ServiceFabric.Actors
         /// </remarks>
         public long GetPartitionKey()
         {
-            long? key = this.partitionKey;
+            var key = this.partitionKey;
             if (key.HasValue)
             {
                 return key.Value;
@@ -246,7 +246,7 @@ namespace Microsoft.ServiceFabric.Actors
                 return this.stringRepresentation;
             }
 
-            string actorIdAsString = string.Empty;
+            var actorIdAsString = string.Empty;
             switch (this.kind)
             {
                 case ActorIdKind.Long:
@@ -405,10 +405,10 @@ namespace Microsoft.ServiceFabric.Actors
         {
             Requires.Argument("storageKey", storageKey).NotNullOrWhiteSpace();
 
-            int idx = storageKey.IndexOf('_');
+            var idx = storageKey.IndexOf('_');
 
-            string kind = storageKey.Substring(0, idx);
-            string id = storageKey.Substring(idx + 1);
+            var kind = storageKey.Substring(0, idx);
+            var id = storageKey.Substring(idx + 1);
 
             if (kind.Equals(ActorIdKind.Guid.ToString(), StringComparison.OrdinalIgnoreCase))
             {

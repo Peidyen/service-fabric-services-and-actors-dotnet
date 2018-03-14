@@ -50,7 +50,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
         internal void HandleRunAsyncUnexpectedException(IServicePartition partition, Exception ex)
         {
             // ReSharper disable once UseStringInterpolation
-            string msg = $"RunAsync failed due to an unhandled exception causing the host process to crash: {ex}";
+            var msg = $"RunAsync failed due to an unhandled exception causing the host process to crash: {ex}";
 
             ServiceTrace.Source.WriteErrorWithId(this.traceType + ApiErrorTraceTypeSuffix, this.traceId, msg);
 
@@ -72,9 +72,9 @@ namespace Microsoft.ServiceFabric.Services.Runtime
             while (true)
             {
                 var delayTaskCts = new CancellationTokenSource();
-                Task delayTask = Task.Delay(RunAsyncExpectedCancellationTimeSpan, delayTaskCts.Token);
+                var delayTask = Task.Delay(RunAsyncExpectedCancellationTimeSpan, delayTaskCts.Token);
 
-                Task finishedTask = await Task.WhenAny(runAsyncTask, delayTask);
+                var finishedTask = await Task.WhenAny(runAsyncTask, delayTask);
 
                 if (finishedTask == runAsyncTask)
                 {
@@ -85,7 +85,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
                     break;
                 }
 
-                string msg = $"RunAsync is taking longer then expected time ({RunAsyncExpectedCancellationTimeSpan.TotalSeconds}s) to cancel.";
+                var msg = $"RunAsync is taking longer then expected time ({RunAsyncExpectedCancellationTimeSpan.TotalSeconds}s) to cancel.";
 
                 ServiceTrace.Source.WriteWarningWithId(this.traceType + ApiSlowTraceTypeSuffix, this.traceId, msg);
                 this.ReportRunAsyncSlowCancellationHealth(partition, msg);
@@ -115,7 +115,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
 
         private static HealthInformation GetRunAsyncUnexpectedExceptionHealthInformation(Exception e)
         {
-            string healthDescription = e.ToString();
+            var healthDescription = e.ToString();
 
             // Trim the health description to maximum allowed size.
             healthDescription = TrimToLength(healthDescription, MaxHealthDescriptionLength);
@@ -161,13 +161,13 @@ namespace Microsoft.ServiceFabric.Services.Runtime
 
         private void ReportRunAsyncSlowCancellationHealth(IServicePartition partition, string description)
         {
-            HealthInformation healthInfo = GetRunAsyncSlowCancellationHealthInformation(description);
+            var healthInfo = GetRunAsyncSlowCancellationHealthInformation(description);
             this.ReportPartitionHealth(partition, healthInfo);
         }
 
         private void ReportRunAsyncUnexpectedExceptionHealth(IServicePartition partition, Exception unexpectedException)
         {
-            HealthInformation healthInfo = GetRunAsyncUnexpectedExceptionHealthInformation(unexpectedException);
+            var healthInfo = GetRunAsyncUnexpectedExceptionHealthInformation(unexpectedException);
             this.ReportPartitionHealth(partition, healthInfo);
         }
     }

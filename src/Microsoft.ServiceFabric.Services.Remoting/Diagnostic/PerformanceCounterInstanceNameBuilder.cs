@@ -47,7 +47,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             // The method name will be part of the performance counter instance name so that it is 
             // easy for a user to figure out which method the counter instance is for. Create the data
             // structure that will help us build the method names from the MethodInfo objects.
-            Dictionary<long, MethodNameBuilder> methodNameBuilders = this.CreateMethodNameBuilders(actorMethodInfo);
+            var methodNameBuilders = this.CreateMethodNameBuilders(actorMethodInfo);
 
             // Assign a rank to each method that will be unique within the actor type.
             // The performance counter instance name will contain a string representation of the method
@@ -60,13 +60,13 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             // Identify overloaded methods. These methods will have the same type and method name, so
             // we'll include some parameter info in the performance counter instance names for these
             // methods. This will make it easier to differentiate between the different overloads.
-            Dictionary<string, int> methodOverloads = this.CreateMethodOverloadMap(methodNameBuilders.Values);
+            var methodOverloads = this.CreateMethodOverloadMap(methodNameBuilders.Values);
 
             // Compute the actual method name component of the counter instance name
             this.ComputeMethodNameInCounterInstanceName(methodNameBuilders.Values, methodOverloads);
 
             // Compute the counter instance names
-            IEnumerable<KeyValuePair<long, string>> counterInstanceNames = this.ComputeCounterInstanceNames(methodNameBuilders);
+            var counterInstanceNames = this.ComputeCounterInstanceNames(methodNameBuilders);
 
             return counterInstanceNames;
         }
@@ -75,9 +75,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             IEnumerable<KeyValuePair<long, MethodInfo>> actorMethodInfo)
         {
             var methodNameInfo = new Dictionary<long, MethodNameBuilder>();
-            foreach (KeyValuePair<long, MethodInfo> kvp in actorMethodInfo)
+            foreach (var kvp in actorMethodInfo)
             {
-                MethodInfo mi = kvp.Value;
+                var mi = kvp.Value;
                 var mnInfo = new MethodNameBuilder {MethodInfo = mi, Names = new string[(int) MethodNameFormat.Count]};
 
                 // Compute method name in the format <DeclaringType>.<MethodName>
@@ -95,8 +95,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
 
         private string FormatMethodParameters(MethodInfo methodInfo)
         {
-            ParameterInfo[] paramInfo = methodInfo.GetParameters();
-            string[] paramInfoStrings = paramInfo.Select(
+            var paramInfo = methodInfo.GetParameters();
+            var paramInfoStrings = paramInfo.Select(
                 pi => string.Format(
                     "{0}{1}",
                     pi.IsOut ? (pi.IsIn ? "ref " : "out ") : string.Empty,
@@ -110,7 +110,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             // and return type. Sort the method name builders based on method names built according to the above format. 
             // After sorting, assign a rank to each method.
             // Note that the rank of each method will be unique within the actor type.
-            IOrderedEnumerable<MethodNameBuilder> methodNameBuildersSorted = methodNameBuilders.OrderBy(
+            var methodNameBuildersSorted = methodNameBuilders.OrderBy(
                 mnInfo => mnInfo.Names[(int) MethodNameFormat.TypeMemberParamsAndReturn]);
             for (var i = 0; i < methodNameBuildersSorted.Count(); i++)
             {
@@ -123,7 +123,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             // The method information part of the counter instance name ends with "_<Rank>", so figure
             // out the number of characters remaining for the method name after accounting for the "_<Rank>"
             // suffix.
-            foreach (MethodNameBuilder currentMethodBuilderInfo in methodNameBuilders)
+            foreach (var currentMethodBuilderInfo in methodNameBuilders)
             {
                 currentMethodBuilderInfo.MethodNameMaxLength = this.maxMethodInfoLen -
                                                                currentMethodBuilderInfo.Rank.ToString("D").Length - 1;
@@ -133,9 +133,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
         private Dictionary<string, int> CreateMethodOverloadMap(IEnumerable<MethodNameBuilder> methodNameBuilders)
         {
             var methodOverloads = new Dictionary<string, int>();
-            foreach (MethodNameBuilder currentMethodBuilderInfo in methodNameBuilders)
+            foreach (var currentMethodBuilderInfo in methodNameBuilders)
             {
-                string methodName = currentMethodBuilderInfo.Names[(int) MethodNameFormat.TypeAndMember];
+                var methodName = currentMethodBuilderInfo.Names[(int) MethodNameFormat.TypeAndMember];
                 if (!methodOverloads.ContainsKey(methodName))
                 {
                     methodOverloads[methodName] = 0;
@@ -151,11 +151,11 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             IEnumerable<MethodNameBuilder> methodNameBuilders,
             Dictionary<string, int> methodOverloads)
         {
-            foreach (MethodNameBuilder currentMethodBuilderInfo in methodNameBuilders)
+            foreach (var currentMethodBuilderInfo in methodNameBuilders)
             {
                 // If the type and method (without parameters) can fit into the instance name and if the method is 
                 // not overloaded (hence easy to identify), then include just the type and method name.
-                string methodNameWithoutParams = currentMethodBuilderInfo.Names[(int) MethodNameFormat.TypeAndMember];
+                var methodNameWithoutParams = currentMethodBuilderInfo.Names[(int) MethodNameFormat.TypeAndMember];
                 if (methodNameWithoutParams.Length <= currentMethodBuilderInfo.MethodNameMaxLength &&
                     methodOverloads[methodNameWithoutParams] == 1)
                 {
@@ -180,49 +180,46 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
 
         private string ComputeTruncatedMethodName(MethodNameBuilder methodNameBuilder)
         {
-            int availableSpaceForTruncatedParts = methodNameBuilder.MethodNameMaxLength;
-            int minLengthToQualifyForTruncation = methodNameBuilder.MethodNameMaxLength / (int) MethodNameParts.Count;
+            var availableSpaceForTruncatedParts = methodNameBuilder.MethodNameMaxLength;
+            var minLengthToQualifyForTruncation = methodNameBuilder.MethodNameMaxLength / (int) MethodNameParts.Count;
 
             var partsToTruncate = new List<MethodNameParts>();
 
             // Check if we should truncate the type component of the method name
-            string typeFull = methodNameBuilder.MethodInfo.DeclaringType.Name;
-            string typeTruncated;
+            var typeFull = methodNameBuilder.MethodInfo.DeclaringType.Name;
             this.PrepareMethodNamePartForTruncation(
                 typeFull,
                 MethodNameParts.DeclaringType,
                 minLengthToQualifyForTruncation,
                 partsToTruncate,
                 ref availableSpaceForTruncatedParts,
-                out typeTruncated);
+                out var typeTruncated);
 
             // Check if we should truncate the method name component of the method name
-            string methodNameFull = methodNameBuilder.MethodInfo.Name;
-            string methodNameTruncated;
+            var methodNameFull = methodNameBuilder.MethodInfo.Name;
             this.PrepareMethodNamePartForTruncation(
                 methodNameFull,
                 MethodNameParts.MethodName,
                 minLengthToQualifyForTruncation,
                 partsToTruncate,
                 ref availableSpaceForTruncatedParts,
-                out methodNameTruncated);
+                out var methodNameTruncated);
 
             // Check if we should truncate the parameters component of the method name.
-            string parametersFull = this.FormatMethodParameters(methodNameBuilder.MethodInfo);
-            string paramsTruncated;
+            var parametersFull = this.FormatMethodParameters(methodNameBuilder.MethodInfo);
             this.PrepareMethodNamePartForTruncation(
                 parametersFull,
                 MethodNameParts.Params,
                 minLengthToQualifyForTruncation,
                 partsToTruncate,
                 ref availableSpaceForTruncatedParts,
-                out paramsTruncated);
+                out var paramsTruncated);
 
             // Divide the available space equally among the parts that need to be truncated
-            int maxSizeOfTruncatedPart = availableSpaceForTruncatedParts / partsToTruncate.Count;
+            var maxSizeOfTruncatedPart = availableSpaceForTruncatedParts / partsToTruncate.Count;
 
             // Truncate each part that we need to
-            foreach (MethodNameParts methodNamePart in partsToTruncate)
+            foreach (var methodNamePart in partsToTruncate)
             {
                 switch (methodNamePart)
                 {
@@ -260,7 +257,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
 
             // For parameters, we add two to the string length because we need to account 
             // for the square brackets that the parameters are enclosed in.
-            int adjustedPartLength = methodNamePart == MethodNameParts.Params
+            var adjustedPartLength = methodNamePart == MethodNameParts.Params
                 ? fullNameOfMethodNamePart.Length + 2
                 : fullNameOfMethodNamePart.Length;
 
@@ -286,8 +283,8 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
         {
             // Take ((maxSizeOfTruncatedPart/2) - 1) characters from the start, and (maxSizeOfTruncatedPart/2)
             // characters from the end. Separate the starting and ending portions with a '~'. 
-            string firstPart = typeOrMethod.Substring(0, maxSizeOfTruncatedPart / 2 - 1);
-            string lastPart = typeOrMethod.Substring(typeOrMethod.Length - maxSizeOfTruncatedPart / 2);
+            var firstPart = typeOrMethod.Substring(0, maxSizeOfTruncatedPart / 2 - 1);
+            var lastPart = typeOrMethod.Substring(typeOrMethod.Length - maxSizeOfTruncatedPart / 2);
             return string.Concat(firstPart, "~", lastPart);
         }
 
@@ -296,7 +293,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             // The format of the truncated parameter string is: [...Pn-2, Pn-1, Pn]
             // So the space actually available for the parameter information is reduced by the length
             // of "[...]"
-            int availableSpace = maxSizeOfTruncatedPart - "[...]".Length;
+            var availableSpace = maxSizeOfTruncatedPart - "[...]".Length;
             if (availableSpace < 0)
             {
                 return string.Empty;
@@ -312,7 +309,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             var paramTypeTruncated = false;
             for (i = parameterInfo.Length - 1; i >= 0 && availableSpace > 0; i--)
             {
-                string currentParam = parameterInfo[i].ParameterType.Name;
+                var currentParam = parameterInfo[i].ParameterType.Name;
                 if (currentParam.Length > availableSpace)
                 {
                     // We have enough space to hold only a part of the current parameter
@@ -332,7 +329,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
 
             // Return the formatted parameter string to the caller
             // Include "..." in the formatted string only if we couldn't fit in all the parameters.
-            string paramsAsString = string.Join(",", parameters.ToArray());
+            var paramsAsString = string.Join(",", parameters.ToArray());
             return string.Concat(
                 "[",
                 availableSpace == 0 && (i >= 0 || paramTypeTruncated) ? "..." : string.Empty,
@@ -347,10 +344,10 @@ namespace Microsoft.ServiceFabric.Services.Remoting.Diagnostic
             // the partition ID, and the differentiator.
             //     <MethodName>_<Rank>_XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX_<Differentiator>
             var counterInstanceNames = new List<KeyValuePair<long, string>>();
-            foreach (long currentMethodId in methodNameBuilders.Keys)
+            foreach (var currentMethodId in methodNameBuilders.Keys)
             {
-                MethodNameBuilder methodNameBuilder = methodNameBuilders[currentMethodId];
-                string counterInstanceName = string.Concat(
+                var methodNameBuilder = methodNameBuilders[currentMethodId];
+                var counterInstanceName = string.Concat(
                     methodNameBuilder.Names[(int) methodNameBuilder.FormatToUse],
                     "_",
                     methodNameBuilder.Rank.ToString("D"),

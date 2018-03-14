@@ -27,14 +27,12 @@ namespace Microsoft.ServiceFabric.Actors.Diagnostics
 
         internal override void InitializeActorMethodInfo(DiagnosticsEventManager diagnosticsEventManager)
         {
-            foreach (Type actorInterfaceType in this.actorTypeInformation.InterfaceTypes)
+            foreach (var actorInterfaceType in this.actorTypeInformation.InterfaceTypes)
             {
-                int interfaceId;
-                MethodDescription[] actorInterfaceMethodDescriptions;
                 diagnosticsEventManager.ActorMethodFriendlyNameBuilder.GetActorInterfaceMethodDescriptionsV2(
                     actorInterfaceType,
-                    out interfaceId,
-                    out actorInterfaceMethodDescriptions);
+                    out var interfaceId,
+                    out var actorInterfaceMethodDescriptions);
                 this.InitializeActorMethodInfo(actorInterfaceMethodDescriptions, interfaceId, this.actorMethodInfoV2);
             }
 

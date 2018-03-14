@@ -13,8 +13,7 @@ namespace Microsoft.ServiceFabric.Actors
     {
         public static string GetCallContext()
         {
-            string callContextValue;
-            if (ActorLogicalCallContext.TryGet(out callContextValue))
+            if (ActorLogicalCallContext.TryGet(out var callContextValue))
             {
                 return string.Format(
                     CultureInfo.InvariantCulture,

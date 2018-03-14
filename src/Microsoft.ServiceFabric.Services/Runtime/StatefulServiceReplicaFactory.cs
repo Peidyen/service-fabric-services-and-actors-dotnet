@@ -42,7 +42,7 @@ namespace Microsoft.ServiceFabric.Services.Runtime
                 partitionId,
                 replicaId);
 
-            StatefulServiceBase service = this.serviceFactory(serviceContext);
+            var service = this.serviceFactory(serviceContext);
             return new StatefulServiceReplicaAdapter(service.Context, service);
         }
     }

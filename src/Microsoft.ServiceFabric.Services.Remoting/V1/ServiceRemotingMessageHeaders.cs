@@ -105,7 +105,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1
 
             using (var stream = new MemoryStream())
             {
-                using (XmlDictionaryWriter writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
+                using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream))
                 {
                     serializer.WriteObject(writer, msg);
                     writer.Flush();
@@ -129,7 +129,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1
 
             using (var stream = new MemoryStream(buffer))
             {
-                using (XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
+                using (var reader = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
                 {
                     return (ServiceRemotingMessageHeaders) serializer.ReadObject(reader);
                 }

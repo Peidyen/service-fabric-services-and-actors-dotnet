@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
 namespace Microsoft.ServiceFabric.Services.Remoting.V2
@@ -20,7 +20,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
 
         /// <summary>
-        ///     Instantiates a new instance of the ServiceRemotingRequestMessageHeader
+        /// Instantiates a new instance of the ServiceRemotingRequestMessageHeader
         /// </summary>
         public ServiceRemotingRequestMessageHeader()
         {
@@ -36,14 +36,14 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
         public int MethodId { get; set; }
 
         /// <summary>
-        ///     The interface id of the remote interface.
+        /// The interface id of the remote interface.
         /// </summary>
         /// <value>Interface id</value>
         [DataMember(Name = "InterfaceId", IsRequired = true, Order = 1)]
         public int InterfaceId { get; set; }
 
         /// <summary>
-        ///     Identifier for the remote method invocation
+        /// Identifier for the remote method invocation
         /// </summary>
         [DataMember(Name = "InvocationId", IsRequired = false, Order = 3, EmitDefaultValue = false)]
         public string InvocationId { get; set; }
@@ -74,5 +74,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
             return this.headers.TryGetValue(headerName, out headerValue);
         }
+
+
+
+
     }
 }

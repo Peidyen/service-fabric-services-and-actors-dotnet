@@ -207,7 +207,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
                 using (var stream = new MemoryStream())
                 {
-                    using (XmlDictionaryWriter writer = this.CreateXmlDictionaryWriter(stream))
+                    using (var writer = this.CreateXmlDictionaryWriter(stream))
                     {
                         this.serializer.WriteObject(writer, serviceRemotingRequestMessageBody);
                         writer.Flush();
@@ -221,14 +221,14 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
             IServiceRemotingRequestMessageBody IServiceRemotingRequestMessageBodySerializer.Deserialize(
                 IMessageBody messageBody)
             {
-                if (messageBody?.GetReceivedBuffer() == null || messageBody.GetReceivedBuffer().Length == 0)
+                if (messageBody == null || messageBody.GetReceivedBuffer() == null || messageBody.GetReceivedBuffer().Length == 0)
                 {
                     return null;
                 }
 
                 using (var stream = new DisposableStream(messageBody.GetReceivedBuffer()))
                 {
-                    using (XmlDictionaryReader reader = this.CreateXmlDictionaryReader(stream))
+                    using (var reader = this.CreateXmlDictionaryReader(stream))
                     {
                         return (ServiceRemotingRequestMessageBody) this.serializer.ReadObject(reader);
                     }
@@ -245,7 +245,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
                 using (var stream = new MemoryStream())
                 {
-                    using (XmlDictionaryWriter writer = this.CreateXmlDictionaryWriter(stream))
+                    using (var writer = this.CreateXmlDictionaryWriter(stream))
                     {
                         this.serializer.WriteObject(writer, serviceRemotingResponseMessageBody);
                         writer.Flush();
@@ -266,7 +266,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
                 using (var stream = new DisposableStream(messageBody.GetReceivedBuffer()))
                 {
-                    using (XmlDictionaryReader reader = this.CreateXmlDictionaryReader(stream))
+                    using (var reader = this.CreateXmlDictionaryReader(stream))
                     {
                         return (ServiceRemotingResponseMessageBody) this.serializer.ReadObject(reader);
                     }
@@ -334,7 +334,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
                 using (var stream = new SegmentedPoolMemoryStream(this.bufferPoolManager))
                 {
-                    using (XmlDictionaryWriter writer = this.CreateXmlDictionaryWriter(stream))
+                    using (var writer = this.CreateXmlDictionaryWriter(stream))
                     {
                         this.serializer.WriteObject(writer, serviceRemotingRequestMessageBody);
                         writer.Flush();
@@ -353,7 +353,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
                 using (var stream = new DisposableStream(messageBody.GetReceivedBuffer()))
                 {
-                    using (XmlDictionaryReader reader = this.CreateXmlDictionaryReader(stream))
+                    using (var reader = this.CreateXmlDictionaryReader(stream))
                     {
                         return (ServiceRemotingRequestMessageBody) this.serializer.ReadObject(reader);
                     }
@@ -370,7 +370,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
                 using (var stream = new SegmentedPoolMemoryStream(this.bufferPoolManager))
                 {
-                    using (XmlDictionaryWriter writer = this.CreateXmlDictionaryWriter(stream))
+                    using (var writer = this.CreateXmlDictionaryWriter(stream))
                     {
                         this.serializer.WriteObject(writer, serviceRemotingResponseMessageBody);
                         writer.Flush();
@@ -389,7 +389,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V2
 
                 using (var stream = new DisposableStream(messageBody.GetReceivedBuffer()))
                 {
-                    using (XmlDictionaryReader reader = this.CreateXmlDictionaryReader(stream))
+                    using (var reader = this.CreateXmlDictionaryReader(stream))
                     {
                         return (ServiceRemotingResponseMessageBody) this.serializer.ReadObject(reader);
                     }

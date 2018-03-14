@@ -33,14 +33,14 @@ namespace Microsoft.ServiceFabric.Actors.Generator
                 return string.Empty;
             }
 
-            using (ExclusiveFileStream fileStream = ExclusiveFileStream.Acquire(
+            using (var fileStream = ExclusiveFileStream.Acquire(
                 filePath,
                 FileMode.Open,
                 FileShare.Read,
                 FileAccess.Read))
             {
                 fileStream.Value.Seek(0, SeekOrigin.Begin);
-                using (StreamReader reader = CreateStreamReader(fileStream.Value))
+                using (var reader = CreateStreamReader(fileStream.Value))
                 {
                     return reader.ReadToEnd();
                 }
@@ -55,12 +55,12 @@ namespace Microsoft.ServiceFabric.Actors.Generator
             contents = sb.ToString();
 
             stream.Seek(0, SeekOrigin.Begin);
-            using (StreamWriter writer = CreateStreamWriter(stream))
+            using (var writer = CreateStreamWriter(stream))
             {
                 writer.Write(contents);
                 writer.Flush();
 
-                int contentLegnth = writer.Encoding.GetByteCount(contents);
+                var contentLegnth = writer.Encoding.GetByteCount(contents);
                 stream.SetLength(contentLegnth);
                 stream.Flush();
             }
@@ -73,7 +73,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
                 return;
             }
 
-            using (ExclusiveFileStream fileStream = ExclusiveFileStream.Acquire(
+            using (var fileStream = ExclusiveFileStream.Acquire(
                 filePath,
                 FileMode.OpenOrCreate,
                 FileShare.Read,
@@ -87,7 +87,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
             StringBuilder template,
             IDictionary<string, string> placeHolders)
         {
-            foreach (KeyValuePair<string, string> p in placeHolders)
+            foreach (var p in placeHolders)
             {
                 template.Replace(p.Key, p.Value);
             }
@@ -102,7 +102,7 @@ namespace Microsoft.ServiceFabric.Actors.Generator
 
         public static void EnsureParentFolder(string filePath)
         {
-            string folderPath = Path.GetDirectoryName(filePath);
+            var folderPath = Path.GetDirectoryName(filePath);
             if (folderPath != null && !Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -119,8 +119,8 @@ namespace Microsoft.ServiceFabric.Actors.Generator
 
         public static string GetRelativePath(string fromPath, string toPath)
         {
-            int fromAttr = GetPathAttribute(fromPath);
-            int toAttr = GetPathAttribute(toPath);
+            var fromAttr = GetPathAttribute(fromPath);
+            var toAttr = GetPathAttribute(toPath);
 
             var path = new StringBuilder(256);
             return PathRelativePathTo(

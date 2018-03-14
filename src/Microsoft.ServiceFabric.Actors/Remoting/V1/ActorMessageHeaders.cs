@@ -44,8 +44,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1
         public static bool TryFromServiceMessageHeaders(ServiceRemotingMessageHeaders headers, out ActorMessageHeaders actorHeaders)
         {
             actorHeaders = null;
-            byte[] headerValue;
-            if (!headers.TryGetHeaderValue(ActorMessageHeaderName, out headerValue))
+            if (!headers.TryGetHeaderValue(ActorMessageHeaderName, out var headerValue))
             {
                 return false;
             }
@@ -58,7 +57,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1
         {
             using (var memoryStream = new MemoryStream())
             {
-                XmlDictionaryWriter writer = XmlDictionaryWriter.CreateBinaryWriter(memoryStream);
+                var writer = XmlDictionaryWriter.CreateBinaryWriter(memoryStream);
                 Serializer.WriteObject(writer, this);
                 writer.Flush();
 
@@ -70,7 +69,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V1
         {
             using (var memoryStream = new MemoryStream(headerBytes))
             {
-                XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader(memoryStream, XmlDictionaryReaderQuotas.Max);
+                var reader = XmlDictionaryReader.CreateBinaryReader(memoryStream, XmlDictionaryReaderQuotas.Max);
                 return (ActorMessageHeaders) Serializer.ReadObject(reader);
             }
         }

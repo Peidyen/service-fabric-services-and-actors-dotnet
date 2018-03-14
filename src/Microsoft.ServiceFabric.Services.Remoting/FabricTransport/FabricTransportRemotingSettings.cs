@@ -192,7 +192,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport
             string sectionName, string filepath = null,
             string configPackageName = null)
         {
-            FabricTransportSettings fabricTransportSettings = FabricTransportSettings.LoadFrom(sectionName, filepath, configPackageName);
+            var fabricTransportSettings = FabricTransportSettings.LoadFrom(sectionName, filepath, configPackageName);
             return new FabricTransportRemotingSettings(fabricTransportSettings);
         }
 
@@ -240,10 +240,9 @@ namespace Microsoft.ServiceFabric.Services.Remoting.FabricTransport
             string filepath = null,
             string configPackageName = null)
         {
-            FabricTransportSettings transportSettings;
-            bool isSucceded = FabricTransportSettings.TryLoadFrom(
+            var isSucceded = FabricTransportSettings.TryLoadFrom(
                 sectionName,
-                out transportSettings,
+                out var transportSettings,
                 filepath,
                 configPackageName);
             if (isSucceded)

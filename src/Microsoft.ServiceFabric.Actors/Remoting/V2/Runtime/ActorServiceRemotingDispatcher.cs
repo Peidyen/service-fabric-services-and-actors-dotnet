@@ -60,10 +60,9 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Runtime
             requestMessage.ThrowIfNull("requestMessage");
             requestMessage.GetHeader().ThrowIfNull("RequestMessageHeader");
 
-            IServiceRemotingRequestMessageHeader messageHeaders = requestMessage.GetHeader();
-            var actorHeaders = requestMessage.GetHeader() as IActorRemotingMessageHeaders;
+            var messageHeaders = requestMessage.GetHeader();
 
-            if (actorHeaders != null)
+            if (requestMessage.GetHeader() is IActorRemotingMessageHeaders actorHeaders)
             {
                 if (messageHeaders.InterfaceId == ActorEventSubscription.InterfaceId)
                 {
@@ -102,7 +101,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Runtime
                     cancellationToken);
             }
 
-            IActorRemotingMessageHeaders header = this.CreateActorHeader(actorDispatchHeaders);
+            var header = this.CreateActorHeader(actorDispatchHeaders);
 
             return this.HandleActorMethodDispatchAsync(header, requestBody, cancellationToken);
         }
@@ -117,7 +116,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Runtime
             IActorRemotingMessageHeaders actorMessageHeaders, IServiceRemotingRequestMessageBody msgBody,
             CancellationToken cancellationToken)
         {
-            DateTime startTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
             IServiceRemotingResponseMessageBody retVal;
             this.actorService.ActorManager.DiagnosticsEventManager.ActorRequestProcessingStart();
             try
@@ -138,7 +137,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Runtime
         private async Task<IServiceRemotingResponseMessage> HandleActorMethodDispatchAsync(
             IActorRemotingMessageHeaders messageHeaders, IServiceRemotingRequestMessageBody msgBody)
         {
-            DateTime startTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
             if (this.IsCancellationRequest(messageHeaders))
             {
                 await this.cancellationHelper.CancelRequestAsync(
@@ -188,8 +187,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Runtime
 
         private IActorRemotingMessageHeaders CreateActorHeader(ActorRemotingDispatchHeaders actorDispatchHeaders)
         {
-            InterfaceDetails details;
-            if (ActorCodeBuilder.TryGetKnownTypes(actorDispatchHeaders.ActorInterfaceName, out details))
+            if (ActorCodeBuilder.TryGetKnownTypes(actorDispatchHeaders.ActorInterfaceName, out var details))
             {
                 var headers = new ActorRemotingMessageHeaders();
                 headers.ActorId = actorDispatchHeaders.ActorId;
@@ -203,8 +201,7 @@ namespace Microsoft.ServiceFabric.Actors.Remoting.V2.Runtime
                     headers.CallContext = actorDispatchHeaders.CallContext;
                 }
 
-                var headersMethodId = 0;
-                if (!details.MethodNames.TryGetValue(actorDispatchHeaders.MethodName, out headersMethodId))
+                if (!details.MethodNames.TryGetValue(actorDispatchHeaders.MethodName, out var headersMethodId))
                 {
                     throw new NotSupportedException("This Actor Method is not Supported" + actorDispatchHeaders.MethodName);
                 }

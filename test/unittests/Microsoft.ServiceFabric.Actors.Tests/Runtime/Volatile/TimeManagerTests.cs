@@ -23,7 +23,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             TestCase("### CurrentLogicalTimeTest ###");
 
             var snapshotHandler = new SnapshotHandler();
-            double snapshotInterval = UpperBoundBuffer;
+            var snapshotInterval = UpperBoundBuffer;
             var timeManager = new VolatileLogicalTimeManager(snapshotHandler, GetTimestamp(snapshotInterval));
 
             VerifyCurrentTime(timeManager, 0);
@@ -68,7 +68,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             TestCase("### SnapshotTest ###");
 
             var snapshotHandler = new SnapshotHandler();
-            double snapshotInterval = UpperBoundBuffer * 2;
+            var snapshotInterval = UpperBoundBuffer * 2;
             var timeManager = new VolatileLogicalTimeManager(snapshotHandler, GetTimestamp(snapshotInterval));
 
             VerifySnapshotTime(timeManager, 0);
@@ -112,9 +112,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             VolatileLogicalTimeManager timeManager,
             double lowerBound)
         {
-            TimeSpan current = timeManager.CurrentLogicalTime;
-            TimeSpan lower = GetTimestamp(lowerBound - LowerBoundBuffer);
-            TimeSpan upper = GetTimestamp(lowerBound + UpperBoundBuffer);
+            var current = timeManager.CurrentLogicalTime;
+            var lower = GetTimestamp(lowerBound - LowerBoundBuffer);
+            var upper = GetTimestamp(lowerBound + UpperBoundBuffer);
 
             FailTestIf(current < lower, "current={0} < lower={1}", current, lower);
             FailTestIf(current > upper, "current={0} > upper={1}", current, upper);
@@ -124,9 +124,9 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             VolatileLogicalTimeManager timeManager,
             double lowerBound)
         {
-            TimeSpan snapshot = timeManager.Test_GetCurrentSnapshot();
-            TimeSpan lower = GetTimestamp(lowerBound - LowerBoundBuffer);
-            TimeSpan upper = GetTimestamp(lowerBound + UpperBoundBuffer);
+            var snapshot = timeManager.Test_GetCurrentSnapshot();
+            var lower = GetTimestamp(lowerBound - LowerBoundBuffer);
+            var upper = GetTimestamp(lowerBound + UpperBoundBuffer);
 
             FailTestIf(snapshot < lower, "snapshot={0} < lower={1}", snapshot, lower);
             FailTestIf(snapshot > upper, "snapshot={0} > upper={1}", snapshot, upper);
@@ -170,7 +170,7 @@ namespace Microsoft.ServiceFabric.Actors.Tests.Runtime.Volatile
             SnapshotHandler handler,
             double expectedCont)
         {
-            int count = handler.SnapshotCount;
+            var count = handler.SnapshotCount;
 
             FailTestIf(count != expectedCont, "count={0} expected={1}", count, expectedCont);
         }

@@ -88,7 +88,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 // The received callContext is of form callContext1callContext2callContext3... 
                 // thus to check if incoming call was made from the current calls in progress
                 // we need to check if the incoming call context starts with the currentCallContext
-                bool startsWith = incomingCallContext.StartsWith(this.Test_CurrentContext);
+                var startsWith = incomingCallContext.StartsWith(this.Test_CurrentContext);
 
                 if (startsWith)
                 {
@@ -157,7 +157,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
             // this is not a reentrant call, which means that the caller needs to wait
             // for its turn to execute this call
             // 
-            TimeSpan timeout = this.GetTurnLockWaitTimeout();
+            var timeout = this.GetTurnLockWaitTimeout();
             if (!await this.turnLock.WaitAsync(timeout, cancellationToken))
             {
                 throw new ActorConcurrencyLockTimeoutException(
@@ -274,7 +274,7 @@ namespace Microsoft.ServiceFabric.Actors.Runtime
                 }
                 else
                 {
-                    TimeSpan t = timeout.Add(TimeSpan.FromMilliseconds(60000));
+                    var t = timeout.Add(TimeSpan.FromMilliseconds(60000));
                     turnLockWaitMaxRandomIntervalMillis = 60000;
                 }
 

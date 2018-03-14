@@ -23,11 +23,10 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime
 
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
-            foreach (ChannelDispatcherBase channelDispBase in serviceHostBase.ChannelDispatchers)
+            foreach (var channelDispBase in serviceHostBase.ChannelDispatchers)
             {
-                var channelDisp = channelDispBase as ChannelDispatcher;
 
-                if (channelDisp != null)
+                if (channelDispBase is ChannelDispatcher channelDisp)
                 {
                     var wcfErrorHandler = new WcfGlobalErrorHandler(channelDisp);
                     channelDisp.ErrorHandlers.Add(wcfErrorHandler);

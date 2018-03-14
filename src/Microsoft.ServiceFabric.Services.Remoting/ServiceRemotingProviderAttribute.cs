@@ -99,7 +99,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting
         {
             if (types != null)
             {
-                foreach (Type t in types)
+                foreach (var t in types)
                 {
                     var attribute = t.GetTypeInfo().Assembly.GetCustomAttribute<ServiceRemotingProviderAttribute>();
                     if (attribute != null)
@@ -109,7 +109,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting
                 }
             }
 
-            Assembly assembly = Assembly.GetEntryAssembly();
+            var assembly = Assembly.GetEntryAssembly();
             if (assembly != null)
             {
                 var attribute = assembly.GetCustomAttribute<ServiceRemotingProviderAttribute>();

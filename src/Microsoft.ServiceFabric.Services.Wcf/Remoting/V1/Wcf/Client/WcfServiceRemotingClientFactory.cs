@@ -149,7 +149,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Wcf.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            WcfCommunicationClient<IServiceRemotingContract> wcfClient = await this.wcfFactory.GetClientAsync(
+            var wcfClient = await this.wcfFactory.GetClientAsync(
                 serviceUri,
                 partitionKey,
                 targetReplicaSelector,
@@ -192,7 +192,7 @@ namespace Microsoft.ServiceFabric.Services.Remoting.V1.Wcf.Client
             OperationRetrySettings retrySettings,
             CancellationToken cancellationToken)
         {
-            WcfCommunicationClient<IServiceRemotingContract> wcfClient = await this.wcfFactory.GetClientAsync(
+            var wcfClient = await this.wcfFactory.GetClientAsync(
                 previousRsp,
                 targetReplicaSelector,
                 listenerName,
